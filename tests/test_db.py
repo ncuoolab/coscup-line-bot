@@ -64,6 +64,14 @@ class TestDb:
         result = get_dao().get_command_responses('help', 'zh_TW')
         assert 'help' and 'hi' not in result
 
+    def test_get_command_response_no_data(self):
+        try:
+            get_dao().get_command_responses('help', 'zh_TW')
+        except db.CommandError as ce:
+            assert True
+        except Exception as ex:
+            assert False
+
     def test_update_command(self):
         r = redis.from_url(REDIS_URL)
         get_dao().add_commands(gen_test_commands(10, 'zh_TW'))
