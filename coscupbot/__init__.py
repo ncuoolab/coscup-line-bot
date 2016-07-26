@@ -7,7 +7,7 @@ import logging
 
 
 class CoscupBot(object):
-    def __init__(self, credentials, db_url = 'redis://localhost:6379'):
+    def __init__(self, credentials, db_url='redis://localhost:6379'):
         self.botapi = api.LineApi(credentials)
         self.logger = logging.getLogger('CoscupBot')
         self.dao = db.Dao(db_url)
