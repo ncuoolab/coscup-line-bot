@@ -30,8 +30,8 @@ def gen_test_commands(num, language='zh_TW'):
 
 @pytest.mark.skipif(should_skip, reason="Redis connection url not configured")
 class TestDb:
-    @classmethod
-    def teardown_class(cls):
+
+    def teardown_method(self, test_method):
         r = redis.from_url(REDIS_URL)
         r.flushall()
 
@@ -63,3 +63,13 @@ class TestDb:
         get_dao().add_commands([cmd1, cmd2])
         result = get_dao().get_command_responses('help', 'zh_TW')
         assert 'help' and 'hi' not in result
+
+    def test_update_command(self):
+        r = redis.from_url(REDIS_URL)
+        get_dao().add_commands(gen_test_commands(10, 'zh_TW'))
+        assert 10 == len(r.keys('COMMAND::zh_TW::*'))
+        get_dao().update_commands(gen_test_commands(20, 'en'))
+        assert 0 == len(r.keys('COMMAND::zh_TW::*'))
+        assert 20 == len(r.keys('COMMAND::en::*'))
+        assert 20 == len(r.keys('COMMAND::*'))
+

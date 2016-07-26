@@ -2,6 +2,7 @@
 
 import logging
 import redis
+from threading import Lock
 
 
 class Dao(object):
@@ -9,6 +10,7 @@ class Dao(object):
         logging.info('Init redis dao use %s' % db_url)
         self.conn_pool = redis.ConnectionPool.from_url(url=db_url)
         self.test_connection()
+        self.command_lock = Lock()
         self.COMMAND_PATTERN = 'COMMAND::%s::%s'
 
     def test_connection(self):
@@ -35,6 +37,17 @@ class Dao(object):
         keys = r.keys('COMMAND::*')
         r.delete(*keys)
 
+    def update_commands(self, commands):
+        """
+        This method will clear all exist command in database. Then insert new commands.
+        :param commands:
+        :return:
+        """
+        self.command_lock.acquire()
+        self.clear_all_command()
+        self.add_commands(commands)
+        self.command_lock.release()
+
     def get_command_responses(self, cmd_str, lang='zh_TW'):
         """
         Get response array from database by command string.
@@ -42,6 +55,9 @@ class Dao(object):
         :param lang: Language code. eg. 'zh_TW'
         :return: list of result
         """
+        while self.command_lock.locked():
+            pass
+
         key = self.COMMAND_PATTERN % (lang, cmd_str)
         result = self.__get_conn().lrange(key, 0, -1)
         if result is None:
