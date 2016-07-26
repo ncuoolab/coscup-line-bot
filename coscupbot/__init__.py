@@ -2,14 +2,15 @@
 
 from linebot.client import *
 from linebot.receives import Receive
-from coscupbot import api
+from coscupbot import api, db
 import logging
 
 
 class CoscupBot(object):
-    def __init__(self, credentials):
+    def __init__(self, credentials, db_url = 'redis://localhost:6379'):
         self.botapi = api.LineApi(credentials)
         self.logger = logging.getLogger('CoscupBot')
+        self.dao = db.Dao(db_url)
 
     def process_new_event(self, data):
         self.logger.debug('Process new receives. %s' % data)

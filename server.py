@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, request
-from loggly import handlers
 import coscupbot
 import logging
 import os
