@@ -56,3 +56,10 @@ class TestDb:
         get_dao().clear_all_command()
         r = redis.from_url(REDIS_URL)
         assert 0 == len(r.keys('COMMAND::*'))
+
+    def test_get_command_response(self):
+        cmd1 = model.Command('zh_TW', 'help', ['help', 'hi'])
+        cmd2 = model.Command('zh_TW', 'hello', ['hello', 'world'])
+        get_dao().add_commands([cmd1, cmd2])
+        result = get_dao().get_command_responses('help', 'zh_TW')
+        assert 'help' and 'hi' not in result
