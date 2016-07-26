@@ -2,15 +2,17 @@
 
 from linebot.client import *
 from linebot.receives import Receive
-from coscupbot import api, db
+from coscupbot import api, db, modules
 import logging
+from concurrent.futures import ThreadPoolExecutor
 
 
 class CoscupBot(object):
-    def __init__(self, credentials, db_url='redis://localhost:6379'):
-        self.botapi = api.LineApi(credentials)
+    def __init__(self, credentials, db_url='redis://localhost:6379', num_thread=4):
+        self.bot_api = api.LineApi(credentials)
         self.logger = logging.getLogger('CoscupBot')
-        self.dao = db.Dao(db_url)
+        self.task_pool = ThreadPoolExecutor(num_thread)
+        self.message_controller = modules.MessageController(self.bot_api, db_url)
 
     def process_new_event(self, data):
         self.logger.debug('Process new receives. %s' % data)
@@ -20,9 +22,9 @@ class CoscupBot(object):
             self.logger.info('Get new %s message. %s' % (content, r))
             if isinstance(content, messages.TextMessage):
                 # Handle text message
-                self.handle_text_message(r)
+                self.task_pool.submit(self.handle_text_message, r)
             elif isinstance(content, messages.AudioMessage):
-                # Handle aduio message
+                # Handle audio message
                 pass
             elif isinstance(content, messages.ImageMessage):
                 # handle Image message
@@ -43,6 +45,6 @@ class CoscupBot(object):
         # echo Example. Will be remove.
         response_text = receive['content']['text']
         try:
-            self.botapi.send_text(to_mid=receive['from_mid'], text=response_text)
+            self.bot_api.send_text(to_mid=receive['from_mid'], text=response_text)
         except Exception as ex:
             self.logger.error(ex)

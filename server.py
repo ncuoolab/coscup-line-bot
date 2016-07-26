@@ -48,7 +48,8 @@ def init_logger():
 if __name__ == '__main__':
     init_logger()
     logging.info('Init bot use credentials. %s' % credentials)
-    bot = coscupbot.CoscupBot(credentials)
+    redis_url = os.getenv('REDIS', 'redis://localhost:6379')
+    bot = coscupbot.CoscupBot(credentials, redis_url)
     ip = os.getenv("IP")
     port = os.getenv("PORT")
     app.run(host=ip, port=port)
