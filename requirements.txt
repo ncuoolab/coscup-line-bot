@@ -5,6 +5,9 @@ itsdangerous==0.24
 Jinja2==2.8
 linebot==0.3.1
 MarkupSafe==0.23
+py==1.4.31
+pytest==2.9.2
 requests==2.8.1
+requests-futures==0.9.7
 Werkzeug==0.11.10
 wheel==0.24.0
