@@ -16,8 +16,8 @@ if not should_skip:
 
 @pytest.mark.skipif(should_skip, reason="Redis connection url not configured")
 class TestDb:
-    def __init__(self):
-        self.dao = db.Dao(REDIS_URL)
-
     def test_ping(self):
-        self.dao.test_connection()
+        self.get_dao().test_connection()
+
+    def get_dao(self):
+        return db.Dao(REDIS_URL)
