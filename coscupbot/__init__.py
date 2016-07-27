@@ -2,8 +2,9 @@
 
 from linebot.client import *
 from linebot.receives import Receive
-from coscupbot import api, db, modules
+from coscupbot import api, db, modules, utils
 import logging
+import redis
 from concurrent.futures import ThreadPoolExecutor
 
 
@@ -14,6 +15,7 @@ class CoscupBot(object):
         self.task_pool = ThreadPoolExecutor(num_thread)
         self.db_url = db_url
         self.message_controllers = self.gen_message_controllers(wit_tokens)
+        self.edison_queue = utils.RedisQueue('edison','queue', connection_pool=redis.ConnectionPool.from_url(url=db_url))
 
     def process_new_event(self, data):
         self.logger.debug('Process new receives. %s' % data)
@@ -59,3 +61,10 @@ class CoscupBot(object):
             ret[key] = modules.WitMessageController(self.bot_api, wittokens[key], self.db_url,
                                                       key)
         return ret
+
+    def get_edison_request(self):
+        self.edison_queue.get(block=False)
+
+    def take_photo_done(self, data):
+        # TODO
+        pass
