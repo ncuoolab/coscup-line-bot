@@ -13,3 +13,8 @@ class Command(object):
         self.language = language
         self.response = response
 
+
+class NLPActions(object):
+    Welcome = 'WELCOME'
+    Location = 'LOCATION'
+    EventTime = 'EVENTTIME'

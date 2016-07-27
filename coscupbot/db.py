@@ -66,6 +66,18 @@ class Dao(object):
             raise CommandError('Command %s has no response.' % key)
         return result
 
+    def get_nlp_response(self, action, lang='zh_TW'):
+        while self.command_lock.locked():
+            pass
+
+        key = 'NLP::%s::%s' % (lang, action)
+        result = self.__get_conn().lrange(key, 0, -1)
+        if result is None:
+            raise CommandError('NLPAction %s response is None.' % key)
+        if len(result) == 0:
+            raise CommandError('NLPAction %s has no response.' % key)
+        return result
+
     def __get_conn(self):
         return redis.Redis(connection_pool=self.conn_pool)
 

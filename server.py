@@ -45,11 +45,17 @@ def init_logger():
     ch.setFormatter(formatter)
     root.addHandler(ch)
 
+def get_wit_tokens():
+    ret = {}
+    if 'WIT_ZHTW_TOKEN' in os.environ:
+        ret['zh_TW'] = os.environ['WIT_ZHTW_TOKEN']
+    return ret
+
 if __name__ == '__main__':
     init_logger()
     logging.info('Init bot use credentials. %s' % credentials)
     redis_url = os.getenv('REDIS', 'redis://localhost:6379')
-    bot = coscupbot.CoscupBot(credentials, redis_url)
+    bot = coscupbot.CoscupBot(credentials, get_wit_tokens(),redis_url)
     ip = os.getenv("IP")
     port = os.getenv("PORT")
     app.run(host=ip, port=port)
