@@ -63,7 +63,7 @@ class CoscupBot(object):
         return ret
 
     def get_edison_request(self):
-        self.edison_queue.get(block=False)
+        self.edison_queue.get(timeout=10)
 
     def take_photo_done(self, data):
         # TODO

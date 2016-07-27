@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, request
+from flask import Response
+
 import coscupbot
 import logging
 import os
@@ -28,6 +30,18 @@ def line_call_back():
     return "OK"
 
 
+@app.route('/edison')
+def edison():
+    ret = bot.get_edison_request()
+    if ret is None:
+        ret = '{}'
+    resp = Response(response=ret,
+                    status=200,
+                    mimetype="application/json")
+
+    return resp
+
+
 def init_logger():
     """
     Init logger. Default use INFO level. If 'DEBUG' is '1' in env use DEBUG level.
@@ -45,17 +59,19 @@ def init_logger():
     ch.setFormatter(formatter)
     root.addHandler(ch)
 
+
 def get_wit_tokens():
     ret = {}
     if 'WIT_ZHTW_TOKEN' in os.environ:
         ret['zh_TW'] = os.environ['WIT_ZHTW_TOKEN']
     return ret
 
+
 if __name__ == '__main__':
     init_logger()
     logging.info('Init bot use credentials. %s' % credentials)
     redis_url = os.getenv('REDIS', 'redis://localhost:6379')
-    bot = coscupbot.CoscupBot(credentials, get_wit_tokens(),redis_url)
+    bot = coscupbot.CoscupBot(credentials, get_wit_tokens(), redis_url)
     ip = os.getenv("IP")
     port = os.getenv("PORT")
     app.run(host=ip, port=port)
