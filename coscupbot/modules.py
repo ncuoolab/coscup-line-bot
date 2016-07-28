@@ -50,7 +50,11 @@ class WitMessageController(object):
             message = receive['content']['text']
             logging.info('Wit process new message %s' % message)
             session_id = 'sesseion-%s-%s' % (receive['from_mid'], datetime.datetime.now().strftime("%Y-%m-%d%H:%M:%S"))
-            self.client.run_actions(session_id, message, self.convert_text_receive(receive), action_confidence=0.3)
+            result = self.client.run_actions(session_id, message, self.convert_text_receive(receive),
+                                             action_confidence=0.3)
+            if 'processed' not in result:
+                response = random_get_result(self.dao.get_nlp_response(NLPActions.Error, self.lang))
+                self.bot_api.reply_text(receive, response)
         except wit.WitError as we:
             logging.warning('Wit Process error %s' % we)
             response = random_get_result(self.dao.get_nlp_response(NLPActions.Error, self.lang))
@@ -79,7 +83,7 @@ class WitMessageController(object):
         from_mid = request['context']['from_mid']
         logging.info('Send %s message to %s, %s' % (action, from_mid, response))
         self.bot_api.send_text(to_mid=from_mid, text=response)
-        pass
+        return {'processed': True}
 
     def convert_text_receive(self, receive):
         return {'from_mid': receive['from_mid'], 'text': receive['content']['text']}
