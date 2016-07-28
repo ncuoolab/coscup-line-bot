@@ -48,6 +48,14 @@ class Dao(object):
         self.add_commands(commands)
         self.command_lock.release()
 
+    def update_NLP_command(self, commands):
+        """
+        This methos will clear all NLP command in database and insert new NLP commands.
+        :param commands:
+        :return:
+        """
+        pass
+
     def get_command_responses(self, cmd_str, lang='zh_TW'):
         """
         Get response array from database by command string.
