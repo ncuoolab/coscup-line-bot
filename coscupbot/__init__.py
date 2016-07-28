@@ -53,6 +53,7 @@ class CoscupBot(object):
             self.logger.error(ex)
         pass
 
+
     def check_fromuser_language(self, mid):
         return 'zh_TW'
 
