@@ -37,6 +37,8 @@ def create_new_app():
     app = Flask(__name__)
     return app
 
+app = create_new_app()
+
 @app.route('/')
 def hello_world():
     return 'Hello, Coscup bot.'
