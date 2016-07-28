@@ -7,6 +7,7 @@ import coscupbot
 import logging
 import os
 import sys
+from linebot import client
 
 app = Flask(__name__)
 
@@ -18,6 +19,8 @@ credentials = {
 
 bot = None
 
+PRODUCTION = False
+
 
 @app.route('/')
 def hello_world():
@@ -26,6 +29,9 @@ def hello_world():
 
 @app.route('/callback', methods=['POST'])
 def line_call_back():
+    if PRODUCTION:
+        if not client.validate_signature(request.headers.get('X-Line-Channelsignature'), request.get_data()):
+            return "NOT PASS"
     bot.process_new_event(request.get_data().decode("utf-8"))
     return "OK"
 
@@ -74,4 +80,5 @@ if __name__ == '__main__':
     bot = coscupbot.CoscupBot(credentials, get_wit_tokens(), redis_url)
     ip = os.getenv("IP")
     port = os.getenv("PORT")
+    PRODUCTION = os.getenv('PRODUCTION', False)
     app.run(host=ip, port=port)
