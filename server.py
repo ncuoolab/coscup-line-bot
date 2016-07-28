@@ -19,7 +19,7 @@ credentials = {
 
 bot = None
 
-PRODUCTION = False
+PRODUCTION = '0'
 
 
 @app.route('/')
@@ -29,7 +29,7 @@ def hello_world():
 
 @app.route('/callback', methods=['POST'])
 def line_call_back():
-    if PRODUCTION:
+    if PRODUCTION == '1':
         if not client.validate_signature(request.headers.get('X-Line-Channelsignature'), request.get_data()):
             return "NOT PASS"
     bot.process_new_event(request.get_data().decode("utf-8"))
@@ -73,12 +73,22 @@ def get_wit_tokens():
     return ret
 
 
-if __name__ == '__main__':
+def create_new_app():
+    global bot
+    global ip
+    global port
+    global PRODUCTION
+    global app
     init_logger()
     logging.info('Init bot use credentials. %s' % credentials)
     redis_url = os.getenv('REDIS', 'redis://localhost:6379')
     bot = coscupbot.CoscupBot(credentials, get_wit_tokens(), redis_url)
     ip = os.getenv("IP")
     port = os.getenv("PORT")
-    PRODUCTION = os.getenv('PRODUCTION', False)
-    app.run(host=ip, port=port)
+    PRODUCTION = os.getenv('PRODUCTION', 0)
+    app = Flask(__name__)
+    return app
+
+
+if __name__ == '__main__':
+    create_new_app().run()
