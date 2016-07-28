@@ -21,6 +21,21 @@ bot = None
 
 PRODUCTION = '0'
 
+def create_new_app():
+    global bot
+    global ip
+    global port
+    global PRODUCTION
+    global app
+    init_logger()
+    logging.info('Init bot use credentials. %s' % credentials)
+    redis_url = os.getenv('REDIS', 'redis://localhost:6379')
+    bot = coscupbot.CoscupBot(credentials, get_wit_tokens(), redis_url)
+    ip = os.getenv("IP")
+    port = os.getenv("PORT")
+    PRODUCTION = os.getenv('PRODUCTION', 0)
+    app = Flask(__name__)
+    return app
 
 @app.route('/')
 def hello_world():
@@ -73,21 +88,7 @@ def get_wit_tokens():
     return ret
 
 
-def create_new_app():
-    global bot
-    global ip
-    global port
-    global PRODUCTION
-    global app
-    init_logger()
-    logging.info('Init bot use credentials. %s' % credentials)
-    redis_url = os.getenv('REDIS', 'redis://localhost:6379')
-    bot = coscupbot.CoscupBot(credentials, get_wit_tokens(), redis_url)
-    ip = os.getenv("IP")
-    port = os.getenv("PORT")
-    PRODUCTION = os.getenv('PRODUCTION', 0)
-    app = Flask(__name__)
-    return app
+
 
 
 if __name__ == '__main__':
