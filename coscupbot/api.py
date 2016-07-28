@@ -19,6 +19,9 @@ class LineApi(object):
         self.logger.info("Bot api send message. %s" % args)
         return check_result(self.client.send_text(**args))
 
+    def reply_text(self, receive, message):
+        self.send_text(to_mid=receive['from_mid'], text=message)
+
     def broadcast_new_message(self, mids, message):
         # notice up to 150 mid in one message request
         pass

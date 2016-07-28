@@ -31,3 +31,4 @@ class NLPActions(object):
     Welcome = 'WELCOME'
     Location = 'LOCATION'
     EventTime = 'EVENTTIME'
+    Error = 'ERROR'

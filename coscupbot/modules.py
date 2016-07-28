@@ -3,6 +3,7 @@ from wit import Wit
 
 from coscupbot import api, db
 from coscupbot.model import NLPActions
+from wit import wit
 import datetime
 import logging
 import random
@@ -45,11 +46,17 @@ class WitMessageController(object):
         return Wit(access_token=self.token, actions=actions)
 
     def process_receive(self, receive):
-        message = receive['content']['text']
-        logging.info('Wit process new message %s' % message)
-        session_id = 'sesseion-%s-%s' % (receive['from_mid'], datetime.datetime.now().strftime("%Y-%m-%d%H:%M:%S"))
-        self.client.run_actions(session_id, message, self.convert_text_receive(receive), action_confidence=0.5)
-        pass
+        try:
+            message = receive['content']['text']
+            logging.info('Wit process new message %s' % message)
+            session_id = 'sesseion-%s-%s' % (receive['from_mid'], datetime.datetime.now().strftime("%Y-%m-%d%H:%M:%S"))
+            self.client.run_actions(session_id, message, self.convert_text_receive(receive), action_confidence=0.3)
+        except wit.WitError as we:
+            logging.warning('Wit Process error %s' % we)
+            response = random_get_result(self.dao.get_nlp_response(NLPActions.Error, self.lang))
+            self.bot_api.reply_text(receive, response)
+        except Exception as ex:
+            logging.exception(ex)
 
     def send_message(self, request, response):
         pass
