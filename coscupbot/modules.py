@@ -67,16 +67,13 @@ class WitMessageController(object):
         pass
 
     def send_welcome(self, request):
-        self.send_nlp_action_message(request, NLPActions.Welcome)
-        pass
+        return self.send_nlp_action_message(request, NLPActions.Welcome)
 
     def send_location(self, request):
-        self.send_nlp_action_message(request, NLPActions.Location)
-        pass
+        return self.send_nlp_action_message(request, NLPActions.Location)
 
     def send_event_time(self, request):
-        self.send_nlp_action_message(request, NLPActions.EventTime)
-        pass
+        return self.send_nlp_action_message(request, NLPActions.EventTime)
 
     def send_nlp_action_message(self, request, action):
         logging.info('Process %s action. %s' % (action, request))
