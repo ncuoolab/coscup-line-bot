@@ -21,6 +21,32 @@ bot = None
 
 PRODUCTION = '0'
 
+
+def init_logger():
+    """
+    Init logger. Default use INFO level. If 'DEBUG' is '1' in env use DEBUG level.
+    :return:
+    """
+    root = logging.getLogger()
+    ch = logging.StreamHandler(sys.stdout)
+    level = logging.INFO
+    if os.getenv("DEBUG") == '1':
+        level = logging.DEBUG
+    root.setLevel(level)
+    ch.setLevel(level)
+    formatter = logging.Formatter(
+        '%(asctime)s - %(levelname)s - %(filename)s: - %(funcName)s(): - %(lineno)d: - %(message)s')
+    ch.setFormatter(formatter)
+    root.addHandler(ch)
+
+
+def get_wit_tokens():
+    ret = {}
+    if 'WIT_ZHTW_TOKEN' in os.environ:
+        ret['zh_TW'] = os.environ['WIT_ZHTW_TOKEN']
+    return ret
+
+
 def create_new_app():
     global bot
     global ip
@@ -37,7 +63,9 @@ def create_new_app():
     app = Flask(__name__)
     return app
 
+
 app = create_new_app()
+
 
 @app.route('/')
 def hello_world():
@@ -65,33 +93,5 @@ def edison():
     return resp
 
 
-def init_logger():
-    """
-    Init logger. Default use INFO level. If 'DEBUG' is '1' in env use DEBUG level.
-    :return:
-    """
-    root = logging.getLogger()
-    ch = logging.StreamHandler(sys.stdout)
-    level = logging.INFO
-    if os.getenv("DEBUG") == '1':
-        level = logging.DEBUG
-    root.setLevel(level)
-    ch.setLevel(level)
-    formatter = logging.Formatter(
-        '%(asctime)s - %(levelname)s - %(filename)s: - %(funcName)s(): - %(lineno)d: - %(message)s')
-    ch.setFormatter(formatter)
-    root.addHandler(ch)
-
-
-def get_wit_tokens():
-    ret = {}
-    if 'WIT_ZHTW_TOKEN' in os.environ:
-        ret['zh_TW'] = os.environ['WIT_ZHTW_TOKEN']
-    return ret
-
-
-
-
-
 if __name__ == '__main__':
-    create_new_app().run()
+    app.run()
