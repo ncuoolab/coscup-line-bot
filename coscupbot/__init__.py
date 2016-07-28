@@ -15,7 +15,8 @@ class CoscupBot(object):
         self.task_pool = ThreadPoolExecutor(num_thread)
         self.db_url = db_url
         self.message_controllers = self.gen_message_controllers(wit_tokens)
-        self.edison_queue = utils.RedisQueue('edison','queue', connection_pool=redis.ConnectionPool.from_url(url=db_url))
+        self.edison_queue = utils.RedisQueue('edison', 'queue',
+                                             connection_pool=redis.ConnectionPool.from_url(url=db_url))
 
     def process_new_event(self, data):
         self.logger.debug('Process new receives. %s' % data)
@@ -59,7 +60,7 @@ class CoscupBot(object):
         ret = {}
         for key, value in wittokens.items():
             ret[key] = modules.WitMessageController(self.bot_api, wittokens[key], self.db_url,
-                                                      key)
+                                                    key)
         return ret
 
     def get_edison_request(self):
