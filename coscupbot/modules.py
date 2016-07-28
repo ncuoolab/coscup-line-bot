@@ -48,7 +48,7 @@ class WitMessageController(object):
         message = receive['content']['text']
         logging.info('Wit process new message %s' % message)
         session_id = 'sesseion-%s-%s' % (receive['from_mid'], datetime.datetime.now().strftime("%Y-%m-%d%H:%M:%S"))
-        self.client.run_actions(session_id, message, self.convert_text_receive(receive), action_confidence=0.8)
+        self.client.run_actions(session_id, message, self.convert_text_receive(receive), action_confidence=0.5)
         pass
 
     def send_message(self, request, response):
