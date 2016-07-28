@@ -53,6 +53,7 @@ class WitMessageController(object):
             result = self.client.run_actions(session_id, message, self.convert_text_receive(receive),
                                              action_confidence=0.3)
             if 'processed' not in result:
+                logging.warning('Message [%s] not run in action.' % message)
                 response = random_get_result(self.dao.get_nlp_response(NLPActions.Error, self.lang))
                 self.bot_api.reply_text(receive, response)
         except wit.WitError as we:
