@@ -12,6 +12,12 @@
 pip install -r /path/to/requirements.txt
 ```
 
+* Install custom wit
+```
+pip uninstall wit
+pip install https://github.com/eternnoir/pywit/archive/master.zip
+```
+
 ### Configuration
 
 Coscup line bot will use these env. Please make sure you setup these value:
