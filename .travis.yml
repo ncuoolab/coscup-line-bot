@@ -5,6 +5,8 @@ python:
     - "3.4"
     - "3.5"
     - "pypy3"
-install: "pip install -r requirements.txt"
+install:
+    - "pip install -r requirements.txt"
+    - "pip install https://github.com/eternnoir/pywit/archive/master.zip"
 script:
     - cd tests && py.test
