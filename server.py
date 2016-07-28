@@ -29,15 +29,19 @@ def init_logger():
     """
     root = logging.getLogger()
     ch = logging.StreamHandler(sys.stdout)
+    fh = logging.FileHandler('coscupbot.log')
     level = logging.INFO
     if os.getenv("DEBUG") == '1':
         level = logging.DEBUG
     root.setLevel(level)
     ch.setLevel(level)
+    fh.setLevel(level)
     formatter = logging.Formatter(
         '%(asctime)s - %(levelname)s - %(filename)s: - %(funcName)s(): - %(lineno)d: - %(message)s')
     ch.setFormatter(formatter)
+    fh.setFormatter(formatter)
     root.addHandler(ch)
+    root.addHandler(fh)
 
 
 def get_wit_tokens():
