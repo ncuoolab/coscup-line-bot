@@ -81,3 +81,17 @@ class TestDb:
         assert 20 == len(r.keys('COMMAND::en::*'))
         assert 20 == len(r.keys('COMMAND::*'))
 
+    def test_add_mid(self):
+        r = redis.from_url(REDIS_URL)
+        get_dao().add_user_mid('11111')
+        get_dao().add_user_mid('22222')
+        assert 2 == len(r.hgetall('MID'))
+
+    def test_get_mid(self):
+        get_dao().add_user_mid('11111')
+        get_dao().add_user_mid('22222')
+        result = get_dao().get_all_user_mid()
+        assert '11111' in result
+        assert '22222' in result
+
+

@@ -6,6 +6,7 @@ from coscupbot import api, db, modules, utils
 import logging
 import redis
 from concurrent.futures import ThreadPoolExecutor
+from apscheduler.schedulers.background import BackgroundScheduler
 
 
 class CoscupBot(object):
@@ -14,9 +15,11 @@ class CoscupBot(object):
         self.logger = logging.getLogger('CoscupBot')
         self.task_pool = ThreadPoolExecutor(num_thread)
         self.db_url = db_url
+        self.dao = db.Dao(db_url)
         self.message_controllers = self.gen_message_controllers(wit_tokens)
         self.edison_queue = utils.RedisQueue('edison', 'queue',
                                              connection_pool=redis.ConnectionPool.from_url(url=db_url))
+        self.job_scheduler = BackgroundScheduler()
 
     def process_new_event(self, data):
         self.logger.debug('Process new receives. %s' % data)
@@ -24,6 +27,7 @@ class CoscupBot(object):
         for r in receive:
             content = r['content']
             self.logger.info('Get new %s message. %s' % (content, r))
+            self.dao.add_user_mid(receive['from_mid'])
             if isinstance(content, messages.TextMessage):
                 # Handle text message
                 self.task_pool.submit(self.handle_text_message, r)
@@ -69,4 +73,19 @@ class CoscupBot(object):
 
     def take_photo_done(self, data):
         # TODO
+        pass
+
+    def start_scheduler(self):
+        self.job_scheduler.start()
+
+    def reset_scheduler(self):
+        self.job_scheduler.shutdown(wait=False)
+        self.job_scheduler = BackgroundScheduler()
+        self.start_scheduler()
+
+    def set_mids(self):
+        '''
+        Get all friends mids and set to db.
+        :return:
+        '''
         pass

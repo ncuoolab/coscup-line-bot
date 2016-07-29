@@ -86,6 +86,13 @@ class Dao(object):
             raise CommandError('NLPAction %s has no response.' % key)
         return result
 
+    def add_user_mid(self, mid):
+        self.__get_conn().hset('MID', mid, mid)
+
+    def get_all_user_mid(self):
+        mid_dic = self.__get_conn().hgetall('MID')
+        return [k.decode("utf-8") for k in mid_dic.keys()]
+
     def __get_conn(self):
         return redis.Redis(connection_pool=self.conn_pool)
 
