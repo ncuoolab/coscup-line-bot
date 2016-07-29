@@ -2,6 +2,7 @@
 
 from linebot.client import *
 import logging
+from coscupbot import utils
 
 
 def check_result(result):
@@ -24,6 +25,9 @@ class LineApi(object):
 
     def broadcast_new_message(self, mids, message):
         # notice up to 150 mid in one message request
+        mids_list = utils.chunks(mids, 100)
+        for mids in mids_list:
+            self.send_text(to_mid=mids, text=message)
         pass
 
 

@@ -23,9 +23,12 @@ class RedisQueue(object):
         else:
             item = self.__db.lpop(self.key)
 
-        if item:
-            item = item[1]
         return item
 
     def get_nowait(self):
         return self.get(False)
+
+
+def chunks(l, n):
+    n = max(1, n)
+    return [l[i:i + n] for i in range(0, len(l), n)]

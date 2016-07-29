@@ -20,6 +20,10 @@ class CoscupBot(object):
         self.edison_queue = utils.RedisQueue('edison', 'queue',
                                              connection_pool=redis.ConnectionPool.from_url(url=db_url))
         self.job_scheduler = BackgroundScheduler()
+        self.realtime_msg_queue = utils.RedisQueue('realmessage', 'queue',
+                                                   connection_pool=redis.ConnectionPool.from_url(url=db_url))
+
+        self.start_scheduler()
 
     def process_new_event(self, data):
         self.logger.debug('Process new receives. %s' % data)
@@ -27,7 +31,7 @@ class CoscupBot(object):
         for r in receive:
             content = r['content']
             self.logger.info('Get new %s message. %s' % (content, r))
-            self.dao.add_user_mid(receive['from_mid'])
+            self.try_set_mid(r)
             if isinstance(content, messages.TextMessage):
                 # Handle text message
                 self.task_pool.submit(self.handle_text_message, r)
@@ -49,6 +53,17 @@ class CoscupBot(object):
             else:
                 logging.error('Not support content %s. %s' % (content, r))
 
+    def try_set_mid(self, receive):
+        """
+        try to save mid to database from receive.
+        :param r:
+        :return:
+        """
+        try:
+            self.dao.add_user_mid(receive['from_mid'])
+        except Exception as ex:
+            self.logger.exception(ex)
+
     def handle_text_message(self, receive):
         try:
             lang = self.check_fromuser_language(receive['from_mid'])
@@ -56,7 +71,6 @@ class CoscupBot(object):
         except Exception as ex:
             self.logger.error(ex)
         pass
-
 
     def check_fromuser_language(self, mid):
         return 'zh_TW'
@@ -75,7 +89,24 @@ class CoscupBot(object):
         # TODO
         pass
 
+    def broadcast_realtime_message(self):
+        """
+        this method will take message from realtime_msg_queue. If no message in queue will pass.
+        :return:
+        """
+        self.logger.info('Start Broadcast real time message.')
+        while True:
+            rmsg = self.realtime_msg_queue.get(block=False)
+            if rmsg is None:
+                self.logger.debug('No real time message now.')
+                break
+            msg = rmsg.decode('utf-8')
+            mids = self.dao.get_all_user_mid()
+            self.logger.info('Start broadcast real time message %s to %d mids.' % (rmsg, len(mids)))
+            self.bot_api.broadcast_new_message(mids, msg)
+
     def start_scheduler(self):
+        self.job_scheduler.add_job(self.broadcast_realtime_message, 'interval', seconds=5)
         self.job_scheduler.start()
 
     def reset_scheduler(self):
@@ -83,9 +114,3 @@ class CoscupBot(object):
         self.job_scheduler = BackgroundScheduler()
         self.start_scheduler()
 
-    def set_mids(self):
-        '''
-        Get all friends mids and set to db.
-        :return:
-        '''
-        pass
