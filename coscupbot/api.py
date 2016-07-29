@@ -26,9 +26,6 @@ class LineApi(object):
         # notice up to 150 mid in one message request
         pass
 
-    def get_all_friends(self):
-        self.client.get
-
 
 class ApiError(Exception):
     def __init__(self, message, request_result):
