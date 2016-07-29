@@ -94,5 +94,11 @@ def edison():
     return resp
 
 
+@app.route('/edisondone')
+def edison_done():
+    data = request.get_data().decode("utf-8")
+    bot.take_photo_done(data)
+    return 'OK'
+
 if __name__ == '__main__':
     app.run()

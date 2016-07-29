@@ -94,7 +94,8 @@ class CoscupBot(object):
         return ret
 
     def get_edison_request(self):
-        self.edison_queue.get(timeout=10)
+        result = self.edison_queue.get(timeout=10)
+        return result.decode('utf-8')
 
     def take_photo_done(self, data):
         # TODO
@@ -112,9 +113,17 @@ class CoscupBot(object):
                 self.logger.debug('No real time message now.')
                 break
             msg = rmsg.decode('utf-8')
-            mids = self.dao.get_all_user_mid()
-            self.logger.info('Start broadcast real time message %s to %d mids.' % (rmsg, len(mids)))
-            self.bot_api.broadcast_new_message(mids, msg)
+            self.broadcast_message(msg)
+
+    def broadcast_message(self, message):
+        """
+        Send message to all mids.
+        :param message: str : what message you want broadcast.
+        :return:
+        """
+        mids = self.dao.get_all_user_mid()
+        self.logger.info('Start broadcast message %s to %d mids.' % (message, len(mids)))
+        self.bot_api.broadcast_new_message(mids, message)
 
     def start_scheduler(self):
         self.job_scheduler.add_job(self.broadcast_realtime_message, 'interval', seconds=5)
@@ -125,3 +134,5 @@ class CoscupBot(object):
         self.job_scheduler = BackgroundScheduler()
         self.start_scheduler()
 
+    def add_scheduler_message(self, trigger_datetime, message):
+        self.job_scheduler.add_job(self.broadcast_message, 'date', run_date=trigger_datetime, args=[message])
