@@ -27,6 +27,8 @@ CHANNEL_MID = 'Your line bot's channel mid'
 CHANNEL_ID = 'Your line bot's channel id'
 CHANNEL_SECRET = 'Your line bot's channel secret'
 WIT_ZHTW_TOKEN = 'Your wit.ai app token'
+SHEET_CREDENTIAL_PATH = 'Your Google app credential path'
+SHEET_NAME = 'Your Google spreadsheet name'
 DEBUG = '1' # If DEBUG env is '1' will set logger's level to debug else INFO.
 ```
 

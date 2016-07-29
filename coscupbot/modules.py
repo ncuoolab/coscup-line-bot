@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from wit import Wit
 
-from coscupbot import api, db
+from coscupbot import api, db, sheet
 from coscupbot.model import NLPActions
 from wit import wit
 import datetime
@@ -85,3 +85,9 @@ class WitMessageController(object):
 
     def convert_text_receive(self, receive):
         return {'from_mid': receive['from_mid'], 'text': receive['content']['text']}
+
+
+class DBMessageController(object):
+    def __init__(self, db_url, credential_path, spreadsheet_name):
+        self.dao = db.Dao(db_url)
+        self.sheet = sheet.Sheet(credential_path, spreadsheet_name)
