@@ -13,10 +13,11 @@ def random_get_result(responses):
     return random.choice(responses).decode("utf-8")
 
 
-class MessageController(object):
-    def __init__(self, bot_api, db_url):
+class CommandController(object):
+    def __init__(self, bot_api, db_url,lang):
         self.bot_api = bot_api
         self.dao = db.Dao(db_url)
+        self.lang = lang
 
     def process_receive(self, receive):
         # echo Example. Will be remove.

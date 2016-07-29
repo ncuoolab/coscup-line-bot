@@ -16,7 +16,8 @@ class CoscupBot(object):
         self.task_pool = ThreadPoolExecutor(num_thread)
         self.db_url = db_url
         self.dao = db.Dao(db_url)
-        self.message_controllers = self.gen_message_controllers(wit_tokens)
+        self.nlp_message_controllers = self.gen_nlp_message_controllers(wit_tokens)
+        self.command_message_controllers = self.gen_command_message_controllers(['zh_TW', 'en_US'])
         self.edison_queue = utils.RedisQueue('edison', 'queue',
                                              connection_pool=redis.ConnectionPool.from_url(url=db_url))
         self.job_scheduler = BackgroundScheduler()
@@ -67,7 +68,11 @@ class CoscupBot(object):
     def handle_text_message(self, receive):
         try:
             lang = self.check_fromuser_language(receive['from_mid'])
-            self.message_controllers[lang].process_receive(receive)
+            msg = receive['content']['text']
+            if msg.startswith('/'):
+                self.command_message_controllers[lang].process_receive(receive)
+            else:
+                self.nlp_message_controllers[lang].process_receive(receive)
         except Exception as ex:
             self.logger.error(ex)
         pass
@@ -75,11 +80,17 @@ class CoscupBot(object):
     def check_fromuser_language(self, mid):
         return 'zh_TW'
 
-    def gen_message_controllers(self, wittokens):
+    def gen_nlp_message_controllers(self, wittokens):
         ret = {}
         for key, value in wittokens.items():
             ret[key] = modules.WitMessageController(self.bot_api, wittokens[key], self.db_url,
                                                     key)
+        return ret
+
+    def gen_command_message_controllers(self, langs):
+        ret = {}
+        for lang in langs:
+            ret[lang] = modules.CommandController(self.bot_api, self.db_url, lang)
         return ret
 
     def get_edison_request(self):
