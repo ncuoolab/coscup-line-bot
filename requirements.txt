@@ -28,3 +28,4 @@ cffi==1.7.0
 cryptography==1.4
 idna==2.1
 pycparser==2.14
+gspread==0.4.1
