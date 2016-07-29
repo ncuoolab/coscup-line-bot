@@ -10,7 +10,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 
 class CoscupBot(object):
-    def __init__(self, credentials, wit_tokens, db_url='redis://localhost:6379', num_thread=4):
+    def __init__(self, credentials, sheet_credentials, wit_tokens, db_url='redis://localhost:6379', num_thread=4):
         self.bot_api = api.LineApi(credentials)
         self.logger = logging.getLogger('CoscupBot')
         self.task_pool = ThreadPoolExecutor(num_thread)
@@ -18,6 +18,8 @@ class CoscupBot(object):
         self.dao = db.Dao(db_url)
         self.nlp_message_controllers = self.gen_nlp_message_controllers(wit_tokens)
         self.command_message_controllers = self.gen_command_message_controllers(['zh_TW', 'en_US'])
+        self.sheet_message_controller = modules.SheetMessageController(db_url, sheet_credentials['credential_path'],
+                                                                       sheet_credentials['name'])
         self.edison_queue = utils.RedisQueue('edison', 'queue',
                                              connection_pool=redis.ConnectionPool.from_url(url=db_url))
         self.job_scheduler = BackgroundScheduler()

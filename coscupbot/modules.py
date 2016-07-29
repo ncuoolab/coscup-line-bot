@@ -2,7 +2,7 @@
 from wit import Wit
 
 from coscupbot import api, db, sheet
-from coscupbot.model import NLPActions
+from coscupbot.model import NLPActions, GoogleSheetName
 from wit import wit
 import datetime
 import logging
@@ -88,7 +88,10 @@ class WitMessageController(object):
         return {'from_mid': receive['from_mid'], 'text': receive['content']['text']}
 
 
-class DBMessageController(object):
+class SheetMessageController(object):
     def __init__(self, db_url, credential_path, spreadsheet_name):
         self.dao = db.Dao(db_url)
         self.sheet = sheet.Sheet(credential_path, spreadsheet_name)
+
+    def parse_command_page(self):
+        self.sheet.get_all_values_from_specific_sheet(GoogleSheetName.Command)

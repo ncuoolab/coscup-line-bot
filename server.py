@@ -17,6 +17,11 @@ credentials = {
     'channel_mid': os.getenv("CHANNEL_MID"),
 }
 
+sheet_credentials = {
+    'credential_path': os.getenv('SHEET_CREDENTIAL_PATH'),
+    'name': os.getenv('SHEET_NAME')
+}
+
 bot = None
 
 PRODUCTION = '0'
@@ -53,8 +58,9 @@ def get_wit_tokens():
 
 init_logger()
 logging.info('Init bot use credentials. %s' % credentials)
+logging.info('Init bot use sheet credentials. %s' % sheet_credentials)
 redis_url = os.getenv('REDIS', 'redis://localhost:6379')
-bot = coscupbot.CoscupBot(credentials, get_wit_tokens(), redis_url)
+bot = coscupbot.CoscupBot(credentials, sheet_credentials, get_wit_tokens(), redis_url)
 ip = os.getenv("IP")
 port = os.getenv("PORT")
 PRODUCTION = os.getenv('PRODUCTION', 0)

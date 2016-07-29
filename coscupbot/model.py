@@ -32,3 +32,9 @@ class NLPActions(object):
     Location = 'LOCATION'
     EventTime = 'EVENTTIME'
     Error = 'ERROR'
+
+
+class GoogleSheetName(object):
+    Command = 'COMMAND'
+    NLPAction = 'NLP_ACTION'
+    Realtime = 'REALTIME'
