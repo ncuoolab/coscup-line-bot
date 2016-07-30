@@ -8,6 +8,7 @@ from coscupbot import sheet
 import os
 import pytest
 import gspread
+import re
 
 should_skip = 'SHEET_CREDENTIAL_PATH' not in os.environ or 'SHEET_NAME' not in os.environ
 
@@ -29,6 +30,45 @@ class TestSheet:
 
     def teardown_method(self, test_method):
         self.sheet.spreadsheet.del_worksheet(self.test_sheet)
+        pass
+
+    def test_update_refresh_time(self):
+        regular = 'Last updated at \d\d:\d\d on \d\d\/\d\d\/\d\d\d\d'
+        parser = sheet.SheetParser(self.sheet.spreadsheet)
+        parser.sheet_name = self.TEST_SHEET_NAME
+        parser.update_refresh_time()
+        assert re.match(regular, self.test_sheet.cell(*parser.refresh_time_pos).value)
+
+    def test_erase_last_update_time(self):
+        regular = 'Last updated at \d\d:\d\d on \d\d\/\d\d\/\d\d\d\d'
+        parser = sheet.SheetParser(self.sheet.spreadsheet)
+        parser.sheet_name = self.TEST_SHEET_NAME
+        parser.update_refresh_time()
+        parser.erase_last_update_time()
+        assert not re.match(regular, self.test_sheet.cell(*parser.refresh_time_pos).value)
+
+    def test_retrieve_all_values(self):
+        expected = [['1','',''],
+                    ['','1',''],
+                    ['','','1'],
+                    ['','1',''],
+                    ['1','','']]
+        pos = ((1, 1), (2, 2), (3, 3), (4, 2), (5, 1))
+        for p in pos:
+            self.test_sheet.update_cell(p[0], p[1], '1')
+        parser = sheet.SheetParser(self.sheet.spreadsheet)
+        parser.sheet_name = self.TEST_SHEET_NAME
+        assert expected == parser.retrieve_all_values()
+
+    def test_set_refresh_time_pos(self):
+        pos = ((1, 1), (2, 2), (3, 3), (4, 2), (5, 1))
+        for p in pos:
+            self.test_sheet.update_cell(p[0], p[1], '1')
+        parser = sheet.SheetParser(self.sheet.spreadsheet)
+        parser.sheet_name = self.TEST_SHEET_NAME
+        parser.retrieve_all_values()
+        expected = (8, 3)
+        assert expected == parser.refresh_time_pos
 
     def test_check_tuple_valid_command(self):
         tuple1 = ['', 'help', 'zh-TW', 'tuple']

@@ -96,4 +96,5 @@ class SheetMessageController(object):
 
     def parse_data_from_google_sheet(self):
         re = self.sheet.parse_all_data()
+        self.dao.update_commands(re[GoogleSheetName.Command])
         pass

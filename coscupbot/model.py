@@ -38,3 +38,4 @@ class GoogleSheetName(object):
     Command = 'COMMAND'
     NLPAction = 'NLP_ACTION'
     Realtime = 'REALTIME'
+    Time = 'TIME'
