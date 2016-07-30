@@ -32,8 +32,8 @@ class SheetParser(object):
         self.default_time_pos = (4, 1)
         self.refresh_time_pos = self.default_time_pos
         self.refresh_time_offset = (3, 0)
-        self.update_time_pattern = 'Last updated at \d\d:\d\d on \d\d\/\d\d\/\d\d\d\d'
-        self.update_time_str = 'Last updated at %H:%M on %m/%d/%Y'
+        self.update_time_pattern = 'Last updated at \d\d:\d\d on \d\d-\d\d-\d\d\d\d'
+        self.update_time_str = 'Last updated at %H:%M on %m-%d-%Y'
 
     def update_refresh_time(self, pos=None):
         self.erase_last_update_time()
@@ -141,8 +141,8 @@ class TimeSheetParser(SheetParser):
     def __init__(self, spreadsheet):
         super().__init__(spreadsheet)
         self.sheet_name = GoogleSheetName.Time
-        self.time_str = '%Y/%m/%d %H:%M:%S'
-        self.time_pattern = '\d\d\d\d/\d\d/\d\d \d\d:\d\d:\d\d'
+        self.time_str = '%Y-%m-%d %H:%M:%S'
+        self.time_pattern = '\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d'
         pass
 
     def parse_data(self):
