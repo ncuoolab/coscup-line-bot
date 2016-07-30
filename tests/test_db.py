@@ -96,5 +96,3 @@ class TestDb:
 
     def test_delete_no_command(self):
         get_dao().clear_all_command()
-
-

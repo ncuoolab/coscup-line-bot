@@ -11,7 +11,9 @@ class Dao(object):
         self.conn_pool = redis.ConnectionPool.from_url(url=db_url)
         self.test_connection()
         self.command_lock = Lock()
+        self.nlp_lock = Lock()
         self.COMMAND_PATTERN = 'COMMAND::%s::%s'
+        self.NLP_PATTERN = 'NLP::%s::%s'
 
     def test_connection(self):
         r = self.__get_conn()
@@ -50,13 +52,16 @@ class Dao(object):
         self.add_commands(commands)
         self.command_lock.release()
 
-    def update_NLP_command(self, commands):
+    def update_NLP_command(self, actions):
         """
         This methos will clear all NLP command in database and insert new NLP commands.
         :param commands:
         :return:
         """
-        pass
+        self.nlp_lock.acquire()
+        self.clear_all_nlp_action()
+        self.add_nlp_action(actions)
+        self.nlp_lock.release()
 
     def get_command_responses(self, cmd_str, lang='zh_TW'):
         """
@@ -76,11 +81,33 @@ class Dao(object):
             raise CommandError('Command %s has no response.' % key)
         return result
 
+    def add_nlp_action(self, actions):
+        """
+        Add nlp actions to redis db.
+        :param commands:
+        :return:
+        """
+        r = self.__get_conn()
+        for action in actions:
+            key = self.NLP_PATTERN % (action.language, action.action_str)
+            r.rpush(key, action.response)
+
+    def clear_all_nlp_action(self):
+        """
+        This method will remove all commands in database.
+        :return:
+        """
+        r = self.__get_conn()
+        keys = r.keys('NLP::*')
+        if len(keys) == 0:
+            return
+        r.delete(*keys)
+
     def get_nlp_response(self, action, lang='zh_TW'):
-        while self.command_lock.locked():
+        while self.nlp_lock.locked():
             pass
 
-        key = 'NLP::%s::%s' % (lang, action)
+        key = self.NLP_PATTERN % (lang, action)
         result = self.__get_conn().lrange(key, 0, -1)
         if result is None:
             raise CommandError('NLPAction %s response is None.' % key)
