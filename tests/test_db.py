@@ -94,4 +94,7 @@ class TestDb:
         assert '11111' in result
         assert '22222' in result
 
+    def test_delete_no_command(self):
+        get_dao().clear_all_command()
+
 

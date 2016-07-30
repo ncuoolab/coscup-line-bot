@@ -35,6 +35,8 @@ class Dao(object):
         """
         r = self.__get_conn()
         keys = r.keys('COMMAND::*')
+        if len(keys) == 0:
+            return
         r.delete(*keys)
 
     def update_commands(self, commands):
