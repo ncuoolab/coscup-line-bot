@@ -33,7 +33,7 @@ class TestSheet:
         pass
 
     def test_update_refresh_time(self):
-        regular = 'Last updated at \d\d:\d\d on \d\d\/\d\d\/\d\d\d\d'
+        regular = 'Last updated at \d\d:\d\d on \d\d-\d\d-\d\d\d\d'
         parser = sheet.SheetParser(self.sheet.spreadsheet)
         parser.sheet_name = self.TEST_SHEET_NAME
         parser.update_refresh_time()
@@ -96,4 +96,23 @@ class TestSheet:
         pass
 
     def test_check_tuple_valid_realtime(self):
+        pass
+
+    def test_check_tuple_valid_time(self):
+        tuple1 = ['1984-01-01 00:00:00', 'tuple']
+        tuple2 = ['1984-01-01 00:00:00', '']
+        tuple3 = ['', 'tuple']
+        tuple4 = ['1984-1-1 00:00:00', 'tuple']
+        tuple5 = ['84-01-01 00:00:00', 'tuple']
+        tuple6 = ['1984-01-01 00:00', 'tuple']
+        tuple7 = ['1984/01/01 00:00:00', 'tuple']
+
+        parser = sheet.TimeSheetParser(self.sheet.spreadsheet)
+        assert True == parser.check_tuple_valid(tuple1)
+        assert False == parser.check_tuple_valid(tuple2)
+        assert False == parser.check_tuple_valid(tuple3)
+        assert False == parser.check_tuple_valid(tuple4)
+        assert False == parser.check_tuple_valid(tuple5)
+        assert False == parser.check_tuple_valid(tuple6)
+        assert False == parser.check_tuple_valid(tuple7)
         pass
