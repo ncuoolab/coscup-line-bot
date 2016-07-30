@@ -43,7 +43,7 @@ class SheetParser(object):
         if not self.sheet_name:
             raise SheetError('Page name should be defined before updating time.')
         if 'Last updated at' in self.spreadsheet.worksheet(self.sheet_name).cell(*self.refresh_time_pos).value:
-            self.spreadsheet.worksheet(self.sheet_name).update_cell(*self.refresh_time_pos, '')
+            self.spreadsheet.worksheet(self.sheet_name).update_cell(self.refresh_time_pos[0], self.refresh_time_pos[1], '')
 
     def retrieve_all_values(self):
         if not self.sheet_name:
