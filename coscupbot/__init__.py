@@ -25,7 +25,7 @@ class CoscupBot(object):
         self.job_scheduler = BackgroundScheduler()
         self.realtime_msg_queue = utils.RedisQueue('realmessage', 'queue',
                                                    connection_pool=redis.ConnectionPool.from_url(url=db_url))
-        self.sheet_message_controller.parse_command_page()
+        self.sheet_message_controller.parse_data_from_google_sheet()
         self.start_scheduler()
 
     def process_new_event(self, data):

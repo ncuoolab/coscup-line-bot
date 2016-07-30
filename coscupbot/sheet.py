@@ -13,61 +13,72 @@ class Sheet(object):
         self.gc = gspread.authorize(credentials)
         logging.info('Sheet service client authorized, credential path: %s' % credential_path)
         self.spreadsheet = self.gc.open(spreadsheet_name)
-        self.page_parsers = [CommandPageParser(self.spreadsheet),
-                             RealtimePageParser(self.spreadsheet),
-                             NLPActionPageParser(self.spreadsheet)]
-        pass
-
-    def update_refresh_time(self, sheet_name=None, pos=None):
-        p = pos if pos else self.refresh_time_pos
-        sheet = None
-        if sheet_name:
-            sheet = self.spreadsheet.worksheet(sheet_name)
-        else:
-            sheet = self.spreadsheet.worksheet(GoogleSheetName.Command)
-
-        sheet.update_cell(*p, datetime.datetime.now().strftime('Last updated at %I:%M%p on %m/%d/%Y'))
-        logging.info('Update last access time, sheet: %s, pos: (%d, %d)' % (sheet, p[0], p[1]))
+        self.page_parsers = [CommandSheetParser(self.spreadsheet),
+                             RealtimeSheetParser(self.spreadsheet),
+                             NLPActionSheetParser(self.spreadsheet)]
         pass
 
     def parse_all_data(self):
         re = []
-        re.append(self.parse_command_page)
-        re.append(self.parse_realtime_page)
-        re.append(self.parse_NLPAction_page)
+        for parser in self.page_parsers:
+            re.append(parser.parse_data())
         return re
-        pass
 
 
-class PageParser(object):
+class SheetParser(object):
     def __init__(self, spreadsheet):
         self.spreadsheet = spreadsheet
-        self.page_name = None
+        self.sheet_name = None
         self.refresh_time_pos = (1, 4)
         self.refresh_time_offset = (0, 3)
 
+    def update_refresh_time(self, pos=None):
+        p = pos if pos else self.refresh_time_pos
+        if not self.sheet_name:
+            raise SheetError('Page name should be defined before updating time.')
+        self.spreadsheet.worksheet(self.sheet_name).update_cell(*p, datetime.datetime.now().strftime('Last updated at %I:%M%p on %m/%d/%Y'))
+        logging.info('Update last access time, sheet: %s, pos: (%d, %d)' % (sheet, p[0], p[1]))
+
+    def erase_last_update_time(self):
+        if not self.sheet_name:
+            raise SheetError('Page name should be defined before updating time.')
+        if 'Last updated at' in self.spreadsheet.worksheet(self.sheet_name).cell(*self.refresh_time_pos).value:
+            self.spreadsheet.worksheet(self.sheet_name).update_cell(*self.refresh_time_pos, '')
+
     def retrieve_all_values(self):
-        if not self.page_name:
+        if not self.sheet_name:
             raise SheetError('Page name should be defined before retrieveing.')
-        list_of_lists = self.spreadsheet.worksheet(self.page_name).get_all_values()
+        list_of_lists = self.spreadsheet.worksheet(self.sheet_name).get_all_values()
         self.refresh_time_pos = (len(list_of_lists[0]) + self.refresh_time_offset[0] + 1,
                                  len(list_of_lists) + self.refresh_time_offset[1] + 1)
         return list_of_lists
 
 
-class CommandPageParser(PageParser):
+class CommandSheetParser(SheetParser):
     def __init__(self, spreadsheet):
         super().__init__(spreadsheet)
-        self.page_name = GoogleSheetName.Command
+        self.sheet_name = GoogleSheetName.Command
+        self.lang_set = ('en-us', 'zh-tw')
 
     def parse_data(self):
-        commands = []
+        commands = {}
+        re = []
         tuple_list = self.retrieve_all_values()
         for tuple in tuple_list:
-            if not self.check_tuple_valid():
+            if not self.check_tuple_valid(tuple):
                 continue
-            commands.append(Command(tuple[2], tuple[1], tuple[3]))
-        return commands
+            if tuple[1] not in commands:
+                commands[tuple[1]] = {tuple[2]: [tuple[3]]}
+            else:
+                if tuple[2] in commands[tuple[1]]:
+                    commands[tuple[1]][tuple[2]].append(tuple[3])
+                else:
+                    commands[tuple[1]][tuple[2]] = [tuple[3]]
+
+        for command, v in commands.items():
+            for lang, response in v.items():
+                re.append(Command(lang, command, response))
+        return re
 
     def check_tuple_valid(self, tuple):
         if tuple[1] == '' or tuple[2] == '' or tuple[3] == '':
@@ -77,17 +88,29 @@ class CommandPageParser(PageParser):
         return True
 
 
-class RealtimePageParser(PageParser):
+class RealtimeSheetParser(SheetParser):
     def __init__(self, spreadsheet):
         super().__init__(spreadsheet)
-        self.page_name = GoogleSheetName.Realtime
+        self.sheet_name = GoogleSheetName.Realtime
+        pass
+
+    def parse_data(self):
+        pass
+
+    def check_tuple_valid(self):
         pass
 
 
-class NLPActionPageParser(PageParser):
+class NLPActionSheetParser(SheetParser):
     def __init__(self, spreadsheet):
         super().__init__(spreadsheet)
-        self.page_name = GoogleSheetName.NLPAction
+        self.sheet_name = GoogleSheetName.NLPAction
+        pass
+
+    def parse_data(self):
+        pass
+
+    def check_tuple_valid(self):
         pass
 
 

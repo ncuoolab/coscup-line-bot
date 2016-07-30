@@ -93,11 +93,7 @@ class SheetMessageController(object):
         self.dao = db.Dao(db_url)
         self.sheet = sheet.Sheet(credential_path, spreadsheet_name)
         self.bot = bot
-        self.lang_set = ('en-us', 'zh-tw')
 
-    def parse_command_page(self):
-        commands = []
-        tuple_list = self.sheet.get_all_values_from_specific_sheet(GoogleSheetName.Command)
-        for tuple in tuple_list:
-            if not self.__check_tuple_valid():
-                continue
+    def parse_data_from_google_sheet(self):
+        re = self.sheet.parse_all_data()
+        pass

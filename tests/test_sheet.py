@@ -30,9 +30,27 @@ class TestSheet:
     def teardown_method(self, test_method):
         self.sheet.spreadsheet.del_worksheet(self.test_sheet)
 
-    def test_update_refresh_time(self):
-        pos = (1, 1)
-        self.test_sheet.update_cell(pos[0], pos[1], '')
-        self.sheet.update_refresh_time(sheet_name=self.TEST_SHEET_NAME, pos=pos)
-        r = self.test_sheet.cell(*pos).value
-        assert 'Last updated at' in r
+    def test_check_tuple_valid_command(self):
+        tuple1 = ['', 'help', 'zh-TW', 'tuple']
+        tuple2 = ['', 'help', 'en-US', 'tuple']
+        tuple3 = ['', '', 'en-US', 'tuple1']
+        tuple4 = ['', 'help', '', 'tuple1']
+        tuple5 = ['', 'help', 'en-US', '']
+        tuple6 = ['', 'help', 'zh-tw', 'tuple']
+        tuple7 = ['', 'help', 'zh-cn', 'tuple']
+
+        parser = sheet.CommandSheetParser(self.sheet.spreadsheet)
+        assert True == parser.check_tuple_valid(tuple1)
+        assert True == parser.check_tuple_valid(tuple2)
+        assert False == parser.check_tuple_valid(tuple3)
+        assert False == parser.check_tuple_valid(tuple4)
+        assert False == parser.check_tuple_valid(tuple5)
+        assert True == parser.check_tuple_valid(tuple6)
+        assert False == parser.check_tuple_valid(tuple7)
+
+
+    def test_check_tuple_valid_NLPAction(self):
+        pass
+
+    def test_check_tuple_valid_realtime(self):
+        pass
