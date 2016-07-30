@@ -40,12 +40,12 @@ class TestSheet:
         assert re.match(regular, self.test_sheet.cell(*parser.refresh_time_pos).value)
 
     def test_erase_last_update_time(self):
-        regular = 'Last updated at \d\d:\d\d on \d\d\/\d\d\/\d\d\d\d'
         parser = sheet.SheetParser(self.sheet.spreadsheet)
         parser.sheet_name = self.TEST_SHEET_NAME
+        parser.erase_last_update_time()
         parser.update_refresh_time()
         parser.erase_last_update_time()
-        assert not re.match(regular, self.test_sheet.cell(*parser.refresh_time_pos).value)
+        assert re.match('', self.test_sheet.cell(*parser.refresh_time_pos).value)
 
     def test_retrieve_all_values(self):
         expected = [['1','',''],
@@ -61,11 +61,14 @@ class TestSheet:
         assert expected == parser.retrieve_all_values()
 
     def test_set_refresh_time_pos(self):
+        expected = (4, 1)
+        parser = sheet.SheetParser(self.sheet.spreadsheet)
+        parser.sheet_name = self.TEST_SHEET_NAME
+        parser.retrieve_all_values()
+        assert expected == parser.refresh_time_pos
         pos = ((1, 1), (2, 2), (3, 3), (4, 2), (5, 1))
         for p in pos:
             self.test_sheet.update_cell(p[0], p[1], '1')
-        parser = sheet.SheetParser(self.sheet.spreadsheet)
-        parser.sheet_name = self.TEST_SHEET_NAME
         parser.retrieve_all_values()
         expected = (8, 3)
         assert expected == parser.refresh_time_pos
