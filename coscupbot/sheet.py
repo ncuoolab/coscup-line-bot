@@ -33,13 +33,14 @@ class SheetParser(object):
         self.refresh_time_pos = self.default_time_pos
         self.refresh_time_offset = (3, 0)
         self.update_time_pattern = 'Last updated at \d\d:\d\d on \d\d\/\d\d\/\d\d\d\d'
+        self.update_time_str = 'Last updated at %H:%M on %m/%d/%Y'
 
     def update_refresh_time(self, pos=None):
         self.erase_last_update_time()
         p = pos if pos else self.refresh_time_pos
         if not self.sheet_name:
             raise SheetError('Page name should be defined before updating time.')
-        self.spreadsheet.worksheet(self.sheet_name).update_cell(p[0], p[1], datetime.datetime.now().strftime('Last updated at %H:%M on %m/%d/%Y'))
+        self.spreadsheet.worksheet(self.sheet_name).update_cell(p[0], p[1], datetime.datetime.now().strftime(self.update_time_str))
         logging.info('Update last access time, sheet: %s, pos: (%d, %d)' % (self.sheet_name, p[0], p[1]))
 
     def erase_last_update_time(self):
@@ -119,7 +120,7 @@ class RealtimeSheetParser(SheetParser):
     def parse_data(self):
         pass
 
-    def check_tuple_valid(self):
+    def check_tuple_valid(self, tuple):
         pass
 
 
@@ -132,7 +133,7 @@ class NLPActionSheetParser(SheetParser):
     def parse_data(self):
         pass
 
-    def check_tuple_valid(self):
+    def check_tuple_valid(self, tuple):
         pass
 
 
@@ -140,13 +141,26 @@ class TimeSheetParser(SheetParser):
     def __init__(self, spreadsheet):
         super().__init__(spreadsheet)
         self.sheet_name = GoogleSheetName.Time
+        self.time_str = '%Y/%m/%d %H:%M:%S'
+        self.time_pattern = '\d\d\d\d/\d\d/\d\d \d\d:\d\d:\d\d'
         pass
 
     def parse_data(self):
-        pass
+        commands = []
+        tuple_list = self.retrieve_all_values()
+        for tuple in tuple_list[1:]:
+            if not self.check_tuple_valid(tuple):
+                continue
+            commands.append((datetime.datetime.strptime(tuple[0], self.time_str), tuple[1]))
+        return commands
 
-    def check_tuple_valid(self):
-        pass
+    def check_tuple_valid(self, tuple):
+        if tuple[0] == '' or tuple[1] == '':
+            return False
+        if re.match(self.time_pattern, tuple[0]):
+            return True
+        else:
+            return False
 
 
 class SheetError(Exception):
