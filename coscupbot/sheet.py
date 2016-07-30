@@ -36,8 +36,8 @@ class SheetParser(object):
         p = pos if pos else self.refresh_time_pos
         if not self.sheet_name:
             raise SheetError('Page name should be defined before updating time.')
-        self.spreadsheet.worksheet(self.sheet_name).update_cell(*p, datetime.datetime.now().strftime('Last updated at %I:%M%p on %m/%d/%Y'))
-        logging.info('Update last access time, sheet: %s, pos: (%d, %d)' % (sheet, p[0], p[1]))
+        self.spreadsheet.worksheet(self.sheet_name).update_cell(p[0], p[1], datetime.datetime.now().strftime('Last updated at %I:%M%p on %m/%d/%Y'))
+        logging.info('Update last access time, sheet: %s, pos: (%d, %d)' % (self.sheet_name, p[0], p[1]))
 
     def erase_last_update_time(self):
         if not self.sheet_name:
