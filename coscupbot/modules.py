@@ -89,9 +89,15 @@ class WitMessageController(object):
 
 
 class SheetMessageController(object):
-    def __init__(self, db_url, credential_path, spreadsheet_name):
+    def __init__(self, db_url, credential_path, spreadsheet_name, bot):
         self.dao = db.Dao(db_url)
         self.sheet = sheet.Sheet(credential_path, spreadsheet_name)
+        self.bot = bot
+        self.lang_set = ('en-us', 'zh-tw')
 
     def parse_command_page(self):
-        self.sheet.get_all_values_from_specific_sheet(GoogleSheetName.Command)
+        commands = []
+        tuple_list = self.sheet.get_all_values_from_specific_sheet(GoogleSheetName.Command)
+        for tuple in tuple_list:
+            if not self.__check_tuple_valid():
+                continue
