@@ -17,7 +17,7 @@ class CoscupBot(object):
         self.db_url = db_url
         self.dao = db.Dao(db_url)
         self.nlp_message_controllers = self.gen_nlp_message_controllers(wit_tokens)
-        self.command_message_controllers = self.gen_command_message_controllers(['zh_TW', 'en_US'])
+        self.command_message_controllers = self.gen_command_message_controllers(['zh-TW', 'en-US'])
         self.sheet_message_controller = modules.SheetMessageController(db_url, sheet_credentials['credential_path'],
                                                                        sheet_credentials['name'], self)
         self.edison_queue = utils.RedisQueue('edison', 'queue',
@@ -25,7 +25,6 @@ class CoscupBot(object):
         self.job_scheduler = BackgroundScheduler()
         self.realtime_msg_queue = utils.RedisQueue('realmessage', 'queue',
                                                    connection_pool=redis.ConnectionPool.from_url(url=db_url))
-        self.sheet_message_controller.parse_data_from_google_sheet()
         self.start_scheduler()
 
     def process_new_event(self, data):
@@ -80,7 +79,7 @@ class CoscupBot(object):
         pass
 
     def check_fromuser_language(self, mid):
-        return 'zh_TW'
+        return 'zh-TW'
 
     def gen_nlp_message_controllers(self, wittokens):
         ret = {}

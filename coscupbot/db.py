@@ -63,7 +63,7 @@ class Dao(object):
         self.add_nlp_action(actions)
         self.nlp_lock.release()
 
-    def get_command_responses(self, cmd_str, lang='zh_TW'):
+    def get_command_responses(self, cmd_str, lang='zh-TW'):
         """
         Get response array from database by command string.
         :param cmd_str: command. eg. 'help'
@@ -103,7 +103,7 @@ class Dao(object):
             return
         r.delete(*keys)
 
-    def get_nlp_response(self, action, lang='zh_TW'):
+    def get_nlp_response(self, action, lang='zh-TW'):
         while self.nlp_lock.locked():
             pass
 

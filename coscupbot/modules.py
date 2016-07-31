@@ -21,9 +21,10 @@ class CommandController(object):
 
     def process_receive(self, receive):
         # echo Example. Will be remove.
-        response_text = receive['content']['text']
+        command = receive['content']['text']
         try:
-            self.bot_api.send_text(to_mid=receive['from_mid'], text=response_text)
+            resp = self.dao.get_command_responses(command, self.lang)
+            self.bot_api.send_text(to_mid=receive['from_mid'], text=resp)
         except Exception as ex:
             self.logger.error(ex)
 
