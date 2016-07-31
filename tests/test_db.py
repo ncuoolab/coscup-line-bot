@@ -90,9 +90,11 @@ class TestDb:
     def test_get_mid(self):
         get_dao().add_user_mid('11111')
         get_dao().add_user_mid('22222')
+        get_dao().add_user_mid('ufasfsafsdfsaf')
         result = get_dao().get_all_user_mid()
         assert '11111' in result
         assert '22222' in result
+        assert 'ufasfsafsdfsaf' in result
 
     def test_delete_no_command(self):
         get_dao().clear_all_command()
