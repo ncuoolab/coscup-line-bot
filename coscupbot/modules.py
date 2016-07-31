@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from wit import Wit
 
-from coscupbot import api, db, sheet
+from coscupbot import api, db, sheet, utils
 from coscupbot.model import NLPActions, GoogleSheetName
 from wit import wit
 import datetime
@@ -23,7 +23,7 @@ class CommandController(object):
         # echo Example. Will be remove.
         command = receive['content']['text']
         try:
-            resp = self.dao.get_command_responses(command, self.lang).decode('utf-8')
+            resp = random_get_result(self.dao.get_command_responses(command, self.lang))
             self.bot_api.send_text(to_mid=receive['from_mid'], text=resp)
         except Exception as ex:
             logging.error(ex)
