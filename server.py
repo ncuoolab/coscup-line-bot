@@ -56,7 +56,7 @@ def init_logger():
 def get_wit_tokens():
     ret = {}
     if 'WIT_ZHTW_TOKEN' in os.environ:
-        ret['zh_TW'] = os.environ['WIT_ZHTW_TOKEN']
+        ret['zh-TW'] = os.environ['WIT_ZHTW_TOKEN']
     return ret
 
 
