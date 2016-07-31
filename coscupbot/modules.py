@@ -97,6 +97,7 @@ class SheetMessageController(object):
     def parse_data_from_google_sheet(self):
         re = self.sheet.parse_all_data()
         self.dao.update_commands(re[GoogleSheetName.Command])
+        self.dao.update_NLP_command(re[GoogleSheetName.NLPAction])
         for time_command in re[GoogleSheetName.Time]:
             self.bot.add_scheduler_message(*time_command)
         for realtime_command in re[GoogleSheetName.Realtime]:

@@ -141,12 +141,34 @@ class NLPActionSheetParser(SheetParser):
     def __init__(self, spreadsheet):
         super().__init__(spreadsheet)
         self.sheet_name = GoogleSheetName.NLPAction
+        self.lang_set = ('en-us', 'zh-tw')
 
     def parse_data(self):
-        pass
+        commands = {}
+        re = []
+        tuple_list = self.retrieve_all_values()
+        for tuple in tuple_list[1:]:
+            if not self.check_tuple_valid(tuple):
+                continue
+            if tuple[0] not in commands:
+                commands[tuple[0]] = {tuple[1]: [tuple[2]]}
+            else:
+                if tuple[1] in commands[tuple[0]]:
+                    commands[tuple[0]][tuple[1]].append(tuple[2])
+                else:
+                    commands[tuple[0]][tuple[1]] = [tuple[2]]
+
+        for command, v in commands.items():
+            for lang, response in v.items():
+                re.append(NlpAction(lang, command, response))
+        return re
 
     def check_tuple_valid(self, tuple):
-        pass
+        if tuple[0] == '' or tuple[1] == '' or tuple[2] == '':
+            return False
+        if tuple[1].lower() not in self.lang_set:
+            return False
+        return True
 
 
 class TimeSheetParser(SheetParser):

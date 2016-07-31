@@ -93,7 +93,22 @@ class TestSheet:
 
 
     def test_check_tuple_valid_NLPAction(self):
-        pass
+        tuple1 = ['help', 'zh-TW', 'tuple']
+        tuple2 = ['help', 'en-US', 'tuple']
+        tuple3 = ['', 'en-US', 'tuple1']
+        tuple4 = ['help', '', 'tuple1']
+        tuple5 = ['help', 'en-US', '']
+        tuple6 = ['help', 'zh-tw', 'tuple']
+        tuple7 = ['help', 'zh-cn', 'tuple']
+
+        parser = sheet.NLPActionSheetParser(self.sheet.spreadsheet)
+        assert True == parser.check_tuple_valid(tuple1)
+        assert True == parser.check_tuple_valid(tuple2)
+        assert False == parser.check_tuple_valid(tuple3)
+        assert False == parser.check_tuple_valid(tuple4)
+        assert False == parser.check_tuple_valid(tuple5)
+        assert True == parser.check_tuple_valid(tuple6)
+        assert False == parser.check_tuple_valid(tuple7)
 
     def test_check_tuple_valid_realtime(self):
         tuple1 = ['tuple']
