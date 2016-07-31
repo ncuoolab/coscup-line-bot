@@ -23,10 +23,10 @@ class CommandController(object):
         # echo Example. Will be remove.
         command = receive['content']['text']
         try:
-            resp = self.dao.get_command_responses(command, self.lang)
+            resp = self.dao.get_command_responses(command, self.lang).decode('utf-8')
             self.bot_api.send_text(to_mid=receive['from_mid'], text=resp)
         except Exception as ex:
-            self.logger.error(ex)
+            logging.error(ex)
 
 
 class WitMessageController(object):
