@@ -61,7 +61,7 @@ class TestSheet:
         assert expected == parser.retrieve_all_values()
 
     def test_set_refresh_time_pos(self):
-        expected = (4, 1)
+        expected = (4, 2)
         parser = sheet.SheetParser(self.sheet.spreadsheet)
         parser.sheet_name = self.TEST_SHEET_NAME
         parser.retrieve_all_values()

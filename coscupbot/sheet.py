@@ -29,7 +29,7 @@ class SheetParser(object):
     def __init__(self, spreadsheet):
         self.spreadsheet = spreadsheet
         self.sheet_name = None
-        self.default_time_pos = (4, 1)
+        self.default_time_pos = (4, 2)
         self.refresh_time_pos = self.default_time_pos
         self.refresh_time_offset = (3, 1)
         self.update_time_pattern = 'Last updated at \d\d:\d\d on \d\d-\d\d-\d\d\d\d'
