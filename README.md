@@ -29,6 +29,8 @@ CHANNEL_SECRET = 'Your line bot's channel secret'
 WIT_ZHTW_TOKEN = 'Your wit.ai app token'
 SHEET_CREDENTIAL_PATH = 'Your Google app credential path'
 SHEET_NAME = 'Your Google spreadsheet name'
+ADMIN_ID = 'Id to login backend'
+ADMIN_PWD = 'Pwd to login backend'
 DEBUG = '1' # If DEBUG env is '1' will set logger's level to debug else INFO.
 ```
 

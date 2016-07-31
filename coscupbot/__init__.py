@@ -128,13 +128,28 @@ class CoscupBot(object):
         self.bot_api.broadcast_new_message(mids, message)
 
     def start_scheduler(self):
+        self.logger.info('Start scheduler.')
         self.job_scheduler.add_job(self.broadcast_realtime_message, 'interval', seconds=5)
         self.job_scheduler.start()
 
     def reset_scheduler(self):
+        self.logger.info('Reset scheduler.')
         self.job_scheduler.shutdown(wait=False)
+        self.logger.debug('Create new scheduler.')
         self.job_scheduler = BackgroundScheduler()
         self.start_scheduler()
 
     def add_scheduler_message(self, trigger_datetime, message):
         self.job_scheduler.add_job(self.broadcast_message, 'date', run_date=trigger_datetime, args=[message])
+
+    def sync_backend_data(self):
+        self.logger.info('Start to sync backend data.')
+        try:
+            self.reset_scheduler()
+            self.sheet_message_controller.parse_data_from_google_sheet()
+        except Exception as ex:
+            self.logger.error('Sync backend data Failed.')
+            self.logger.exception(ex)
+            return False
+        return True
+

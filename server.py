@@ -2,6 +2,7 @@
 
 from flask import Flask, request
 from flask import Response
+from functools import wraps
 
 import coscupbot
 import logging
@@ -25,6 +26,9 @@ sheet_credentials = {
 bot = None
 
 PRODUCTION = '0'
+
+ADMIN_ID = None
+ADMIN_PWD = None
 
 
 def init_logger():
@@ -56,6 +60,32 @@ def get_wit_tokens():
     return ret
 
 
+def check_auth(username, password):
+    """This function is called to check if a username /
+    password combination is valid.
+    """
+    return username == ADMIN_ID and password == ADMIN_PWD
+
+
+def authenticate():
+    """Sends a 401 response that enables basic auth"""
+    return Response(
+        'Could not verify your access level for that URL.\n'
+        'You have to login with proper credentials', 401,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+
+    return decorated
+
+
 init_logger()
 logging.info('Init bot use credentials. %s' % credentials)
 logging.info('Init bot use sheet credentials. %s' % sheet_credentials)
@@ -64,6 +94,8 @@ bot = coscupbot.CoscupBot(credentials, sheet_credentials, get_wit_tokens(), redi
 ip = os.getenv("IP")
 port = os.getenv("PORT")
 PRODUCTION = os.getenv('PRODUCTION', 0)
+ADMIN_ID = os.environ['ADMIN_ID']
+ADMIN_PWD = os.environ['ADMIN_PWD']
 
 
 def create_new_app():
@@ -105,6 +137,19 @@ def edison_done():
     data = request.get_data().decode("utf-8")
     bot.take_photo_done(data)
     return 'OK'
+
+
+@app.route('/syncbackend')
+@requires_auth
+def sync_backend():
+    '''
+    Reget all data from google sheet.
+    :return:
+    '''
+    if bot.sync_backend_data():
+        return 'OK'
+    return 'FAIL'
+
 
 if __name__ == '__main__':
     app.run()
