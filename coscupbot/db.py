@@ -28,7 +28,7 @@ class Dao(object):
         r = self.__get_conn()
         for cmd in commands:
             key = self.COMMAND_PATTERN % (cmd.language, cmd.command_str)
-            r.rpush(key, cmd.response)
+            r.rpush(key, *cmd.response)
 
     def clear_all_command(self):
         """
@@ -90,7 +90,7 @@ class Dao(object):
         r = self.__get_conn()
         for action in actions:
             key = self.NLP_PATTERN % (action.language, action.action_str)
-            r.rpush(key, action.response)
+            r.rpush(key, *action.response)
 
     def clear_all_nlp_action(self):
         """
