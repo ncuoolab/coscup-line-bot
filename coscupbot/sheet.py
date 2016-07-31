@@ -59,28 +59,14 @@ class SheetParser(object):
         if not self.sheet_name:
             raise SheetError('Page name should be defined before retrieveing.')
         list_of_lists = self.spreadsheet.worksheet(self.sheet_name).get_all_values()
-        self.set_refresh_time_pos(list_of_lists)
         self.update_refresh_time()
         return list_of_lists
-
-    def set_refresh_time_pos(self, list_of_lists):
-        if not list_of_lists:
-            return 
-        indices = [i for i, x in enumerate(list_of_lists[-1]) if re.search(self.update_time_pattern, x)]
-        if indices:
-            list_of_lists = list_of_lists[:len(list_of_lists)-self.refresh_time_offset[0]]
-            list_of_lists[0] = list_of_lists[0][:len(list_of_lists[0])-self.refresh_time_offset[1]]
-        if len(list_of_lists) > 0:
-            self.refresh_time_pos = (len(list_of_lists) + self.refresh_time_offset[0],
-                                     len(list_of_lists[0]) + self.refresh_time_offset[1])
-        else:
-            self.refresh_time_pos = self.default_time_pos
-
 
 class CommandSheetParser(SheetParser):
     def __init__(self, spreadsheet):
         super().__init__(spreadsheet)
         self.sheet_name = GoogleSheetName.Command
+        self.refresh_time_pos = (1, 6)
         self.lang_set = ('en-us', 'zh-tw')
 
     def parse_data(self):
@@ -114,6 +100,7 @@ class CommandSheetParser(SheetParser):
 class RealtimeSheetParser(SheetParser):
     def __init__(self, spreadsheet):
         super().__init__(spreadsheet)
+        self.refresh_time_pos = (1, 2)
         self.sheet_name = GoogleSheetName.Realtime
 
     def parse_data(self):
@@ -140,6 +127,7 @@ class RealtimeSheetParser(SheetParser):
 class NLPActionSheetParser(SheetParser):
     def __init__(self, spreadsheet):
         super().__init__(spreadsheet)
+        self.refresh_time_pos = (1, 4)
         self.sheet_name = GoogleSheetName.NLPAction
         self.lang_set = ('en-us', 'zh-tw')
 
@@ -175,6 +163,7 @@ class TimeSheetParser(SheetParser):
     def __init__(self, spreadsheet):
         super().__init__(spreadsheet)
         self.sheet_name = GoogleSheetName.Time
+        self.refresh_time_pos = (1, 3)
         self.time_str = '%Y-%m-%d %H:%M:%S'
         self.time_pattern = '\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d'
 

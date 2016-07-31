@@ -60,19 +60,6 @@ class TestSheet:
         parser.sheet_name = self.TEST_SHEET_NAME
         assert expected == parser.retrieve_all_values()
 
-    def test_set_refresh_time_pos(self):
-        expected = (4, 2)
-        parser = sheet.SheetParser(self.sheet.spreadsheet)
-        parser.sheet_name = self.TEST_SHEET_NAME
-        parser.retrieve_all_values()
-        assert expected == parser.refresh_time_pos
-        pos = ((1, 1), (2, 2), (3, 3), (4, 2), (5, 1))
-        for p in pos:
-            self.test_sheet.update_cell(p[0], p[1], '1')
-        parser.retrieve_all_values()
-        expected = (8, 4)
-        assert expected == parser.refresh_time_pos
-
     def test_check_tuple_valid_command(self):
         tuple1 = ['', 'help', 'zh-TW', 'tuple']
         tuple2 = ['', 'help', 'en-US', 'tuple']
