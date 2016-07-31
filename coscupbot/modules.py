@@ -99,4 +99,5 @@ class SheetMessageController(object):
         self.dao.update_commands(re[GoogleSheetName.Command])
         for time_command in re[GoogleSheetName.Time]:
             self.bot.add_scheduler_message(*time_command)
-        pass
+        for realtime_command in re[GoogleSheetName.Realtime]:
+            self.bot.realtime_msg_queue.put(realtime_command)

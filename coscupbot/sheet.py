@@ -31,7 +31,7 @@ class SheetParser(object):
         self.sheet_name = None
         self.default_time_pos = (4, 1)
         self.refresh_time_pos = self.default_time_pos
-        self.refresh_time_offset = (3, 0)
+        self.refresh_time_offset = (3, 1)
         self.update_time_pattern = 'Last updated at \d\d:\d\d on \d\d-\d\d-\d\d\d\d'
         self.update_time_str = 'Last updated at %H:%M on %m-%d-%Y'
 
@@ -115,20 +115,32 @@ class RealtimeSheetParser(SheetParser):
     def __init__(self, spreadsheet):
         super().__init__(spreadsheet)
         self.sheet_name = GoogleSheetName.Realtime
-        pass
 
     def parse_data(self):
-        pass
+        commands = []
+        tuple_list = self.retrieve_all_values()
+        for tuple in tuple_list[1:]:
+            if not self.check_tuple_valid(tuple):
+                continue
+            commands.append(tuple[0])
+        self.clear_sheet(len(tuple_list))
+        return commands
 
     def check_tuple_valid(self, tuple):
-        pass
+        if tuple[0] == '':
+            return False
+        return True
+
+    def clear_sheet(self, row_count):
+        sheet = self.spreadsheet.worksheet(self.sheet_name)
+        for i in range(2, row_count + 1):
+            sheet.update_cell(i, 1, '')
 
 
 class NLPActionSheetParser(SheetParser):
     def __init__(self, spreadsheet):
         super().__init__(spreadsheet)
         self.sheet_name = GoogleSheetName.NLPAction
-        pass
 
     def parse_data(self):
         pass
@@ -143,7 +155,6 @@ class TimeSheetParser(SheetParser):
         self.sheet_name = GoogleSheetName.Time
         self.time_str = '%Y-%m-%d %H:%M:%S'
         self.time_pattern = '\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d'
-        pass
 
     def parse_data(self):
         commands = []

@@ -70,7 +70,7 @@ class TestSheet:
         for p in pos:
             self.test_sheet.update_cell(p[0], p[1], '1')
         parser.retrieve_all_values()
-        expected = (8, 3)
+        expected = (8, 4)
         assert expected == parser.refresh_time_pos
 
     def test_check_tuple_valid_command(self):
@@ -96,6 +96,12 @@ class TestSheet:
         pass
 
     def test_check_tuple_valid_realtime(self):
+        tuple1 = ['tuple']
+        tuple2 = ['']
+
+        parser = sheet.RealtimeSheetParser(self.sheet.spreadsheet)
+        assert True == parser.check_tuple_valid(tuple1)
+        assert False == parser.check_tuple_valid(tuple2)
         pass
 
     def test_check_tuple_valid_time(self):
