@@ -92,14 +92,18 @@ class WitMessageController(object):
 class SheetMessageController(object):
     def __init__(self, db_url, credential_path, spreadsheet_name, bot):
         self.dao = db.Dao(db_url)
-        self.sheet = sheet.Sheet(credential_path, spreadsheet_name)
         self.bot = bot
+        self.credential_path = credential_path
+        self.spreadsheet_name = spreadsheet_name
 
     def parse_data_from_google_sheet(self):
-        re = self.sheet.parse_all_data()
+        re = self.__create_sheet().parse_all_data()
         self.dao.update_commands(re[GoogleSheetName.Command])
         self.dao.update_NLP_command(re[GoogleSheetName.NLPAction])
         for time_command in re[GoogleSheetName.Time]:
             self.bot.add_scheduler_message(*time_command)
         for realtime_command in re[GoogleSheetName.Realtime]:
             self.bot.realtime_msg_queue.put(realtime_command)
+
+    def __create_sheet(self):
+        return sheet.Sheet(self.credential_path, self.spreadsheet_name)
