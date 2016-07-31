@@ -64,6 +64,8 @@ class WitMessageController(object):
             self.bot_api.reply_text(receive, response)
         except Exception as ex:
             logging.exception(ex)
+            response = random_get_result(self.dao.get_nlp_response(NLPActions.Error, self.lang))
+            self.bot_api.reply_text(receive, response)
 
     def send_message(self, request, response):
         pass
