@@ -20,11 +20,10 @@ class CoscupBot(object):
         self.command_message_controllers = self.gen_command_message_controllers(['zh-TW', 'en-US'])
         self.sheet_message_controller = modules.SheetMessageController(db_url, sheet_credentials['credential_path'],
                                                                        sheet_credentials['name'], self)
-        self.edison_queue = utils.RedisQueue('edison', 'queue',
-                                             connection_pool=redis.ConnectionPool.from_url(url=db_url))
+        self.__mq_conn_pool= redis.ConnectionPool.from_url(url=db_url)
+        self.edison_queue = utils.RedisQueue('edison', 'queue', connection_pool=self.__mq_conn_pool)
+        self.realtime_msg_queue = utils.RedisQueue('realmessage', 'queue', connection_pool=self.__mq_conn_pool)
         self.job_scheduler = BackgroundScheduler()
-        self.realtime_msg_queue = utils.RedisQueue('realmessage', 'queue',
-                                                   connection_pool=redis.ConnectionPool.from_url(url=db_url))
         self.start_scheduler()
 
     def process_new_event(self, data):
