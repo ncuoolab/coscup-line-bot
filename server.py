@@ -46,7 +46,7 @@ def init_logger():
     ch.setLevel(level)
     fh.setLevel(level)
     formatter = logging.Formatter(
-        '%(asctime)s - %(levelname)s - %(filename)s: - %(funcName)s(): - %(lineno)d: - %(message)s')
+        '%(asctime)s - %(name)s - %(levelname)s - %(filename)s: - %(funcName)s(): - %(lineno)d: - %(message)s')
     ch.setFormatter(formatter)
     fh.setFormatter(formatter)
     root.addHandler(ch)
