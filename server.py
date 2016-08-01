@@ -114,7 +114,7 @@ def hello_world():
 @app.route('/callback', methods=['POST'])
 def line_call_back():
     if PRODUCTION == '1':
-        if not bot.validate_signature(request.headers.get('X-Line-Channelsignature'), request.get_data()):
+        if not bot.bot_api.client.validate_signature(request.headers.get('X-Line-Channelsignature'), request.get_data()):
             return "NOT PASS"
     bot.process_new_event(request.get_data().decode("utf-8"))
     return "OK"
