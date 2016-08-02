@@ -124,3 +124,28 @@ class Room(object):
     def __init__(self, room, name):
         self.room = room
         self.name = name
+
+
+class ProgramType(object):
+    @classmethod
+    def de_json_list(cls, json_str):
+        jsonobj = check_json(json_str)
+        ret = []
+        for program_json in jsonobj:
+            ret.append(ProgramType.de_json_program_type(program_json))
+        return ret
+
+    @classmethod
+    def de_json_program_type(cls, json_obj):
+        type = json_obj.get('type')
+        nameen = json_obj.get('nameen')
+        namezh = json_obj.get('namezh')
+        return ProgramType(type, nameen, namezh)
+
+    def __init__(self, type, name_en, name_zh):
+        self.type = type
+        self.name_en = name_en
+        self.name_zh = name_zh
+
+
+

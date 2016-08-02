@@ -32,3 +32,12 @@ def test_de_json_room():
     assert len(rooms) == 9
     assert rooms[0].room == 'R0'
     assert rooms[0].name == '國際會議廳'
+
+
+def test_de_json_program_type():
+    pt_json_str = open('test_data/type_test.json', 'r').read()
+    pts = model.ProgramType.de_json_list(pt_json_str)
+    assert len(pts) == 12
+    assert pts[0].type == 91
+    assert pts[0].name_en == 'Unconf'
+    assert pts[0].name_zh == 'Unconf'
