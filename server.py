@@ -12,11 +12,22 @@ from linebot import client
 
 app = Flask(__name__)
 
-credentials = {
-    'channel_id': os.getenv("CHANNEL_ID"),
-    'channel_secret': os.getenv("CHANNEL_SECRET"),
-    'channel_mid': os.getenv("CHANNEL_MID"),
-}
+BOT_TYPE = os.getenv("BOT_TYPE")
+
+credentials =\
+{
+    'TRIAL': 
+    {
+        'channel_id': os.getenv("CHANNEL_ID"),
+        'channel_secret': os.getenv("CHANNEL_SECRET"),
+        'channel_mid': os.getenv("CHANNEL_MID")
+    },
+    'BUSINESS':
+    {
+        'channel_secret': os.getenv("CHANNEL_SECRET"),
+        'channel_token': os.getenv("CHANNEL_TOKEN")
+    }
+}.get(BOT_TYPE)
 
 sheet_credentials = {
     'credential_path': os.getenv('SHEET_CREDENTIAL_PATH'),
@@ -90,7 +101,7 @@ init_logger()
 logging.info('Init bot use credentials. %s' % credentials)
 logging.info('Init bot use sheet credentials. %s' % sheet_credentials)
 redis_url = os.getenv('REDIS', 'redis://localhost:6379')
-bot = coscupbot.CoscupBot(credentials, sheet_credentials, get_wit_tokens(), redis_url)
+bot = coscupbot.CoscupBot(BOT_TYPE, credentials, sheet_credentials, get_wit_tokens(), redis_url)
 ip = os.getenv("IP")
 port = os.getenv("PORT")
 PRODUCTION = os.getenv('PRODUCTION', 0)

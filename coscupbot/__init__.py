@@ -10,8 +10,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 
 class CoscupBot(object):
-    def __init__(self, credentials, sheet_credentials, wit_tokens, db_url='redis://localhost:6379', num_thread=4):
-        self.bot_api = api.LineApi(credentials)
+    def __init__(self, bot_type, credentials, sheet_credentials, wit_tokens, db_url='redis://localhost:6379', num_thread=4):
+        self.bot_api = api.LineApi(bot_type, credentials)
         self.logger = logging.getLogger('CoscupBot')
         self.task_pool = ThreadPoolExecutor(num_thread)
         self.db_url = db_url

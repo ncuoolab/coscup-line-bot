@@ -12,8 +12,8 @@ def check_result(result):
 
 
 class LineApi(object):
-    def __init__(self, credentials):
-        self.client = LineBotClient(**credentials)
+    def __init__(self, bot_type, credentials):
+        self.client = LineBotClient(bot_type=bot_type, **credentials)
         self.logger = logging.getLogger('LineApi')
 
     def send_text(self, **args):
