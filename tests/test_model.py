@@ -9,13 +9,13 @@ from coscupbot import model
 
 def test_de_json_program():
     program_json_str = open('test_data/program_test.json', 'r').read()
-    program_list = model.Program.de_json_program_list(program_json_str)
+    program_list = model.Program.de_json_list(program_json_str)
     assert len(program_list) == 68
 
 
 def test_de_json_program_data():
     program_json_str = open('test_data/program_test.json', 'r').read()
-    program = model.Program.de_json_program_list(program_json_str)[0]
+    program = model.Program.de_json_list(program_json_str)[0]
     assert program.slot == 'K0'
     assert program.room == 'R0'
     assert program.starttime.year == 2016

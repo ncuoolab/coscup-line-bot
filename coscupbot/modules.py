@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-from wit import Wit
-
-from coscupbot import api, db, sheet, utils, model
-from coscupbot.model import NLPActions, GoogleSheetName, CoscupApiType
-from urllib.request import urlopen
-from wit import wit
 import datetime
 import logging
 import random
+from urllib.request import urlopen
+
+from wit import Wit
+from wit import wit
+
+from coscupbot import db, sheet, utils, model
+from coscupbot.model import NLPActions, GoogleSheetName, CoscupApiType
 
 COSCUP_BACKEND_URL = 'http://coscup.org/2016-assets/json'
 
