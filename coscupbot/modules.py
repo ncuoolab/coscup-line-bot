@@ -14,7 +14,7 @@ def random_get_result(responses):
 
 
 class CommandController(object):
-    def __init__(self, bot_api, db_url,lang):
+    def __init__(self, bot_api, db_url, lang):
         self.bot_api = bot_api
         self.dao = db.Dao(db_url)
         self.lang = lang
@@ -37,6 +37,7 @@ class WitMessageController(object):
         self.lang = lang
         self.client = self.init_wit_client()
         self.dao = db.Dao(db_url)
+        self.mid_action = {}
 
     def init_wit_client(self):
         actions = {
@@ -48,27 +49,38 @@ class WitMessageController(object):
         return Wit(access_token=self.token, actions=actions)
 
     def process_receive(self, receive):
+        mid = receive['from_mid']
         try:
             message = receive['content']['text']
             logging.info('Wit process new message %s' % message)
-            session_id = 'sesseion-%s-%s' % (receive['from_mid'], datetime.datetime.now().strftime("%Y-%m-%d%H:%M:%S"))
+            session_id = self.get_session_id(mid)
             result = self.client.run_actions(session_id, message, self.convert_text_receive(receive),
                                              action_confidence=0.3)
             if 'processed' not in result:
                 logging.warning('Message [%s] not run in action.' % message)
+                self.clear_session_id(mid)
                 response = random_get_result(self.dao.get_nlp_response(NLPActions.Error, self.lang))
                 self.bot_api.reply_text(receive, response)
         except wit.WitError as we:
             logging.warning('Wit Process error %s' % we)
+            self.clear_session_id(mid)
             response = random_get_result(self.dao.get_nlp_response(NLPActions.Error, self.lang))
             self.bot_api.reply_text(receive, response)
         except Exception as ex:
             logging.exception(ex)
+            self.clear_session_id(mid)
             response = random_get_result(self.dao.get_nlp_response(NLPActions.Error, self.lang))
             self.bot_api.reply_text(receive, response)
 
-    def send_message(self, request, response):
-        pass
+    def get_session_id(self, mid):
+        if mid in self.mid_action:
+            return self.mid_action[mid]
+        session_id = 'sesseion-%s-%s' % (mid, datetime.datetime.now().strftime("%Y-%m-%d%H:%M:%S"))
+        self.mid_action[mid] = session_id
+        return session_id
+
+    def clear_session_id(self, mid):
+        self.mid_action.pop(mid, None)
 
     def send_welcome(self, request):
         return self.send_nlp_action_message(request, NLPActions.Welcome)
@@ -109,3 +121,7 @@ class SheetMessageController(object):
 
     def __create_sheet(self):
         return sheet.Sheet(self.credential_path, self.spreadsheet_name)
+
+class CoscupInfoHelper(object):
+    def __init__(self):
+        pass
