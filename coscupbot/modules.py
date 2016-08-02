@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from wit import Wit
 
-from coscupbot import api, db, sheet, utils
-from coscupbot.model import NLPActions, GoogleSheetName
+from coscupbot import api, db, sheet, utils, model
+from coscupbot.model import NLPActions, GoogleSheetName, CoscupApiType
+from urllib.request import urlopen
 from wit import wit
 import datetime
 import logging
@@ -32,15 +33,16 @@ class CommandController(object):
 
 
 class WitMessageController(object):
-    def __init__(self, bot_api, token, db_url, lang):
+    def __init__(self, bot, token, db_url, lang):
         self.token = token
-        self.bot_api = bot_api
+        self.bot_api = bot.bot_api
         self.db_url = db_url
         self.lang = lang
         self.client = self.init_wit_client()
         self.dao = db.Dao(db_url)
         self.mid_action = {}
         self.action_context = {}
+        self.bot = bot
 
     def init_wit_client(self):
         actions = {
@@ -161,6 +163,86 @@ class SheetMessageController(object):
 
 
 class CoscupInfoHelper(object):
-    def __init__(self, backend_url = COSCUP_BACKEND_URL):
+    def __init__(self, db_url, backend_url=COSCUP_BACKEND_URL):
+        self.backend_url = backend_url
+        self.dao = db.Dao(db_url)
+        self.programs = None
+        self.rooms = None
+        self.program_type = None
+        self.sponsors = None
+        self.levels = None
+        self.transport = None
+        self.staffs = None
 
-        pass
+    def sync_backend(self):
+        self.get_program_to_db()
+        self.get_room_to_db()
+        self.get_type_to_db()
+        self.get_sponsor_to_db()
+        self.get_level_to_db()
+        self.get_transport_to_db()
+        self.get_staff_to_db()
+        self.load_db_to_cache()
+
+    def get_program_to_db(self):
+        url = self.backend_url + '/program.json'
+        logging.info('Start to get program data from coscup api. %s', url)
+        response = self.__get_url_content(url)
+        logging.debug('Get program data from coscup api. %s', response)
+        self.dao.save_coscup_api_data(CoscupApiType.program, response)
+
+    def get_room_to_db(self):
+        url = self.backend_url + '/room.json'
+        logging.info('Start to get room data from coscup api. %s', url)
+        response = self.__get_url_content(url)
+        logging.debug('Get program room from coscup api. %s', response)
+        self.dao.save_coscup_api_data(CoscupApiType.room, response)
+
+    def get_type_to_db(self):
+        url = self.backend_url + '/type.json'
+        logging.info('Start to get type data from coscup api. %s', url)
+        response = self.__get_url_content(url)
+        logging.debug('Get program type from coscup api. %s', response)
+        self.dao.save_coscup_api_data(CoscupApiType.program_type, response)
+
+    def get_sponsor_to_db(self):
+        url = self.backend_url + '/sponsor.json'
+        logging.info('Start to get sponsor data from coscup api. %s', url)
+        response = self.__get_url_content(url)
+        logging.debug('Get program sponsor from coscup api. %s', response)
+        self.dao.save_coscup_api_data(CoscupApiType.sponsor, response)
+
+    def get_level_to_db(self):
+        url = self.backend_url + '/level.json'
+        logging.info('Start to get level data from coscup api. %s', url)
+        response = self.__get_url_content(url)
+        logging.debug('Get program level from coscup api. %s', response)
+        self.dao.save_coscup_api_data(CoscupApiType.level, response)
+
+    def get_transport_to_db(self):
+        url = self.backend_url + '/sponsor.json'
+        logging.info('Start to get transport data from coscup api. %s', url)
+        response = self.__get_url_content(url)
+        logging.debug('Get program transport from coscup api. %s', response)
+        self.dao.save_coscup_api_data(CoscupApiType.transport, response)
+
+    def get_staff_to_db(self):
+        url = self.backend_url + '/staff.json'
+        logging.info('Start to get staff data from coscup api. %s', url)
+        response = self.__get_url_content(url)
+        logging.debug('Get program staff from coscup api. %s', response)
+        self.dao.save_coscup_api_data(CoscupApiType.staff, response)
+
+    def __get_url_content(self, url):
+        with urlopen(url) as response:
+            ret = response.read()
+        return ret
+
+    def load_db_to_cache(self):
+        self.programs = model.Program.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.program))
+        self.rooms = model.Program.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.room))
+        self.program_type = model.Program.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.program_type))
+        self.sponsors = model.Program.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.sponsor))
+        self.levels = model.Program.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.level))
+        self.transport = model.Program.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.transport))
+        self.staffs = model.Program.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.staff))

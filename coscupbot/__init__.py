@@ -24,6 +24,7 @@ class CoscupBot(object):
         self.edison_queue = utils.RedisQueue('edison', 'queue', connection_pool=self.__mq_conn_pool)
         self.realtime_msg_queue = utils.RedisQueue('realmessage', 'queue', connection_pool=self.__mq_conn_pool)
         self.job_scheduler = BackgroundScheduler()
+        self.coscup_api_helper = modules.CoscupInfoHelper(db_url)
         self.start_scheduler()
 
     def process_new_event(self, data):
@@ -83,7 +84,7 @@ class CoscupBot(object):
     def gen_nlp_message_controllers(self, wittokens):
         ret = {}
         for key, value in wittokens.items():
-            ret[key] = modules.WitMessageController(self.bot_api, wittokens[key], self.db_url,
+            ret[key] = modules.WitMessageController(self, wittokens[key], self.db_url,
                                                     key)
         return ret
 
@@ -144,6 +145,7 @@ class CoscupBot(object):
         self.logger.info('Start to sync backend data.')
         try:
             self.reset_scheduler()
+            self.coscup_api_helper.sync_backend()
             self.sheet_message_controller.parse_data_from_google_sheet()
         except Exception as ex:
             self.logger.error('Sync backend data Failed.')

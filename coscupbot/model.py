@@ -68,6 +68,16 @@ class GoogleSheetName(object):
     Time = 'TIME'
 
 
+class CoscupApiType(object):
+    program = 'PROGRAM'
+    room = 'ROOM'
+    program_type = 'PROGRAMTYPE'
+    sponsor = 'SPONSOR'
+    level = 'LEVEL'
+    transport = 'TRANSPORT'
+    staff = 'STAFF'
+
+
 class Program(object):
     @classmethod
     def de_json_program_list(cls, json_string):

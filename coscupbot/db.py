@@ -3,6 +3,7 @@
 import logging
 import redis
 from threading import Lock
+from coscupbot import utils
 
 
 class Dao(object):
@@ -121,6 +122,14 @@ class Dao(object):
     def get_all_user_mid(self):
         mid_dic = self.__get_conn().hgetall('MID')
         return [k.decode("utf-8") for k in mid_dic.keys()]
+
+    def save_coscup_api_data(self, typename, json_str):
+        key = 'CONFINFO::%s' % typename
+        self.__get_conn().set(key, json_str)
+
+    def get_coscup_api_data(self, typename):
+        key = 'CONFINFO::%s' % typename
+        return utils.to_utf8_str(self.__get_conn().get(key))
 
     def __get_conn(self):
         return redis.Redis(connection_pool=self.conn_pool)
