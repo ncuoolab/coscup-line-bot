@@ -46,6 +46,7 @@ class WitMessageController(object):
             'Welcome': self.send_welcome,
             'GetLocation': self.send_location,
             'GetEventTime': self.send_event_time,
+            'GetProgramHelp': self.get_program_help,
         }
         return Wit(access_token=self.token, actions=actions)
 
@@ -57,6 +58,11 @@ class WitMessageController(object):
             session_id = self.get_session_id(mid)
             result = self.client.run_actions(session_id, message, self.get_session_context(mid, receive),
                                              action_confidence=0.3)
+
+            if 'processed' and 'stop' in result:
+                # Action done. Clear cache data.
+                self.clear_session_id(mid)
+
             if 'processed' not in result:
                 logging.warning('Message [%s] not run in action.' % message)
                 self.clear_session_id(mid)
@@ -103,6 +109,7 @@ class WitMessageController(object):
         logging.info('Wit send message [%s] to [%s]', mid, msg)
         self.bot_api.send_text(to_mid=mid, text=msg)
 
+
     def send_welcome(self, request):
         return self.send_nlp_action_message(request, NLPActions.Welcome)
 
@@ -111,6 +118,14 @@ class WitMessageController(object):
 
     def send_event_time(self, request):
         return self.send_nlp_action_message(request, NLPActions.EventTime)
+
+    def get_program_help(self, request):
+        logging.info('Process %s action. %s' % (NLPActions.Program_help, request))
+        cxt = request['context']
+        response = random_get_result(self.dao.get_nlp_response(NLPActions.Program_help, self.lang))
+        cxt['response_msg'] = response
+        cxt['processed'] = True
+        return cxt
 
     def send_nlp_action_message(self, request, action):
         logging.info('Process %s action. %s' % (action, request))

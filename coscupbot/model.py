@@ -32,6 +32,7 @@ class NLPActions(object):
     Location = 'LOCATION'
     EventTime = 'EVENTTIME'
     Error = 'ERROR'
+    Program_help = 'PROGRAMHELP'
 
 
 class GoogleSheetName(object):
