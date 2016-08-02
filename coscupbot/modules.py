@@ -54,7 +54,6 @@ class WitMessageController(object):
             'GetEventTime': self.send_event_time,
             'GetProgramHelp': self.get_program_help,
             'FindProgramWithRoom': self.find_program_with_room,
-            'FindProgramWithRoomTimeRange': self.find_program_with_room,
         }
         return Wit(access_token=self.token, actions=actions)
 
