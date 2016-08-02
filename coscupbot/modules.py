@@ -98,7 +98,7 @@ class WitMessageController(object):
         self.action_context.pop(mid, None)
 
     def send_message(self, request, response):
-        mid = utils.to_utf8_str(request['context']['from_mid'])
+        mid = request['context']['from_mid']
         msg = utils.to_utf8_str(response['text'])
         logging.info('Wit send message [%s] to [%s]', mid, msg)
         self.bot_api.send_text(to_mid=mid, text=msg)
