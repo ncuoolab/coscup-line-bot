@@ -8,6 +8,8 @@ import datetime
 import logging
 import random
 
+COSCUP_BACKEND_URL = 'http://coscup.org/2016-assets/json'
+
 
 def random_get_result(responses):
     return random.choice(responses).decode("utf-8")
@@ -42,7 +44,7 @@ class WitMessageController(object):
 
     def init_wit_client(self):
         actions = {
-            'send':self.send_message,
+            'send': self.send_message,
             'Welcome': self.send_welcome,
             'GetLocation': self.send_location,
             'GetEventTime': self.send_event_time,
@@ -109,7 +111,6 @@ class WitMessageController(object):
         logging.info('Wit send message [%s] to [%s]', mid, msg)
         self.bot_api.send_text(to_mid=mid, text=msg)
 
-
     def send_welcome(self, request):
         return self.send_nlp_action_message(request, NLPActions.Welcome)
 
@@ -160,5 +161,6 @@ class SheetMessageController(object):
 
 
 class CoscupInfoHelper(object):
-    def __init__(self):
+    def __init__(self, backend_url = COSCUP_BACKEND_URL):
+
         pass
