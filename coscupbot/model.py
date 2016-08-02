@@ -85,15 +85,15 @@ class CoscupApiType(object):
 
 class Program(object):
     @classmethod
-    def de_json_program_list(cls, json_string):
+    def de_json_list(cls, json_string):
         jsonobj = check_json(json_string)
         ret = []
         for program_json in jsonobj:
-            ret.append(Program.de_json_program(program_json))
+            ret.append(Program.de_json(program_json))
         return ret
 
     @classmethod
-    def de_json_program(cls, jsonobj):
+    def de_json(cls, jsonobj):
         slot = jsonobj.get('slot')
         room = jsonobj.get('room')
         starttime = try_parse_datetime(jsonobj.get('starttime'))
@@ -127,11 +127,11 @@ class Room(object):
         jsonobj = check_json(json_str)
         ret = []
         for program_json in jsonobj:
-            ret.append(Room.de_json_room(program_json))
+            ret.append(Room.de_json(program_json))
         return ret
 
     @classmethod
-    def de_json_room(cls, json_obj):
+    def de_json(cls, json_obj):
         room = json_obj.get('room')
         name = json_obj.get('name')
         return Room(room, name)

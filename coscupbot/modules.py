@@ -245,10 +245,10 @@ class CoscupInfoHelper(object):
         return ret
 
     def load_db_to_cache(self):
-        self.programs = model.Program.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.program))
-        self.rooms = model.Room.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.room))
-        self.program_type = model.ProgramType.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.program_type))
-        self.sponsors = model.Sponsor.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.sponsor))
-        self.levels = model.Level.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.level))
-        self.transport = model.Transport.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.transport))
-        self.staffs = model.Staff.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.staff))
+        self.programs = model.Program.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.program))
+        self.rooms = model.Room.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.room))
+        self.program_type = model.ProgramType.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.program_type))
+        self.sponsors = model.Sponsor.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.sponsor))
+        self.levels = model.Level.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.level))
+        self.transport = model.Transport.de_json(self.dao.get_coscup_api_data(CoscupApiType.transport))
+        self.staffs = model.Staff.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.staff))
