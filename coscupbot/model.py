@@ -64,6 +64,8 @@ class NLPActions(object):
     EventTime = 'EVENTTIME'
     Error = 'ERROR'
     Program_help = 'PROGRAMHELP'
+    Program_not_found = 'PROGRAMNOTFUND'
+    Program_result = 'PROGRAMRESULT'
 
 
 class GoogleSheetName(object):
@@ -175,13 +177,14 @@ class Sponsor(object):
     @classmethod
     def de_json(cls, json_obj):
         level = json_obj.get('level')
+        place = json_obj.get('place')
         logolink = json_obj.get('logolink')
         logourl = json_obj.get('logourl')
         name_en = json_obj.get('nameen')
         name_zh = json_obj.get('namezh')
         intro_en = json_obj.get('introen')
         intro_zh = json_obj.get('introzh')
-        return Sponsor(level, logolink, logourl, name_en, name_zh, intro_en, intro_zh)
+        return Sponsor(level, place, logolink, logourl, name_en, name_zh, intro_en, intro_zh)
 
     def __init__(self, level, place, logolink, logourl, name_en, name_zh, intro_en, intro_zh):
         self.level = level

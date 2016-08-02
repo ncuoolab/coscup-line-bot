@@ -3,6 +3,7 @@ import datetime
 import logging
 import random
 from urllib.request import urlopen
+from mako.template import Template
 
 from wit import Wit
 from wit import wit
@@ -52,6 +53,8 @@ class WitMessageController(object):
             'GetLocation': self.send_location,
             'GetEventTime': self.send_event_time,
             'GetProgramHelp': self.get_program_help,
+            'FindProgramWithRoom': self.find_program_with_room,
+            'FindProgramWithRoomTimeRange': self.find_program_with_room,
         }
         return Wit(access_token=self.token, actions=actions)
 
@@ -123,6 +126,18 @@ class WitMessageController(object):
     def send_event_time(self, request):
         return self.send_nlp_action_message(request, NLPActions.EventTime)
 
+    def find_program_with_room(self, request):
+        ctx = request['context']
+        try:
+            time = utils.get_wit_datetimes(request)
+            room = utils.get_wit_room(request)
+            resp = self.bot.coscup_api_helper.find_program_by_room_time(room, time, self.lang)
+            ctx['response_msg'] = resp
+        except Exception as ex:
+            logging.exception(ex)
+        ctx['processed'] = True
+        return ctx
+
     def get_program_help(self, request):
         logging.info('Process %s action. %s' % (NLPActions.Program_help, request))
         cxt = request['context']
@@ -174,12 +189,24 @@ class CoscupInfoHelper(object):
         self.levels = None
         self.transport = None
         self.staffs = None
+        self.load_db_to_cache()
 
-    def find_program_by_room_time(self, room, time):
+    def find_program_by_room_time(self, room, time, lang):
+        program = self.__find_program_by_room_time(room, time)
+        if program is None:
+            return random_get_result(self.dao.get_nlp_response(NLPActions.Program_not_found, lang))
+        return self.__gen_template_result(NLPActions.Program_result, lang, program=program, time=time)
+
+    def __find_program_by_room_time(self, room, time):
         for program in self.programs:
             if program.room == room and program.starttime < time < program.endtime:
                 return program
         return None
+
+    def __gen_template_result(self, nlp_action, lang, **args):
+        tem_str = random_get_result(self.dao.get_nlp_response(nlp_action, lang))
+        t = Template(tem_str)
+        return t.render(**args)
 
     def sync_backend(self):
         self.get_program_to_db()
@@ -246,10 +273,13 @@ class CoscupInfoHelper(object):
         return ret
 
     def load_db_to_cache(self):
-        self.programs = model.Program.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.program))
-        self.rooms = model.Room.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.room))
-        self.program_type = model.ProgramType.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.program_type))
-        self.sponsors = model.Sponsor.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.sponsor))
-        self.levels = model.Level.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.level))
-        self.transport = model.Transport.de_json(self.dao.get_coscup_api_data(CoscupApiType.transport))
-        self.staffs = model.Staff.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.staff))
+        try:
+            self.programs = model.Program.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.program))
+            self.rooms = model.Room.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.room))
+            self.program_type = model.ProgramType.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.program_type))
+            self.sponsors = model.Sponsor.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.sponsor))
+            self.levels = model.Level.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.level))
+            self.transport = model.Transport.de_json(self.dao.get_coscup_api_data(CoscupApiType.transport))
+            self.staffs = model.Staff.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.staff))
+        except Exception as ex:
+            logging.exception(ex)

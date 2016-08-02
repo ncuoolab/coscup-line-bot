@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import redis
+import datetime
+import iso8601
 
 
 class RedisQueue(object):
@@ -33,5 +35,23 @@ def chunks(l, n):
     n = max(1, n)
     return [l[i:i + n] for i in range(0, len(l), n)]
 
+
 def to_utf8_str(byte):
     return byte.decode('utf-8')
+
+
+def parse_wit_datime(dt):
+    value = dt['value']
+    return iso8601.parse_date(value)
+
+
+def get_wit_datetimes(request):
+    ents = request['entities']
+    datetimes = ents['datetime']
+    return parse_wit_datime(datetimes[0])
+
+
+def get_wit_room(request):
+    ents = request['entities']
+    room = ents['room'][0]['value']
+    return room
