@@ -67,7 +67,7 @@ class WitMessageController(object):
             result = self.client.run_actions(session_id, message, self.get_session_context(mid, receive),
                                              action_confidence=0.3)
 
-            if 'processed' and 'stop' in result:
+            if 'stop' in result:
                 # Action done. Clear cache data.
                 self.clear_session_id(mid)
 
