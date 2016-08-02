@@ -132,27 +132,28 @@ class WitMessageController(object):
             time = utils.get_wit_datetimes(request)
             room = utils.get_wit_room(request)
             resp = self.bot.coscup_api_helper.find_program_by_room_time(room, time, self.lang)
-            ctx['response_msg'] = resp
+            self.__set_response_message(ctx, resp)
         except Exception as ex:
             logging.exception(ex)
-        ctx['processed'] = True
+
         return ctx
 
     def get_program_help(self, request):
         logging.info('Process %s action. %s' % (NLPActions.Program_help, request))
         cxt = request['context']
         response = random_get_result(self.dao.get_nlp_response(NLPActions.Program_help, self.lang))
-        cxt['response_msg'] = response
-        cxt['processed'] = True
-        return cxt
+        return self.__set_response_message(cxt, response)
 
     def send_nlp_action_message(self, request, action):
         logging.info('Process %s action. %s' % (action, request))
         response = random_get_result(self.dao.get_nlp_response(action, self.lang))
-        from_mid = request['context']['from_mid']
-        logging.info('Send %s message to %s, %s' % (action, from_mid, response))
-        self.bot_api.send_text(to_mid=from_mid, text=response)
-        return {'processed': True}
+        ctx = request['context']
+        self.__set_response_message(ctx, response)
+
+    def __set_response_message(self, context, message):
+        context['response_msg'] = message
+        context['processed'] = True
+        return context
 
     def convert_text_receive(self, receive):
         return {'from_mid': receive['from_mid'], 'text': receive['content']['text']}
