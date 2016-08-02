@@ -132,7 +132,7 @@ class WitMessageController(object):
             time = utils.get_wit_datetimes(request)
             room = utils.get_wit_room(request)
             resp = self.bot.coscup_api_helper.find_program_by_room_time(room, time, self.lang)
-            self.__set_response_message(ctx, resp)
+            ctx = self.__set_response_message(ctx, resp)
         except Exception as ex:
             logging.exception(ex)
 
@@ -148,7 +148,7 @@ class WitMessageController(object):
         logging.info('Process %s action. %s' % (action, request))
         response = random_get_result(self.dao.get_nlp_response(action, self.lang))
         ctx = request['context']
-        self.__set_response_message(ctx, response)
+        return self.__set_response_message(ctx, response)
 
     def __set_response_message(self, context, message):
         context['response_msg'] = message
