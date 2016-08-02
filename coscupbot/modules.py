@@ -42,7 +42,7 @@ class WitMessageController(object):
 
     def init_wit_client(self):
         actions = {
-            'send': self.send_message,
+            'send':self.send_message,
             'Welcome': self.send_welcome,
             'GetLocation': self.send_location,
             'GetEventTime': self.send_event_time,
@@ -96,6 +96,9 @@ class WitMessageController(object):
 
     def clear_session_context(self, mid):
         self.action_context.pop(mid, None)
+
+    def send_message(self, request):
+        pass
 
     def send_welcome(self, request):
         return self.send_nlp_action_message(request, NLPActions.Welcome)
