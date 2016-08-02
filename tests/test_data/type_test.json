@@ -1,0 +1,62 @@
+[
+    {
+        "type": 91,
+        "nameen": "Unconf",
+        "namezh": "Unconf"
+    },
+    {
+        "type": 90,
+        "nameen": "Workshop",
+        "namezh": "工作坊"
+    },
+    {
+        "type": 89,
+        "nameen": "Embedded",
+        "namezh": "嵌入式"
+    },
+    {
+        "type": 88,
+        "nameen": "IOT",
+        "namezh": "物聯網"
+    },
+    {
+        "type": 87,
+        "nameen": "Open culture/data",
+        "namezh": "開放文化/資料"
+    },
+    {
+        "type": 86,
+        "nameen": "Open source software",
+        "namezh": "開源程式"
+    },
+    {
+        "type": 85,
+        "nameen": "Information security",
+        "namezh": "資訊安全"
+    },
+    {
+        "type": 84,
+        "nameen": "Open source hardware",
+        "namezh": "開源硬體"
+    },
+    {
+        "type": 83,
+        "nameen": "Bussiness & Education",
+        "namezh": "商業、教育"
+    },
+    {
+        "type": 82,
+        "nameen": "Open source application",
+        "namezh": "開源應用"
+    },
+    {
+        "type": 81,
+        "nameen": "Lay the Foundations",
+        "namezh": "扎根"
+    },
+    {
+        "type": 80,
+        "nameen": "Open source legal",
+        "namezh": "開源法律"
+    }
+]

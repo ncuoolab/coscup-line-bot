@@ -57,7 +57,7 @@ def init_logger():
     ch.setLevel(level)
     fh.setLevel(level)
     formatter = logging.Formatter(
-        '%(asctime)s - %(levelname)s - %(filename)s: - %(funcName)s(): - %(lineno)d: - %(message)s')
+        '%(asctime)s - %(name)s - %(levelname)s - %(filename)s: - %(funcName)s(): - %(lineno)d: - %(message)s')
     ch.setFormatter(formatter)
     fh.setFormatter(formatter)
     root.addHandler(ch)
@@ -125,7 +125,8 @@ def hello_world():
 @app.route('/callback', methods=['POST'])
 def line_call_back():
     if PRODUCTION == '1':
-        if not client.validate_signature(request.headers.get('X-Line-Channelsignature'), request.get_data()):
+        if not bot.bot_api.client.validate_signature(request.headers.get('X-Line-Channelsignature'),
+                                                     request.get_data().decode("utf-8")):
             return "NOT PASS"
     bot.process_new_event(request.get_data().decode("utf-8"))
     return "OK"
