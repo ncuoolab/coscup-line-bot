@@ -2,6 +2,7 @@
 import json
 import dateutil.parser
 
+
 def check_json(json_type):
     """
     Checks whether json_type is a dict or a string. If it is already a dict, it is returned as-is.
@@ -17,6 +18,7 @@ def check_json(json_type):
         return json.loads(json_type)
     else:
         raise ValueError("json_type should be a json dict or string.")
+
 
 def try_parse_datetime(datetime_string):
     try:
@@ -102,3 +104,23 @@ class Program(object):
         self.lang = lang
         self.abstract = abstract
         self.speakerintro = speakerintro
+
+
+class Room(object):
+    @classmethod
+    def de_json_list(cls, json_str):
+        jsonobj = check_json(json_str)
+        ret = []
+        for program_json in jsonobj:
+            ret.append(Room.de_json_room(program_json))
+        return ret
+
+    @classmethod
+    def de_json_room(cls, json_obj):
+        room = json_obj.get('room')
+        name = json_obj.get('name')
+        return Room(room, name)
+
+    def __init__(self, room, name):
+        self.room = room
+        self.name = name

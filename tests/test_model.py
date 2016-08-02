@@ -5,7 +5,6 @@ import sys
 sys.path.append('../')
 
 from coscupbot import model
-from datetime import *
 
 
 def test_de_json_program():
@@ -25,3 +24,11 @@ def test_de_json_program_data():
     assert program.endtime.year == 2016
     assert program.endtime.day == 20
     assert program.endtime.hour == 2
+
+
+def test_de_json_room():
+    room_json_str = open('test_data/room_test.json', 'r').read()
+    rooms = model.Room.de_json_list(room_json_str)
+    assert len(rooms) == 9
+    assert rooms[0].room == 'R0'
+    assert rooms[0].name == '國際會議廳'
