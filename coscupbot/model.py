@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
-
+import dateutil.parser
 
 def check_json(json_type):
     """
@@ -17,6 +17,12 @@ def check_json(json_type):
         return json.loads(json_type)
     else:
         raise ValueError("json_type should be a json dict or string.")
+
+def try_parse_datetime(datetime_string):
+    try:
+        return dateutil.parser.parse(datetime_string)
+    except:
+        return None
 
 
 class Command(object):
@@ -73,8 +79,16 @@ class Program(object):
     def de_json_program(cls, jsonobj):
         slot = jsonobj.get('slot')
         room = jsonobj.get('room')
-        starttime = 
-        pass
+        starttime = try_parse_datetime(jsonobj.get('starttime'))
+        endtime = try_parse_datetime(jsonobj.get('endtime'))
+        cross = jsonobj.get('cross')
+        subject = jsonobj.get('subject')
+        speakername = jsonobj.get('speakername')
+        type = jsonobj.get('type')
+        lang = jsonobj.get('lang')
+        abstract = jsonobj.get('abstract')
+        speakerintro = jsonobj.get('speakerintro')
+        return Program(slot, room, starttime, endtime, cross, subject, speakername, type, lang, abstract, speakerintro)
 
     def __init__(self, slot, room, starttime, endtime, cross, subject, speakername, type, lang, abstract, speakerintro):
         self.slot = slot
