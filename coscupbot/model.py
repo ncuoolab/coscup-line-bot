@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import json
-import dateutil.parser
 import datetime
 import pytz
+from datetime import timezone
 
 tz = pytz.timezone('Asia/Taipei')
 
@@ -25,8 +25,9 @@ def check_json(json_type):
 
 def try_parse_datetime(datetime_string):
     try:
-        utc =datetime.datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%S.%f")
-        return tz.localize(utc)
+        utc_dt =datetime.datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%S.%fZ")
+        local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(tz)
+        return tz.normalize(local_dt)
     except Exception as ex:
         return None
 

@@ -20,10 +20,10 @@ def test_de_json_program_data():
     assert program.room == 'R0'
     assert program.starttime.year == 2016
     assert program.starttime.day == 20
-    assert program.starttime.hour == 1
+    assert program.starttime.hour == 9
     assert program.endtime.year == 2016
     assert program.endtime.day == 20
-    assert program.endtime.hour == 2
+    assert program.endtime.hour == 10
 
 
 def test_de_json_room():
