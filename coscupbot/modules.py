@@ -38,6 +38,7 @@ class WitMessageController(object):
         self.client = self.init_wit_client()
         self.dao = db.Dao(db_url)
         self.mid_action = {}
+        self.action_context = {}
 
     def init_wit_client(self):
         actions = {
@@ -54,7 +55,7 @@ class WitMessageController(object):
             message = receive['content']['text']
             logging.info('Wit process new message %s' % message)
             session_id = self.get_session_id(mid)
-            result = self.client.run_actions(session_id, message, self.convert_text_receive(receive),
+            result = self.client.run_actions(session_id, message, self.get_session_context(mid, receive),
                                              action_confidence=0.3)
             if 'processed' not in result:
                 logging.warning('Message [%s] not run in action.' % message)
@@ -63,14 +64,18 @@ class WitMessageController(object):
                 self.bot_api.reply_text(receive, response)
         except wit.WitError as we:
             logging.warning('Wit Process error %s' % we)
-            self.clear_session_id(mid)
+            self.clear_session(mid)
             response = random_get_result(self.dao.get_nlp_response(NLPActions.Error, self.lang))
             self.bot_api.reply_text(receive, response)
         except Exception as ex:
             logging.exception(ex)
-            self.clear_session_id(mid)
+            self.clear_session(mid)
             response = random_get_result(self.dao.get_nlp_response(NLPActions.Error, self.lang))
             self.bot_api.reply_text(receive, response)
+
+    def clear_session(self, mid):
+        self.clear_session_id(mid)
+        self.clear_session_context(mid)
 
     def get_session_id(self, mid):
         if mid in self.mid_action:
@@ -81,6 +86,16 @@ class WitMessageController(object):
 
     def clear_session_id(self, mid):
         self.mid_action.pop(mid, None)
+
+    def get_session_context(self, mid, receive):
+        if mid in self.action_context:
+            self.action_context[mid].pop('processed', None)
+            return self.action_context[mid]
+        self.action_context[mid] = self.convert_text_receive(receive)
+        return self.action_context[mid]
+
+    def clear_session_context(self, mid):
+        self.action_context.pop(mid, None)
 
     def send_welcome(self, request):
         return self.send_nlp_action_message(request, NLPActions.Welcome)
@@ -121,6 +136,7 @@ class SheetMessageController(object):
 
     def __create_sheet(self):
         return sheet.Sheet(self.credential_path, self.spreadsheet_name)
+
 
 class CoscupInfoHelper(object):
     def __init__(self):
