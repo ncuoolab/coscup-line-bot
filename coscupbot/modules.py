@@ -174,6 +174,12 @@ class CoscupInfoHelper(object):
         self.transport = None
         self.staffs = None
 
+    def find_program_by_room_time(self, room, time):
+        for program in self.programs:
+            if program.room == room and program.starttime < time < program.endtime:
+                return program
+        return None
+
     def sync_backend(self):
         self.get_program_to_db()
         self.get_room_to_db()
@@ -240,9 +246,9 @@ class CoscupInfoHelper(object):
 
     def load_db_to_cache(self):
         self.programs = model.Program.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.program))
-        self.rooms = model.Program.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.room))
-        self.program_type = model.Program.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.program_type))
-        self.sponsors = model.Program.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.sponsor))
-        self.levels = model.Program.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.level))
-        self.transport = model.Program.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.transport))
-        self.staffs = model.Program.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.staff))
+        self.rooms = model.Room.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.room))
+        self.program_type = model.ProgramType.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.program_type))
+        self.sponsors = model.Sponsor.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.sponsor))
+        self.levels = model.Level.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.level))
+        self.transport = model.Transport.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.transport))
+        self.staffs = model.Staff.de_json_program_list(self.dao.get_coscup_api_data(CoscupApiType.staff))
