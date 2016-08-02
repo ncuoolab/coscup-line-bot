@@ -97,8 +97,11 @@ class WitMessageController(object):
     def clear_session_context(self, mid):
         self.action_context.pop(mid, None)
 
-    def send_message(self, request):
-        pass
+    def send_message(self, request, response):
+        mid = request['context']['from_mid']
+        msg = response['text']
+        logging.info('Wit send message [%s] to [%s]', mid, msg)
+        self.bot_api.send_text(to_mid=mid, text=msg)
 
     def send_welcome(self, request):
         return self.send_nlp_action_message(request, NLPActions.Welcome)
