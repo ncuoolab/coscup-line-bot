@@ -9,6 +9,7 @@ from linebot.client import *
 from linebot.receives import Receive
 
 from coscupbot import api, db, modules, utils
+from coscupbot.model import LanguageCode
 
 
 class CoscupBot(object):
@@ -19,7 +20,7 @@ class CoscupBot(object):
         self.db_url = db_url
         self.dao = db.Dao(db_url)
         self.nlp_message_controllers = self.gen_nlp_message_controllers(wit_tokens)
-        self.command_message_controllers = self.gen_command_message_controllers(['zh-TW', 'en-US'])
+        self.command_message_controllers = self.gen_command_message_controllers([LanguageCode.zh_tw, LanguageCode.en_us])
         self.sheet_message_controller = modules.SheetMessageController(db_url, sheet_credentials['credential_path'],
                                                                        sheet_credentials['name'], self)
         self.__mq_conn_pool= redis.ConnectionPool.from_url(url=db_url)
@@ -81,7 +82,7 @@ class CoscupBot(object):
         pass
 
     def check_fromuser_language(self, mid):
-        return 'zh-TW'
+        return LanguageCode.zh_tw
 
     def gen_nlp_message_controllers(self, wittokens):
         ret = {}

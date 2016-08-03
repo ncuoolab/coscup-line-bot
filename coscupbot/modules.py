@@ -54,6 +54,7 @@ class WitMessageController(object):
             'GetEventTime': self.send_event_time,
             'GetProgramHelp': self.get_program_help,
             'FindProgramWithRoom': self.find_program_with_room,
+            'ShowTransportType': self.show_transport_types,
         }
         return Wit(access_token=self.token, actions=actions)
 
@@ -137,6 +138,10 @@ class WitMessageController(object):
 
         return ctx
 
+    def show_transport_types(self, request):
+        ctx = request['context']
+
+
     def get_program_help(self, request):
         logging.info('Process %s action. %s' % (NLPActions.Program_help, request))
         cxt = request['context']
@@ -202,6 +207,9 @@ class CoscupInfoHelper(object):
             if program.room == room and program.starttime < time < program.endtime:
                 return program
         return None
+
+    def show_transport_types(self, lang):
+        pass
 
     def __gen_template_result(self, nlp_action, lang, **args):
         tem_str = random_get_result(self.dao.get_nlp_response(nlp_action, lang))

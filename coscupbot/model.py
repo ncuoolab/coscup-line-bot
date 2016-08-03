@@ -84,6 +84,10 @@ class CoscupApiType(object):
     transport = 'TRANSPORT'
     staff = 'STAFF'
 
+class LanguageCode(object):
+    zh_tw = 'zh-TW'
+    en_us = 'en-US'
+
 
 class Program(object):
     @classmethod
@@ -232,7 +236,23 @@ class Transport(object):
 
     def __init__(self, jsonobj):
         self.json_obj = jsonobj
+        self.lang_code = {'zh-TW':'zh', 'en-US':'en'}
 
+    def get_transport_types(self, lang):
+        """
+        Get transport types.
+        :param lang: language
+        :return: string list. Transport types string.
+        """
+        transports = self.__get_transport_list()
+        ret = []
+        for transport in transports:
+            ret.append(transport['title'][self.lang_code[lang]])
+        return ret
+
+
+    def __get_transport_list(self):
+        return self.json_obj['transport']
 
 class Staff(object):
     @classmethod
