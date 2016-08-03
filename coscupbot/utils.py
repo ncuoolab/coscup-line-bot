@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import redis
-import datetime
 import iso8601
+import redis
 
 
 class RedisQueue(object):

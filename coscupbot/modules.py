@@ -3,8 +3,8 @@ import datetime
 import logging
 import random
 from urllib.request import urlopen
-from mako.template import Template
 
+from mako.template import Template
 from wit import Wit
 from wit import wit
 

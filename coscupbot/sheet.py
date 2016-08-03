@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import gspread
-import datetime
 import re
-from coscupbot.model import *
+
+import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+
+from coscupbot.model import *
+
 
 class Sheet(object):
     def __init__(self, credential_path, spreadsheet_name):

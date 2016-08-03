@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import json
 import datetime
+import json
+
 import pytz
-from datetime import timezone
 
 tz = pytz.timezone('Asia/Taipei')
 

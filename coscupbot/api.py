@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from linebot.client import *
 import logging
+
+from linebot.client import *
+
 from coscupbot import utils
 
 

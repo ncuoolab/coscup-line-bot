@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import redis
 from threading import Lock
+
+import redis
+
 from coscupbot import utils
 
 

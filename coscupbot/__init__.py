@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import logging
+from concurrent.futures import ThreadPoolExecutor
+
+import redis
+from apscheduler.schedulers.background import BackgroundScheduler
 from linebot.client import *
 from linebot.receives import Receive
+
 from coscupbot import api, db, modules, utils
-import logging
-import redis
-from concurrent.futures import ThreadPoolExecutor
-from apscheduler.schedulers.background import BackgroundScheduler
 
 
 class CoscupBot(object):
