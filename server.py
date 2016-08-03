@@ -14,20 +14,20 @@ app = Flask(__name__)
 
 BOT_TYPE = os.getenv("BOT_TYPE")
 
-credentials =\
-{
-    'TRIAL': 
+credentials = \
     {
-        'channel_id': os.getenv("CHANNEL_ID"),
-        'channel_secret': os.getenv("CHANNEL_SECRET"),
-        'channel_mid': os.getenv("CHANNEL_MID")
-    },
-    'BUSINESS':
-    {
-        'channel_secret': os.getenv("CHANNEL_SECRET"),
-        'channel_token': os.getenv("CHANNEL_TOKEN")
-    }
-}.get(BOT_TYPE)
+        'TRIAL':
+            {
+                'channel_id': os.getenv("CHANNEL_ID"),
+                'channel_secret': os.getenv("CHANNEL_SECRET"),
+                'channel_mid': os.getenv("CHANNEL_MID")
+            },
+        'BUSINESS':
+            {
+                'channel_secret': os.getenv("CHANNEL_SECRET"),
+                'channel_token': os.getenv("CHANNEL_TOKEN")
+            }
+    }.get(BOT_TYPE)
 
 sheet_credentials = {
     'credential_path': os.getenv('SHEET_CREDENTIAL_PATH'),
@@ -149,6 +149,13 @@ def edison_done():
     data = request.get_data().decode("utf-8")
     bot.take_photo_done(data)
     return 'OK'
+
+
+@app.route('/triggerrealtime')
+@requires_auth
+def trigger_broadcast_realtime():
+    result = bot.broadcast_realtime_message()
+    return str(result)
 
 
 @app.route('/syncbackend')

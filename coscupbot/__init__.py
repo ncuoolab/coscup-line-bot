@@ -109,8 +109,9 @@ class CoscupBot(object):
     def broadcast_realtime_message(self):
         """
         this method will take message from realtime_msg_queue. If no message in queue will pass.
-        :return:
+        :return: how many message broadcasted.
         """
+        ret = 0
         while True:
             rmsg = self.realtime_msg_queue.get(block=False)
             if rmsg is None:
@@ -119,6 +120,8 @@ class CoscupBot(object):
             self.logger.info('Start Broadcast real time message.')
             msg = rmsg.decode('utf-8')
             self.broadcast_message(msg)
+            ret += 1
+        return ret
 
     def broadcast_message(self, message):
         """
@@ -132,7 +135,6 @@ class CoscupBot(object):
 
     def start_scheduler(self):
         self.logger.info('Start scheduler.')
-        self.job_scheduler.add_job(self.broadcast_realtime_message, 'interval', seconds=5)
         self.job_scheduler.start()
 
     def reset_scheduler(self):
@@ -151,6 +153,7 @@ class CoscupBot(object):
             self.reset_scheduler()
             self.coscup_api_helper.sync_backend()
             self.sheet_message_controller.parse_data_from_google_sheet()
+            self.broadcast_realtime_message()
         except Exception as ex:
             self.logger.error('Sync backend data Failed.')
             self.logger.exception(ex)
