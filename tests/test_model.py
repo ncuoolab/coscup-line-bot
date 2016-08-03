@@ -48,3 +48,8 @@ def test_de_json_transport_zh():
     trans = model.Transport.de_json(json_str)
     assert len(trans.get_transport_types('zh-TW')) == 5
     assert '搭乘捷運' in trans.get_transport_types('zh-TW')
+
+def test_get_transport_result():
+    json_str = open('test_data/transport_test.json', 'r').read()
+    trans = model.Transport.de_json(json_str)
+    ret = trans.get_transport_result('YouBike', 'zh-TW')

@@ -221,6 +221,7 @@ class CoscupInfoHelper(object):
         return self.__gen_template_result(NLPActions.Show_transport_types, lang, transport_types=transport_types)
 
     def show_transport_result(self, trans_type, lang):
+        logging.info('Get transport result.[Type] %s, [Labg] %s', trans_type, lang)
         return self.transport.get_transport_result(trans_type, lang)
 
     def __gen_template_result(self, nlp_action, lang, **args):
