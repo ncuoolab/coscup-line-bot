@@ -55,6 +55,7 @@ class WitMessageController(object):
             'GetProgramHelp': self.get_program_help,
             'FindProgramWithRoom': self.find_program_with_room,
             'ShowTransportType': self.show_transport_types,
+            'ShowTransport': self.show_transport_result,
         }
         return Wit(access_token=self.token, actions=actions)
 
@@ -140,7 +141,14 @@ class WitMessageController(object):
 
     def show_transport_types(self, request):
         ctx = request['context']
+        resp = self.bot.coscup_api_helper.show_transport_types(self.lang)
+        return self.__set_response_message(ctx, resp)
 
+    def show_transport_result(self, request):
+        ctx = request['context']
+        transport = utils.get_wit_transport_type(request)
+        resp = self.bot.coscup_api_helper.show_transport_result(transport, self.lang)
+        return self.__set_response_message(ctx, resp)
 
     def get_program_help(self, request):
         logging.info('Process %s action. %s' % (NLPActions.Program_help, request))
@@ -209,7 +217,11 @@ class CoscupInfoHelper(object):
         return None
 
     def show_transport_types(self, lang):
-        pass
+        transport_types = self.transport.get_transport_types(lang)
+        return self.__gen_template_result(NLPActions.Show_transport_types, lang, transport_types=transport_types)
+
+    def show_transport_result(self, trans_type, lang):
+        return self.transport.get_transport_result(trans_type, lang)
 
     def __gen_template_result(self, nlp_action, lang, **args):
         tem_str = random_get_result(self.dao.get_nlp_response(nlp_action, lang))
@@ -262,7 +274,7 @@ class CoscupInfoHelper(object):
         self.dao.save_coscup_api_data(CoscupApiType.level, response)
 
     def get_transport_to_db(self):
-        url = self.backend_url + '/sponsor.json'
+        url = self.backend_url + '/transport.json'
         logging.info('Start to get transport data from coscup api. %s', url)
         response = self.__get_url_content(url)
         logging.debug('Get program transport from coscup api. %s', response)

@@ -54,3 +54,9 @@ def get_wit_room(request):
     ents = request['entities']
     room = ents['room'][0]['value']
     return room
+
+
+def get_wit_transport_type(request):
+    ents = request['entities']
+    room = ents['transport'][0]['value']
+    return room

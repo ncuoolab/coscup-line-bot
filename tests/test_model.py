@@ -42,9 +42,9 @@ def test_de_json_program_type():
     assert pts[0].name_en == 'Unconf'
     assert pts[0].name_zh == 'Unconf'
 
-def test_de_json_transport():
+
+def test_de_json_transport_zh():
     json_str = open('test_data/transport_test.json', 'r').read()
     trans = model.Transport.de_json(json_str)
     assert len(trans.get_transport_types('zh-TW')) == 5
     assert '搭乘捷運' in trans.get_transport_types('zh-TW')
-

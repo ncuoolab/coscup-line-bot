@@ -6,6 +6,7 @@ import pytz
 
 tz = pytz.timezone('Asia/Taipei')
 
+
 def check_json(json_type):
     """
     Checks whether json_type is a dict or a string. If it is already a dict, it is returned as-is.
@@ -25,7 +26,7 @@ def check_json(json_type):
 
 def try_parse_datetime(datetime_string):
     try:
-        utc_dt =datetime.datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%S.%fZ")
+        utc_dt = datetime.datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%S.%fZ")
         local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(tz)
         return tz.normalize(local_dt)
     except Exception as ex:
@@ -66,6 +67,7 @@ class NLPActions(object):
     Program_help = 'PROGRAMHELP'
     Program_not_found = 'PROGRAMNOTFUND'
     Program_result = 'PROGRAMRESULT'
+    Show_transport_types = 'SHOWTRANSPORTTYPES'
 
 
 class GoogleSheetName(object):
@@ -83,6 +85,7 @@ class CoscupApiType(object):
     level = 'LEVEL'
     transport = 'TRANSPORT'
     staff = 'STAFF'
+
 
 class LanguageCode(object):
     zh_tw = 'zh-TW'
@@ -236,7 +239,7 @@ class Transport(object):
 
     def __init__(self, jsonobj):
         self.json_obj = jsonobj
-        self.lang_code = {'zh-TW':'zh', 'en-US':'en'}
+        self.lang_code = {'zh-TW': 'zh', 'en-US': 'en'}
 
     def get_transport_types(self, lang):
         """
@@ -250,9 +253,22 @@ class Transport(object):
             ret.append(transport['title'][self.lang_code[lang]])
         return ret
 
+    def get_transport_result(self, trans_type, lang):
+        return self.__get_transport_content(trans_type)[self.lang_code[lang]]
 
     def __get_transport_list(self):
         return self.json_obj['transport']
+
+    def __get_transport_content(self, trans_type):
+        transports = self.__get_transport_list()
+        for transport in transports:
+            if trans_type == transport['title']['zh'] or trans_type == transport['title']['en']:
+                return transport['content']
+        return None
+
+
+
+
 
 class Staff(object):
     @classmethod
