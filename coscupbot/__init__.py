@@ -73,7 +73,7 @@ class CoscupBot(object):
         try:
             lang = self.check_fromuser_language(receive['from_mid'])
             msg = receive['content']['text']
-            self.logger.info('New text message.[Text] %s', msg)
+            self.logger.info('New text message.[Text] %s' % msg)
             if msg.startswith('/'):
                 self.command_message_controllers[lang].process_receive(receive)
             else:
