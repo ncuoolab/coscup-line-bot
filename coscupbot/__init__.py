@@ -111,12 +111,12 @@ class CoscupBot(object):
         this method will take message from realtime_msg_queue. If no message in queue will pass.
         :return:
         """
-        self.logger.info('Start Broadcast real time message.')
         while True:
             rmsg = self.realtime_msg_queue.get(block=False)
             if rmsg is None:
                 self.logger.debug('No real time message now.')
                 break
+            self.logger.info('Start Broadcast real time message.')
             msg = rmsg.decode('utf-8')
             self.broadcast_message(msg)
 
