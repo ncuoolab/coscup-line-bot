@@ -106,9 +106,12 @@ class CoscupBot(object):
         return ret
 
     def get_edison_request(self):
+        self.logger.info('Edison try get mid from queue.')
         result = self.edison_queue.get(timeout=10)
         if result:
-            return result.decode('utf-8')
+            mid = result.decode('utf-8')
+            self.logger.info('Edison get mid %s .' % mid)
+            return mid
         return None
 
     def take_photo_done(self, data):
