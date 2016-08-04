@@ -68,6 +68,7 @@ class NLPActions(object):
     Program_not_found = 'PROGRAMNOTFUND'
     Program_result = 'PROGRAMRESULT'
     Show_transport_types = 'SHOWTRANSPORTTYPES'
+    Edison_request = 'EDISONREQUEST'
 
 
 class GoogleSheetName(object):
@@ -265,9 +266,6 @@ class Transport(object):
             if trans_type == transport['title']['zh'] or trans_type == transport['title']['en']:
                 return transport['content']
         return None
-
-
-
 
 
 class Staff(object):

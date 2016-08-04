@@ -88,6 +88,9 @@ class CoscupBot(object):
     def handle_sticker_message(self, receive):
         mid = receive['from_mid']
         self.edison_queue.put(mid)
+        lang = self.check_fromuser_language(mid)
+        result = modules.random_get_result(self.dao.get_nlp_response(model.NLPActions.Edison_request, lang))
+        self.bot_api.reply_text(receive, result)
 
     def check_fromuser_language(self, mid):
         return LanguageCode.zh_tw
