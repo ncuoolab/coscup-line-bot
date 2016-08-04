@@ -4,6 +4,7 @@ import logging
 from concurrent.futures import ThreadPoolExecutor
 
 import redis
+import json
 from apscheduler.schedulers.background import BackgroundScheduler
 from linebot.client import *
 from linebot.receives import Receive
@@ -118,8 +119,13 @@ class CoscupBot(object):
         return None
 
     def take_photo_done(self, data):
-        # TODO
-        pass
+        self.logger.info('Edison take photo done.[Data] %s' % data)
+        json_obj = json.loads(data)
+        mid = json_obj['mid']
+        o_url = json_obj['originalUrl']
+        p_url = json_obj['previewUrl']
+        self.bot_api.send_image(mid, o_url, p_url)
+        self.logger.info('Send image to user %s done' % mid)
 
     def broadcast_realtime_message(self):
         """

@@ -25,6 +25,9 @@ class LineApi(object):
     def reply_text(self, receive, message):
         self.send_text(to_mid=receive['from_mid'], text=message)
 
+    def send_image(self, mid, original_url, preview_url):
+        self.client.send_image(to_mid=mid, image_url=original_url, preview_url=preview_url)
+
     def broadcast_new_message(self, mids, message):
         # notice up to 150 mid in one message request
         mids_list = utils.chunks(mids, 100)

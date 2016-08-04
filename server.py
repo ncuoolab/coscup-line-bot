@@ -141,7 +141,8 @@ def edison():
     return jsonify(ret_json)
 
 
-@app.route('/edisondone')
+@app.route('/edisondone', methods=['POST'])
+@requires_auth
 def edison_done():
     data = request.get_data().decode("utf-8")
     bot.take_photo_done(data)
