@@ -45,6 +45,7 @@ class WitMessageController(object):
         self.mid_action = {}
         self.action_context = {}
         self.bot = bot
+        self.logger = logging.getLogger('WitMessageController')
 
     def init_wit_client(self):
         actions = {
@@ -56,6 +57,8 @@ class WitMessageController(object):
             'FindProgramWithRoom': self.find_program_with_room,
             'ShowTransportType': self.show_transport_types,
             'ShowTransport': self.show_transport_result,
+            'ShowSponsors': self.show_sponsors,
+            'ShowSponsorIntro': self.show_sponsor_intro,
         }
         return Wit(access_token=self.token, actions=actions)
 
@@ -63,7 +66,7 @@ class WitMessageController(object):
         mid = receive['from_mid']
         try:
             message = receive['content']['text']
-            logging.info('Wit process new message %s' % message)
+            self.logger.info('Wit process new message %s' % message)
             session_id = self.get_session_id(mid)
             result = self.client.run_actions(session_id, message, self.get_session_context(mid, receive),
                                              action_confidence=0.3)
@@ -73,17 +76,17 @@ class WitMessageController(object):
                 self.clear_session_id(mid)
 
             if 'processed' not in result:
-                logging.warning('Message [%s] not run in action.' % message)
+                self.logger.warning('Message [%s] not run in action.' % message)
                 self.clear_session_id(mid)
                 response = random_get_result(self.dao.get_nlp_response(NLPActions.Error, self.lang))
                 self.bot_api.reply_text(receive, response)
         except wit.WitError as we:
-            logging.warning('Wit Process error %s' % we)
+            self.logger.warning('Wit Process error %s' % we)
             self.clear_session(mid)
             response = random_get_result(self.dao.get_nlp_response(NLPActions.Error, self.lang))
             self.bot_api.reply_text(receive, response)
         except Exception as ex:
-            logging.exception(ex)
+            self.logger.exception(ex)
             self.clear_session(mid)
             response = random_get_result(self.dao.get_nlp_response(NLPActions.Error, self.lang))
             self.bot_api.reply_text(receive, response)
@@ -140,6 +143,7 @@ class WitMessageController(object):
         return ctx
 
     def show_transport_types(self, request):
+
         ctx = request['context']
         resp = self.bot.coscup_api_helper.show_transport_types(self.lang)
         return self.__set_response_message(ctx, resp)
@@ -151,9 +155,19 @@ class WitMessageController(object):
         return self.__set_response_message(ctx, resp)
 
     def get_program_help(self, request):
-        logging.info('Process %s action. %s' % (NLPActions.Program_help, request))
         cxt = request['context']
         response = random_get_result(self.dao.get_nlp_response(NLPActions.Program_help, self.lang))
+        return self.__set_response_message(cxt, response)
+
+    def show_sponsors(self, request):
+        cxt = request['context']
+        response = self.bot.coscup_api_helper.show_sponsors(self.lang)
+        return self.__set_response_message(cxt, response)
+
+    def show_sponsor_intro(self, request):
+        cxt = request['context']
+        sp_name = utils.get_wit_sponsor_name(request)
+        response = self.bot.coscup_api_helper.show_sponsor_intro(sp_name, self.lang)
         return self.__set_response_message(cxt, response)
 
     def send_nlp_action_message(self, request, action):
@@ -223,6 +237,15 @@ class CoscupInfoHelper(object):
     def show_transport_result(self, trans_type, lang):
         logging.info('Get transport result.[Type] %s, [Labg] %s', trans_type, lang)
         return self.transport.get_transport_result(trans_type, lang)
+
+    def show_sponsors(self, lang):
+        return self.__gen_template_result(NLPActions.Show_sponsors, lang, sponsors=self.sponsors)
+
+    def show_sponsor_intro(self, sponsor_name,lang):
+        for sp in self.sponsors:
+            if sponsor_name == sp.name_en or sponsor_name==sp.name_zh:
+                return self.__gen_template_result(NLPActions.Sponsor_intro, lang, sponsor=sp)
+        raise Exception('Search Sponsor error. %s not found.' % sponsor_name)
 
     def __gen_template_result(self, nlp_action, lang, **args):
         tem_str = random_get_result(self.dao.get_nlp_response(nlp_action, lang))

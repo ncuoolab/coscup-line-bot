@@ -69,6 +69,8 @@ class NLPActions(object):
     Program_result = 'PROGRAMRESULT'
     Show_transport_types = 'SHOWTRANSPORTTYPES'
     Edison_request = 'EDISONREQUEST'
+    Show_sponsors = 'SHOWSPONSORS'
+    Sponsor_intro = 'SPONSORINTRO'
 
 
 class GoogleSheetName(object):

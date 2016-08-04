@@ -62,3 +62,9 @@ def get_wit_transport_type(request):
     ents = request['entities']
     room = ents['transport'][0]['value']
     return room
+
+
+def get_wit_sponsor_name(request):
+    ents = request['entities']
+    sp = ents['sponsors'][0]['value']
+    return sp
