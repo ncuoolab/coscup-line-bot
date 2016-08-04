@@ -13,17 +13,19 @@ from coscupbot.model import LanguageCode
 
 
 class CoscupBot(object):
-    def __init__(self, bot_type, credentials, sheet_credentials, wit_tokens, db_url='redis://localhost:6379', num_thread=4):
+    def __init__(self, bot_type, credentials, sheet_credentials, wit_tokens, db_url='redis://localhost:6379',
+                 num_thread=4):
         self.bot_api = api.LineApi(bot_type, credentials)
         self.logger = logging.getLogger('CoscupBot')
         self.task_pool = ThreadPoolExecutor(num_thread)
         self.db_url = db_url
         self.dao = db.Dao(db_url)
         self.nlp_message_controllers = self.gen_nlp_message_controllers(wit_tokens)
-        self.command_message_controllers = self.gen_command_message_controllers([LanguageCode.zh_tw, LanguageCode.en_us])
+        self.command_message_controllers = self.gen_command_message_controllers(
+            [LanguageCode.zh_tw, LanguageCode.en_us])
         self.sheet_message_controller = modules.SheetMessageController(db_url, sheet_credentials['credential_path'],
                                                                        sheet_credentials['name'], self)
-        self.__mq_conn_pool= redis.ConnectionPool.from_url(url=db_url)
+        self.__mq_conn_pool = redis.ConnectionPool.from_url(url=db_url)
         self.edison_queue = utils.RedisQueue('edison', 'queue', connection_pool=self.__mq_conn_pool)
         self.realtime_msg_queue = utils.RedisQueue('realmessage', 'queue', connection_pool=self.__mq_conn_pool)
         self.job_scheduler = BackgroundScheduler()
@@ -31,14 +33,15 @@ class CoscupBot(object):
         self.start_scheduler()
 
     def process_new_event(self, data):
-        self.logger.debug('Process new receives. %s' % data)
+        self.logger.info('Process new receives. %s' % data)
         receive = Receive(data)
         for r in receive:
             content = r['content']
-            self.logger.info('Get new %s message. %s' % (content, r))
             self.try_set_mid(r)
             if isinstance(content, messages.TextMessage):
                 # Handle text message
+                msg = r['content']['text']
+                self.logger.info('New text message.[Text] %s' % msg)
                 self.task_pool.submit(self.handle_text_message, r)
             elif isinstance(content, messages.AudioMessage):
                 # Handle audio message
@@ -51,7 +54,9 @@ class CoscupBot(object):
                 pass
             elif isinstance(content, messages.StickerMessage):
                 # handle Sticker message
-                pass
+                mid = r['from_mid']
+                self.logger.info('New sticker message.[From] %s' % mid)
+                self.task_pool.submit(self.handle_sticker_message, r)
             elif isinstance(content, messages.VideoMessage):
                 # handle Video message
                 pass
@@ -73,14 +78,16 @@ class CoscupBot(object):
         try:
             lang = self.check_fromuser_language(receive['from_mid'])
             msg = receive['content']['text']
-            self.logger.info('New text message.[Text] %s' % msg)
             if msg.startswith('/'):
                 self.command_message_controllers[lang].process_receive(receive)
             else:
                 self.nlp_message_controllers[lang].process_receive(receive)
         except Exception as ex:
             self.logger.error(ex)
-        pass
+
+    def handle_sticker_message(self, receive):
+        mid = receive['from_mid']
+        self.edison_queue.put(mid)
 
     def check_fromuser_language(self, mid):
         return LanguageCode.zh_tw
@@ -100,7 +107,9 @@ class CoscupBot(object):
 
     def get_edison_request(self):
         result = self.edison_queue.get(timeout=10)
-        return result.decode('utf-8')
+        if result:
+            return result.decode('utf-8')
+        return None
 
     def take_photo_done(self, data):
         # TODO
@@ -159,4 +168,3 @@ class CoscupBot(object):
             self.logger.exception(ex)
             return False
         return True
-

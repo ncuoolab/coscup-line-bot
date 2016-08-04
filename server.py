@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, request
-from flask import Response
+from flask import Response, jsonify
 from functools import wraps
 
 import coscupbot
@@ -134,14 +134,11 @@ def line_call_back():
 
 @app.route('/edison')
 def edison():
+    ret_json ={}
     ret = bot.get_edison_request()
-    if ret is None:
-        ret = '{}'
-    resp = Response(response=ret,
-                    status=200,
-                    mimetype="application/json")
-
-    return resp
+    if ret:
+        ret_json['mid'] = ret
+    return jsonify(ret_json)
 
 
 @app.route('/edisondone')

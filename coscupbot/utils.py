@@ -21,6 +21,8 @@ class RedisQueue(object):
     def get(self, block=True, timeout=None):
         if block:
             item = self.__db.blpop(self.key, timeout=timeout)
+            if item:
+                item = item[1]
         else:
             item = self.__db.lpop(self.key)
 
