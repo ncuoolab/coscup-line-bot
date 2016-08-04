@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, request
-from flask import Response, jsonify
-from functools import wraps
-
-import coscupbot
 import logging
 import os
 import sys
-from linebot import client
+from functools import wraps
+
+from flask import Flask, request
+from flask import Response, jsonify
+
+import coscupbot
 
 app = Flask(__name__)
 
@@ -133,6 +133,7 @@ def line_call_back():
 
 
 @app.route('/edison')
+@requires_auth
 def edison():
     ret_json ={}
     ret = bot.get_edison_request()
