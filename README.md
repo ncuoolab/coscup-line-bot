@@ -12,7 +12,7 @@
 pip install -r /path/to/requirements.txt
 ```
 
-* Install custom wit
+* Install custom wit and linebot
 ```
 pip uninstall wit linebot
 pip install https://github.com/eternnoir/pywit/archive/master.zip https://github.com/tp6vup54/line-bot-sdk-python/archive/master.zip
