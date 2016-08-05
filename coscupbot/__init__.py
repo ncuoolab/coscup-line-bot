@@ -34,7 +34,7 @@ class CoscupBot(object):
         self.start_scheduler()
 
     def process_new_event(self, data):
-        self.logger.info('Process new receives. %s' % data)
+        self.logger.info('Process new receives. %s', data)
         receive = Receive(data)
         for r in receive:
             content = r['content']
