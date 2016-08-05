@@ -33,6 +33,12 @@ class CoscupBot(object):
         self.start_scheduler()
 
     def process_new_event(self, data):
+        """
+        Process new event from LINE Api callback method.
+        This method will dispatch message by message type to each type's handler.
+        :param data: receive json string.
+        :return:
+        """
         self.logger.info('Process new receives. %s', data)
         receive = Receive(data)
         for r in receive:
@@ -71,6 +77,11 @@ class CoscupBot(object):
             self.logger.exception(ex)
 
     def handle_text_message(self, receive):
+        """
+        Text message handler. All text message will be send to this method.
+        :param receive:
+        :return:
+        """
         try:
             lang = self.check_fromuser_language(receive['from_mid'])
             msg = receive['content']['text']
@@ -83,6 +94,11 @@ class CoscupBot(object):
             self.logger.error(ex)
 
     def handle_sticker_message(self, receive):
+        """
+        Sticker message handler.
+        :param receive:
+        :return:
+        """
         mid = receive['from_mid']
         self.logger.info('New sticker message.[From] %s' % mid)
         self.edison_queue.put(mid)
@@ -91,6 +107,11 @@ class CoscupBot(object):
         self.bot_api.reply_text(receive, result)
 
     def check_fromuser_language(self, mid):
+        """
+        Check user's language family by mid.
+        :param mid:
+        :return: language code.
+        """
         return LanguageCode.zh_tw
 
     def gen_nlp_message_controllers(self, wittokens):
@@ -107,6 +128,10 @@ class CoscupBot(object):
         return ret
 
     def get_edison_request(self):
+        """
+        Get mid from take photo request queue.
+        :return: None or mid
+        """
         self.logger.info('Edison try get mid from queue.')
         result = self.edison_queue.get(timeout=10)
         if result:
@@ -116,6 +141,12 @@ class CoscupBot(object):
         return None
 
     def take_photo_done(self, data):
+        """
+        When edison take photo done will call this method.
+        This method will send image to who send take photo request.
+        :param data:
+        :return:
+        """
         self.logger.info('Edison take photo done.[Data] %s' % data)
         json_obj = json.loads(data)
         mid = json_obj['mid']
@@ -152,10 +183,18 @@ class CoscupBot(object):
         self.bot_api.broadcast_new_message(mids, message)
 
     def start_scheduler(self):
+        """
+        Start scheduler for datetime message
+        :return:
+        """
         self.logger.info('Start scheduler.')
         self.job_scheduler.start()
 
     def reset_scheduler(self):
+        """
+        Stop exist scheduler. Then create new one.
+        :return:
+        """
         self.logger.info('Reset scheduler.')
         self.job_scheduler.shutdown(wait=False)
         self.logger.debug('Create new scheduler.')
@@ -163,9 +202,19 @@ class CoscupBot(object):
         self.start_scheduler()
 
     def add_scheduler_message(self, trigger_datetime, message):
+        """
+        Add datetime message to scheduler.
+        :param trigger_datetime: When to broadcast message.
+        :param message: Message text to boradcast.
+        :return:
+        """
         self.job_scheduler.add_job(self.broadcast_message, 'date', run_date=trigger_datetime, args=[message])
 
     def sync_backend_data(self):
+        """
+        Get data from google sheet and coscup backend api.
+        :return:
+        """
         self.logger.info('Start to sync backend data.')
         try:
             self.reset_scheduler()
