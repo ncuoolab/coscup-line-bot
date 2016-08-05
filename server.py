@@ -3,7 +3,6 @@
 import logging
 import logging.config
 import os
-import sys
 from functools import wraps
 
 from flask import Flask, request

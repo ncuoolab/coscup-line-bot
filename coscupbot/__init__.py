@@ -4,7 +4,6 @@ import logging
 from concurrent.futures import ThreadPoolExecutor
 
 import redis
-import json
 from apscheduler.schedulers.background import BackgroundScheduler
 from linebot.client import *
 from linebot.receives import Receive
