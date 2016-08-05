@@ -41,8 +41,6 @@ class CoscupBot(object):
             self.try_set_mid(r)
             if isinstance(content, messages.TextMessage):
                 # Handle text message
-                msg = r['content']['text']
-                self.logger.info('New text message.[Text] %s' % msg)
                 self.task_pool.submit(self.handle_text_message, r)
             elif isinstance(content, messages.AudioMessage):
                 # Handle audio message
@@ -55,8 +53,6 @@ class CoscupBot(object):
                 pass
             elif isinstance(content, messages.StickerMessage):
                 # handle Sticker message
-                mid = r['from_mid']
-                self.logger.info('New sticker message.[From] %s' % mid)
                 self.task_pool.submit(self.handle_sticker_message, r)
             elif isinstance(content, messages.VideoMessage):
                 # handle Video message
@@ -79,6 +75,7 @@ class CoscupBot(object):
         try:
             lang = self.check_fromuser_language(receive['from_mid'])
             msg = receive['content']['text']
+            self.logger.info('New text message.[Text] %s' % msg)
             if msg.startswith('/'):
                 self.command_message_controllers[lang].process_receive(receive)
             else:
@@ -88,6 +85,7 @@ class CoscupBot(object):
 
     def handle_sticker_message(self, receive):
         mid = receive['from_mid']
+        self.logger.info('New sticker message.[From] %s' % mid)
         self.edison_queue.put(mid)
         lang = self.check_fromuser_language(mid)
         result = modules.random_get_result(self.dao.get_nlp_response(model.NLPActions.Edison_request, lang))
