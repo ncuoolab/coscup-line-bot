@@ -14,7 +14,7 @@ idna==2.1
 iso8601==0.1.11
 itsdangerous==0.24
 Jinja2==2.8
-linebot==0.3.1
+linebot==0.3.2
 Mako==1.0.4
 MarkupSafe==0.23
 oauth2client==3.0.0
