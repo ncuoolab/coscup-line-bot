@@ -36,6 +36,7 @@ class SheetParser(object):
         self.refresh_time_offset = (3, 1)
         self.update_time_pattern = 'Last updated at \d\d:\d\d on \d\d-\d\d-\d\d\d\d'
         self.update_time_str = 'Last updated at %H:%M on %m-%d-%Y'
+        self.lang_set = (LanguageCode.zh_tw.lower(), LanguageCode.en_us.lower())
 
     def update_refresh_time(self, pos=None):
         self.erase_last_update_time()
@@ -69,22 +70,35 @@ class CommandSheetParser(SheetParser):
         super().__init__(spreadsheet)
         self.sheet_name = 'NEW_COMMAND'
         self.refresh_time_pos = (1, 10)
-        self.lang_set = ('en-us', 'zh-tw')
+        self.command_type = ('standard', 'humour')
 
     def parse_data(self):
+        def get_command_response(tuple):
+            nonsense = []
+            if tuple[3] != '':
+                nonsense.append(tuple[3])
+            if tuple[5] != '':
+                nonsense.append(tuple[5])
+            return CommandResponse(nonsense, tuple[7])
+
         commands = {}
         re = []
         tuple_list = self.retrieve_all_values()
         for tuple in tuple_list[1:]:
             if not self.check_tuple_valid(tuple):
                 continue
+            # Check if humour.
+            if tuple[2].lower()[6:] == self.command_type[1]:
+                tuple[1] = tuple[1].strip() + '@'
+            # Remove command type string.
+            tuple[2] = tuple[2][:5]
             if tuple[1] not in commands:
-                commands[tuple[1]] = {tuple[2]: [tuple[3]]}
+                commands[tuple[1]] = {tuple[2]: [get_command_response(tuple)]}
             else:
                 if tuple[2] in commands[tuple[1]]:
-                    commands[tuple[1]][tuple[2]].append(tuple[3])
+                    commands[tuple[1]][tuple[2]].append(get_command_response(tuple))
                 else:
-                    commands[tuple[1]][tuple[2]] = [tuple[3]]
+                    commands[tuple[1]][tuple[2]] = [get_command_response(tuple)]
 
         for command, v in commands.items():
             for lang, response in v.items():
@@ -92,9 +106,11 @@ class CommandSheetParser(SheetParser):
         return re
 
     def check_tuple_valid(self, tuple):
-        if tuple[1] == '' or tuple[2] == '' or tuple[3] == '':
+        if tuple[1] == '' or tuple[2] == '' or tuple[7] == '':
             return False
-        if tuple[2].lower() not in self.lang_set:
+        if tuple[2].lower()[:5] not in self.lang_set:
+            return False
+        if tuple[2].lower()[6:] not in self.command_type:
             return False
         return True
 
@@ -131,7 +147,6 @@ class NLPActionSheetParser(SheetParser):
         super().__init__(spreadsheet)
         self.refresh_time_pos = (1, 4)
         self.sheet_name = GoogleSheetName.NLPAction
-        self.lang_set = ('en-us', 'zh-tw')
 
     def parse_data(self):
         commands = {}

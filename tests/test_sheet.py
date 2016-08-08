@@ -61,22 +61,28 @@ class TestSheet:
         assert expected == parser.retrieve_all_values()
 
     def test_check_tuple_valid_command(self):
-        tuple1 = ['', 'help', 'zh-TW', 'tuple']
-        tuple2 = ['', 'help', 'en-US', 'tuple']
-        tuple3 = ['', '', 'en-US', 'tuple1']
-        tuple4 = ['', 'help', '', 'tuple1']
-        tuple5 = ['', 'help', 'en-US', '']
-        tuple6 = ['', 'help', 'zh-tw', 'tuple']
-        tuple7 = ['', 'help', 'zh-cn', 'tuple']
+        tuple1 = ['', 'help', 'zh-TW_standard', 'aa', '', 'bb', '', 'tuple']
+        tuple2 = ['', 'help', 'zh-TW_humour', 'aa', '', 'bb', '', 'tuple']
+        tuple3 = ['', 'help', 'en-US_standard', 'aa', '', 'bb', '', 'tuple']
+        tuple4 = ['', 'help', 'en-US_humour', 'aa', '', 'bb', '', 'tuple']
+        tuple5 = ['', 'help', 'en-US_humour', '', '', '', '', 'tuple']
+        tuple6 = ['', 'help', 'en-US_humour', '', '', '', '', '']
+        tuple7 = ['', 'help', 'en-US', '', '', '', '', 'tuple']
+        tuple8 = ['', 'help', 'zh-cn_humour', '', '', '', '', 'tuple']
+        tuple9 = ['', '', 'en-US_humour', 'aa', '', 'bb', '', 'tuple']
+        tuple10 = ['', 'help', '', 'aa', '', 'bb', '', 'tuple']
 
         parser = sheet.CommandSheetParser(self.sheet.spreadsheet)
         assert True == parser.check_tuple_valid(tuple1)
         assert True == parser.check_tuple_valid(tuple2)
-        assert False == parser.check_tuple_valid(tuple3)
-        assert False == parser.check_tuple_valid(tuple4)
-        assert False == parser.check_tuple_valid(tuple5)
-        assert True == parser.check_tuple_valid(tuple6)
+        assert True == parser.check_tuple_valid(tuple3)
+        assert True == parser.check_tuple_valid(tuple4)
+        assert True == parser.check_tuple_valid(tuple5)
+        assert False == parser.check_tuple_valid(tuple6)
         assert False == parser.check_tuple_valid(tuple7)
+        assert False == parser.check_tuple_valid(tuple8)
+        assert False == parser.check_tuple_valid(tuple9)
+        assert False == parser.check_tuple_valid(tuple10)
 
 
     def test_check_tuple_valid_NLPAction(self):
