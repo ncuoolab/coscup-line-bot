@@ -39,11 +39,22 @@ class Command(object):
         Command object.
         :param language: language set. eg. zh_TW
         :param command_str: string to trigger command. eg. help
-        :param response: list of response content. eg. ['hi', 'hello']
+        :param response: list of CommandResponse.
         """
         self.command_str = command_str
         self.language = language
         self.response = response
+
+
+class CommandResponse(object):
+    def __init__(self, nonsense_resps, response_msg):
+        """
+        Command's response set. When command triggered. Bot will send all nonsense_resps message then send response_msg.
+        :param nonsense_resps: no use messages, can be empty. eg. ['假的', '我Python業障重啊']
+        :param response_msg: Response message. eg. "Hello World. Python"
+        """
+        self.response_msg = response_msg
+        self.nonsense_responses = nonsense_resps
 
 
 class NlpAction(object):
