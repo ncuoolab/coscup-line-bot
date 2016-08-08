@@ -45,8 +45,26 @@ class Command(object):
         self.language = language
         self.response = response
 
+    def get_command_response_json_list(self):
+        ret = []
+        for cr in self.response:
+            ret.append(cr.to_json())
+        return ret
+
 
 class CommandResponse(object):
+    @classmethod
+    def de_json(cls, json_string):
+        json_obj = check_json(json_string)
+        response_msg = None
+        nonsense_responses = None
+        if 'response_msg' in json_obj:
+            response_msg = json_obj['response_msg']
+        if 'nonsense_responses' in json_obj:
+            nonsense_responses = json_obj['nonsense_responses']
+
+        return CommandResponse(nonsense_responses, response_msg)
+
     def __init__(self, nonsense_resps, response_msg):
         """
         Command's response set. When command triggered. Bot will send all nonsense_resps message then send response_msg.
@@ -55,6 +73,11 @@ class CommandResponse(object):
         """
         self.response_msg = response_msg
         self.nonsense_responses = nonsense_resps
+
+    def to_json(self):
+        dic = {'response_msg': self.response_msg, 'nonsense_responses': self.nonsense_responses}
+        return json.dumps(dic)
+
 
 
 class NlpAction(object):

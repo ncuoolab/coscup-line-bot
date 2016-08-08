@@ -28,13 +28,3 @@ def gen_test_commands(num, language='zh_TW'):
         commands.append(cmd)
     return commands
 
-
-@pytest.mark.skipif(should_skip, reason="Redis connection url not configured")
-class TestApiHelper:
-    def test_find_program_by_room_time(self):
-        program_json_str = open('test_data/program_test.json', 'r').read()
-        ca = modules.CoscupInfoHelper(REDIS_URL)
-        ca.programs = model.Program.de_json_list(program_json_str)
-        time = datetime.datetime(year=2016, month=8, day=20, hour=10, minute=0, tzinfo=pytz.timezone('Asia/Taipei'))
-        result = ca.find_program_by_room_time('R0', time)
-        assert result.slot == 'K0'

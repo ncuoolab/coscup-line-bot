@@ -4,7 +4,7 @@ import sys
 
 sys.path.append('../')
 
-from coscupbot import db, model
+from coscupbot import db, model, utils, modules
 import os
 import pytest
 import redis
@@ -22,7 +22,7 @@ def get_dao():
 def gen_test_commands(num, language='zh_TW'):
     commands = []
     for i in range(0, num):
-        response = ['resp%s-1' % i, 'resp%s-2' % i]
+        response = [model.CommandResponse(['Yooo'],'resp%s-1' % i),model.CommandResponse(['Yooo'], 'resp%s-2' % i)]
         cmd = model.Command(language, 'CMD%s' % i, response)
         commands.append(cmd)
     return commands
@@ -30,7 +30,6 @@ def gen_test_commands(num, language='zh_TW'):
 
 @pytest.mark.skipif(should_skip, reason="Redis connection url not configured")
 class TestDb:
-
     def teardown_method(self, test_method):
         r = redis.from_url(REDIS_URL)
         r.flushall()
@@ -58,11 +57,14 @@ class TestDb:
         assert 0 == len(r.keys('COMMAND::*'))
 
     def test_get_command_response(self):
-        cmd1 = model.Command('zh_TW', 'help', ['help', 'hi'])
-        cmd2 = model.Command('zh_TW', 'hello', ['hello', 'world'])
+        cmd1 = model.Command('zh_TW', 'help', [model.CommandResponse(['No', 'No2'], 'hi'),
+                                               model.CommandResponse(['No3', 'No4'], 'Hello')])
+        cmd2 = model.Command('zh_TW', 'hello', [model.CommandResponse(['Yes', 'Yes2'], 'Hello'),
+                                                model.CommandResponse(['Yes3', 'Yes4'], 'Wrold')])
         get_dao().add_commands([cmd1, cmd2])
-        result = get_dao().get_command_responses('help', 'zh_TW')
-        assert 'help' and 'hi' not in result
+        result = modules.random_get_result(get_dao().get_command_responses('help', 'zh_TW'))
+        cr = model.CommandResponse.de_json(result)
+        assert 'hi' == cr.response_msg or 'Hello' == cr.response_msg
 
     def test_get_command_response_no_data(self):
         try:

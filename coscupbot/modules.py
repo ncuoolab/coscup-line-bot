@@ -2,6 +2,8 @@
 import datetime
 import logging
 import random
+from random import randint
+from time import sleep
 from urllib.request import urlopen
 
 from mako.template import Template
@@ -29,7 +31,11 @@ class CommandController(object):
         command = receive['content']['text']
         try:
             resp = random_get_result(self.dao.get_command_responses(command, self.lang))
-            self.bot_api.send_text(to_mid=receive['from_mid'], text=resp)
+            command_resp = model.CommandResponse.de_json(resp)
+            for ns in command_resp.nonsense_responses:
+                self.bot_api.send_text(to_mid=receive['from_mid'], text=ns)
+                sleep(randint(1, 3))
+            self.bot_api.send_text(to_mid=receive['from_mid'], text=command_resp.response_msg)
         except Exception as ex:
             logging.error(ex)
 

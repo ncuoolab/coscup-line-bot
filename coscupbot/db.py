@@ -31,7 +31,7 @@ class Dao(object):
         r = self.__get_conn()
         for cmd in commands:
             key = self.COMMAND_PATTERN % (cmd.language, cmd.command_str)
-            r.rpush(key, *cmd.response)
+            r.rpush(key, *cmd.get_command_response_json_list())
 
     def clear_all_command(self):
         """
