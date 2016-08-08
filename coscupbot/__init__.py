@@ -84,10 +84,11 @@ class CoscupBot(object):
         """
         try:
             lang = self.check_fromuser_language(receive['from_mid'])
+            humour = self.check_fromuser_humour(receive['from_mid'])
             msg = receive['content']['text']
             self.logger.info('New text message.[Text] %s' % msg)
             if msg.startswith('/'):
-                self.command_message_controllers[lang].process_receive(receive)
+                self.command_message_controllers[lang].process_receive(receive, humour)
             else:
                 self.nlp_message_controllers[lang].process_receive(receive)
         except Exception as ex:
@@ -113,6 +114,9 @@ class CoscupBot(object):
         :return: language code.
         """
         return LanguageCode.zh_tw
+
+    def check_fromuser_humour(self, mid):
+        return True
 
     def gen_nlp_message_controllers(self, wittokens):
         ret = {}

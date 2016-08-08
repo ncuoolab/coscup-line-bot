@@ -26,11 +26,11 @@ class CommandController(object):
         self.dao = db.Dao(db_url)
         self.lang = lang
 
-    def process_receive(self, receive):
+    def process_receive(self, receive, humour=False):
         # echo Example. Will be remove.
         command = receive['content']['text']
         try:
-            resp = random_get_result(self.dao.get_command_responses(command, self.lang))
+            resp = random_get_result(self.dao.get_command_responses(command, self.lang, humour))
             command_resp = model.CommandResponse.de_json(resp)
             for ns in command_resp.nonsense_responses:
                 self.bot_api.send_text(to_mid=receive['from_mid'], text=ns)

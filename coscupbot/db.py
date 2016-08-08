@@ -66,7 +66,7 @@ class Dao(object):
         self.add_nlp_action(actions)
         self.nlp_lock.release()
 
-    def get_command_responses(self, cmd_str, lang='zh-TW'):
+    def get_command_responses(self, cmd_str, lang='zh-TW', humour = False):
         """
         Get response array from database by command string.
         :param cmd_str: command. eg. 'help'
@@ -77,6 +77,8 @@ class Dao(object):
             pass
 
         key = self.COMMAND_PATTERN % (lang, cmd_str)
+        if humour:
+            key += '@'
         result = self.__get_conn().lrange(key, 0, -1)
         if result is None:
             raise CommandError('Command %s response is None.' % key)
