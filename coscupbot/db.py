@@ -17,10 +17,22 @@ class Dao(object):
         self.nlp_lock = Lock()
         self.COMMAND_PATTERN = 'COMMAND::%s::%s'
         self.NLP_PATTERN = 'NLP::%s::%s'
+        self.LANG_PATTERN = 'LANG::%s'
 
     def test_connection(self):
         r = self.__get_conn()
         r.ping()
+
+    def set_mid_lang(self, mid, lang):
+        r = self.__get_conn()
+        key = self.LANG_PATTERN % mid
+        r.set(key, lang)
+
+    def get_mid_lang(self, mid):
+        result = self.__get_conn().get(self.LANG_PATTERN % mid)
+        if result:
+            return utils.to_utf8_str(result)
+        return None
 
     def add_commands(self, commands):
         """
@@ -66,7 +78,7 @@ class Dao(object):
         self.add_nlp_action(actions)
         self.nlp_lock.release()
 
-    def get_command_responses(self, cmd_str, lang='zh-TW', humour = False):
+    def get_command_responses(self, cmd_str, lang='zh-TW', humour=False):
         """
         Get response array from database by command string.
         :param cmd_str: command. eg. 'help'

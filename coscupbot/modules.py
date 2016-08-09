@@ -21,8 +21,9 @@ def random_get_result(responses):
 
 
 class CommandController(object):
-    def __init__(self, bot_api, db_url, lang):
-        self.bot_api = bot_api
+    def __init__(self, bot, db_url, lang):
+        self.bot = bot
+        self.bot_api = bot.bot_api
         self.dao = db.Dao(db_url)
         self.lang = lang
 
@@ -38,6 +39,14 @@ class CommandController(object):
             self.bot_api.send_text(to_mid=receive['from_mid'], text=command_resp.response_msg)
         except Exception as ex:
             logging.error(ex)
+
+    def has_command(self, receive, humour=False):
+        command = receive['content']['text']
+        try:
+            self.dao.get_command_responses(command, self.lang, humour)
+        except:
+            return False
+        return True
 
 
 class WitMessageController(object):
@@ -149,7 +158,6 @@ class WitMessageController(object):
         return ctx
 
     def show_transport_types(self, request):
-
         ctx = request['context']
         resp = self.bot.coscup_api_helper.show_transport_types(self.lang)
         return self.__set_response_message(ctx, resp)
@@ -247,9 +255,9 @@ class CoscupInfoHelper(object):
     def show_sponsors(self, lang):
         return self.__gen_template_result(NLPActions.Show_sponsors, lang, sponsors=self.sponsors)
 
-    def show_sponsor_intro(self, sponsor_name,lang):
+    def show_sponsor_intro(self, sponsor_name, lang):
         for sp in self.sponsors:
-            if sponsor_name == sp.name_en or sponsor_name==sp.name_zh:
+            if sponsor_name == sp.name_en or sponsor_name == sp.name_zh:
                 return self.__gen_template_result(NLPActions.Sponsor_intro, lang, sponsor=sp)
         raise Exception('Search Sponsor error. %s not found.' % sponsor_name)
 

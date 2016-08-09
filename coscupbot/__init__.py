@@ -31,6 +31,7 @@ class CoscupBot(object):
         self.job_scheduler = BackgroundScheduler()
         self.coscup_api_helper = modules.CoscupInfoHelper(db_url)
         self.start_scheduler()
+        self.next_step_dic = {}
 
     def process_new_event(self, data):
         """
@@ -83,16 +84,19 @@ class CoscupBot(object):
         :return:
         """
         try:
-            lang = self.check_fromuser_language(receive['from_mid'])
-            humour = self.check_fromuser_humour(receive['from_mid'])
+            mid = receive['from_mid']
+            lang = self.check_fromuser_language(mid)
+            humour = self.check_fromuser_humour(mid)
             msg = receive['content']['text']
             self.logger.info('New text message.[Text] %s' % msg)
-            if msg.startswith('/'):
+            if mid in self.next_step_dic:
+                self.next_step_dic[mid](receive)
+            elif self.command_message_controllers[lang].has_command(receive, humour):
                 self.command_message_controllers[lang].process_receive(receive, humour)
             else:
                 self.nlp_message_controllers[lang].process_receive(receive)
         except Exception as ex:
-            self.logger.error(ex)
+            self.logger.exception(ex)
 
     def handle_sticker_message(self, receive):
         """
@@ -113,7 +117,11 @@ class CoscupBot(object):
         :param mid:
         :return: language code.
         """
-        return LanguageCode.zh_tw
+        lang = self.dao.get_mid_lang(mid)
+        if not lang:
+            self.logger.warn('Mid %s can not found language data. Use default language zh-TW')
+            return LanguageCode.zh_tw
+        return lang
 
     def check_fromuser_humour(self, mid):
         return True
@@ -128,7 +136,7 @@ class CoscupBot(object):
     def gen_command_message_controllers(self, langs):
         ret = {}
         for lang in langs:
-            ret[lang] = modules.CommandController(self.bot_api, self.db_url, lang)
+            ret[lang] = modules.CommandController(self, self.db_url, lang)
         return ret
 
     def get_edison_request(self):

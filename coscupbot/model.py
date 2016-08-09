@@ -105,6 +105,8 @@ class NLPActions(object):
     Edison_request = 'EDISONREQUEST'
     Show_sponsors = 'SHOWSPONSORS'
     Sponsor_intro = 'SPONSORINTRO'
+    Show_langs = 'SHOWCHOICELANG'
+    Set_language_response = 'SETLANGRESP'
 
 
 class GoogleSheetName(object):
