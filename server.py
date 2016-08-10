@@ -7,6 +7,7 @@ from functools import wraps
 
 from flask import Flask, request
 from flask import Response, jsonify
+from flask import render_template
 
 import coscupbot
 
@@ -159,6 +160,13 @@ def sync_backend():
         return 'OK'
     return 'FAIL'
 
+@app.route('/sp/')
+def sp_index():
+    return jsonify(result=True, message="Welcome, traveller.")
+
+@app.route('/sp/<sp_id>')
+def sp_with_id(sp_id):
+    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run()

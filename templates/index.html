@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Loading JavaScript SDK file -->
+<script src="https://scdn.line-apps.com/channel/sdk/js/loader_20150909.js"></script>
+<script type="text/javascript">
+window.addEventListener("load", function(evt) {
+  document.addEventListener("deviceready", function(evt) {
+    // Can use JavaScript SDK APIs from here!
+    document.getElementById("ready").innerHTML = "Hello, Channel Web Application with JavaScript SDK!";
+  }, false);
+});
+</script>
+</head>
+<body>
+<div>教練，我只是想寫JavaScript啊...</div>
+  <p id="ready"></p>
+</body>
+</html>
