@@ -19,10 +19,26 @@ class Dao(object):
         self.NLP_PATTERN = 'NLP::%s::%s'
         self.LANG_PATTERN = 'LANG::%s'
         self.HUMOUR_PATTERN = 'HUMOUR::%s'
+        self.NEXT_STEP_PATTERN = 'NEXT::%s'
 
     def test_connection(self):
         r = self.__get_conn()
         r.ping()
+
+    def set_next_command(self, mid, lang, method_name):
+        r = self.__get_conn()
+        key = self.NEXT_STEP_PATTERN % mid
+        value = lang + ":" + method_name
+        r.set(key, value)
+
+    def get_next_command(self, mid):
+        result = self.__get_conn().get(self.NEXT_STEP_PATTERN % mid)
+        if result:
+            return utils.to_utf8_str(result)
+        return None
+
+    def del_next_command(self, mid):
+        self.__get_conn().delete(self.NEXT_STEP_PATTERN % mid)
 
     def set_mid_lang(self, mid, lang):
         r = self.__get_conn()

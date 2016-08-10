@@ -89,7 +89,7 @@ class CoscupBot(object):
             humour = self.check_fromuser_humour(mid)
             msg = receive['content']['text']
             self.logger.info('New text message.[Text] %s' % msg)
-            if mid in self.next_step_dic:
+            if self.has_next_command(mid):
                 self.process_next_step(receive, humour)
             elif msg.startswith('/'):
                 self.command_message_controllers[lang].process_receive(receive, humour)
@@ -97,6 +97,9 @@ class CoscupBot(object):
                 self.nlp_message_controllers[lang].process_receive(receive)
         except Exception as ex:
             self.logger.exception(ex)
+
+    def has_next_command(self, mid):
+        return self.dao.get_next_command(mid) is not None
 
     def handle_sticker_message(self, receive):
         """
@@ -125,12 +128,16 @@ class CoscupBot(object):
 
     def process_next_step(self, receive, humour):
         mid = receive['from_mid']
-        func = self.next_step_dic[mid]
-        self.next_step_dic.pop(mid)
-        func(receive, humour)
+        res = self.dao.get_next_command(mid).split(':')
+        self.logger.info('Get next command for %s. %s' % (mid, res))
+        lang= res[0]
+        function_name = res[1]
+        methodToCall = getattr(self.command_message_controllers[lang], function_name)
+        self.dao.del_next_command(mid)
+        methodToCall(receive, humour)
 
-    def setup_next_step(self, mid, func):
-        self.next_step_dic[mid] = func
+    def setup_next_step(self, mid, lang, func):
+        self.dao.set_next_command(mid, lang, func.__name__)
 
     def check_fromuser_humour(self, mid):
         hu = self.dao.get_mid_humour(mid)
@@ -138,7 +145,6 @@ class CoscupBot(object):
             self.logger.warn('Mid %s can not found humour data. Use default humour True', mid)
             return True
         return hu
-
 
     def gen_nlp_message_controllers(self, wittokens):
         ret = {}

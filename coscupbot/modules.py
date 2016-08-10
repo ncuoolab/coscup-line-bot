@@ -62,7 +62,6 @@ class CommandController(object):
             'Y': True,
             '不': False,
             '不用': False,
-            '不用': False,
             'No': False,
             'NO': False,
             'no': False,
@@ -100,7 +99,7 @@ class CommandController(object):
     def boot_action(self, receive, humour=False):
         mid = receive['from_mid']
         logging.info('Trigger boot action from %s' % mid)
-        self.bot.setup_next_step(mid, self.set_language)
+        self.bot.setup_next_step(mid, self.lang, self.set_language)
         self.send_command_message('/login', humour, receive)
 
     def set_language(self, receive, humour=False):
@@ -109,10 +108,10 @@ class CommandController(object):
         msg = receive['content']['text']
         if msg not in self.language_pack:
             self.send_command_message('/langerror', humour, receive)
-            self.bot.setup_next_step(mid, self.set_language)
+            self.bot.setup_next_step(mid, self.lang, self.set_language)
         else:
             self.dao.set_mid_lang(mid, self.language_pack[msg])
-            self.bot.setup_next_step(mid, self.set_humour)
+            self.bot.setup_next_step(mid, self.lang, self.set_humour)
             self.send_command_message('/sethumour', humour, receive)
 
     def set_humour(self, receive, humour=False):
@@ -121,7 +120,7 @@ class CommandController(object):
         msg = receive['content']['text']
         if msg not in self.bool_pack:
             self.send_command_message('/humourerror', humour, receive)
-            self.bot.setup_next_step(mid, self.set_humour)
+            self.bot.setup_next_step(mid, self.lang, self.set_humour)
         else:
             self.dao.set_mid_humour(mid, self.bool_pack[msg])
             self.send_command_message('/sethumourdone', humour, receive)
