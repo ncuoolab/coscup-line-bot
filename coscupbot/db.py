@@ -18,6 +18,7 @@ class Dao(object):
         self.COMMAND_PATTERN = 'COMMAND::%s::%s'
         self.NLP_PATTERN = 'NLP::%s::%s'
         self.LANG_PATTERN = 'LANG::%s'
+        self.HUMOUR_PATTERN = 'HUMOUR::%s'
 
     def test_connection(self):
         r = self.__get_conn()
@@ -32,6 +33,21 @@ class Dao(object):
         result = self.__get_conn().get(self.LANG_PATTERN % mid)
         if result:
             return utils.to_utf8_str(result)
+        return None
+
+    def set_mid_humour(self, mid, is_humour):
+        r = self.__get_conn()
+        key = self.HUMOUR_PATTERN % mid
+        if is_humour:
+            r.set(key, 'y')
+        else:
+            r.set(key, 'n')
+
+    def get_mid_humour(self, mid):
+        result = self.__get_conn().get(self.HUMOUR_PATTERN % mid)
+        if result:
+            rs = utils.to_utf8_str(result)
+            return rs == 'y'
         return None
 
     def add_commands(self, commands):

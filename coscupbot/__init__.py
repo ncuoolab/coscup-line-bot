@@ -90,8 +90,8 @@ class CoscupBot(object):
             msg = receive['content']['text']
             self.logger.info('New text message.[Text] %s' % msg)
             if mid in self.next_step_dic:
-                self.next_step_dic[mid](receive)
-            elif self.command_message_controllers[lang].has_command(receive, humour):
+                self.process_next_step(receive, humour)
+            elif msg.startswith('/'):
                 self.command_message_controllers[lang].process_receive(receive, humour)
             else:
                 self.nlp_message_controllers[lang].process_receive(receive)
@@ -119,12 +119,26 @@ class CoscupBot(object):
         """
         lang = self.dao.get_mid_lang(mid)
         if not lang:
-            self.logger.warn('Mid %s can not found language data. Use default language zh-TW')
+            self.logger.warn('Mid %s can not found language data. Use default language zh-TW', mid)
             return LanguageCode.zh_tw
         return lang
 
+    def process_next_step(self, receive, humour):
+        mid = receive['from_mid']
+        func = self.next_step_dic[mid]
+        self.next_step_dic.pop(mid)
+        func(receive, humour)
+
+    def setup_next_step(self, mid, func):
+        self.next_step_dic[mid] = func
+
     def check_fromuser_humour(self, mid):
-        return True
+        hu = self.dao.get_mid_humour(mid)
+        if hu is None:
+            self.logger.warn('Mid %s can not found humour data. Use default humour True', mid)
+            return True
+        return hu
+
 
     def gen_nlp_message_controllers(self, wittokens):
         ret = {}

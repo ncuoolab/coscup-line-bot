@@ -26,27 +26,105 @@ class CommandController(object):
         self.bot_api = bot.bot_api
         self.dao = db.Dao(db_url)
         self.lang = lang
+        self.action_commands = {
+            '/login': self.boot_action,
+            '/start': self.boot_action,
+            '/boot': self.boot_action,
+        }
+
+        self.language_pack = {
+            '中文': model.LanguageCode.zh_tw,
+            'zh-TW': model.LanguageCode.zh_tw,
+            'zh-tw': model.LanguageCode.zh_tw,
+            'zh': model.LanguageCode.zh_tw,
+            'TW': model.LanguageCode.zh_tw,
+            'tw': model.LanguageCode.zh_tw,
+            'Chinese': model.LanguageCode.zh_tw,
+            'chinese': model.LanguageCode.zh_tw,
+
+            '英文': model.LanguageCode.en_us,
+            'English': model.LanguageCode.en_us,
+            'english': model.LanguageCode.en_us,
+            'en': model.LanguageCode.en_us,
+            'en-US': model.LanguageCode.en_us,
+            'en-us': model.LanguageCode.en_us,
+            'EN': model.LanguageCode.en_us,
+        }
+
+        self.bool_pack = {
+            '好': True,
+            '好啊': True,
+            '可以': True,
+            '可': True,
+            'Yes': True,
+            'YES': True,
+            'yes': True,
+            'Y': True,
+            '不': False,
+            '不用': False,
+            '不用': False,
+            'No': False,
+            'NO': False,
+            'no': False,
+            'N': False,
+        }
 
     def process_receive(self, receive, humour=False):
         # echo Example. Will be remove.
         command = receive['content']['text']
         try:
-            resp = random_get_result(self.dao.get_command_responses(command, self.lang, humour))
-            command_resp = model.CommandResponse.de_json(resp)
-            for ns in command_resp.nonsense_responses:
-                self.bot_api.send_text(to_mid=receive['from_mid'], text=ns)
-                sleep(randint(1, 3))
-            self.bot_api.send_text(to_mid=receive['from_mid'], text=command_resp.response_msg)
+            if command in self.action_commands:
+                self.action_commands[command](receive, humour)
+                return
+            self.send_command_message(command, humour, receive)
         except Exception as ex:
+            self.send_command_message('/commanderror', humour, receive)
             logging.error(ex)
+
+    def send_command_message(self, command, humour, receive):
+        resp = random_get_result(self.dao.get_command_responses(command, self.lang, humour))
+        command_resp = model.CommandResponse.de_json(resp)
+        for ns in command_resp.nonsense_responses:
+            self.bot_api.send_text(to_mid=receive['from_mid'], text=ns)
+            sleep(randint(1, 3))
+        self.bot_api.send_text(to_mid=receive['from_mid'], text=command_resp.response_msg)
 
     def has_command(self, receive, humour=False):
         command = receive['content']['text']
         try:
             self.dao.get_command_responses(command, self.lang, humour)
-        except:
+        except Exception as ex:
             return False
         return True
+
+    def boot_action(self, receive, humour=False):
+        mid = receive['from_mid']
+        logging.info('Trigger boot action from %s' % mid)
+        self.bot.setup_next_step(mid, self.set_language)
+        self.send_command_message('/login', humour, receive)
+
+    def set_language(self, receive, humour=False):
+        mid = receive['from_mid']
+        logging.info('Trigger set language action from %s' % mid)
+        msg = receive['content']['text']
+        if msg not in self.language_pack:
+            self.send_command_message('/langerror', humour, receive)
+            self.bot.setup_next_step(mid, self.set_language)
+        else:
+            self.dao.set_mid_lang(mid, self.language_pack[msg])
+            self.bot.setup_next_step(mid, self.set_humour)
+            self.send_command_message('/sethumour', humour, receive)
+
+    def set_humour(self, receive, humour=False):
+        mid = receive['from_mid']
+        logging.info('Trigger set humour action from %s' % mid)
+        msg = receive['content']['text']
+        if msg not in self.bool_pack:
+            self.send_command_message('/humourerror', humour, receive)
+            self.bot.setup_next_step(mid, self.set_humour)
+        else:
+            self.dao.set_mid_humour(mid, self.bool_pack[msg])
+            self.send_command_message('/sethumourdone', humour, receive)
 
 
 class WitMessageController(object):
