@@ -7,6 +7,7 @@ import redis
 from apscheduler.schedulers.background import BackgroundScheduler
 from linebot.client import *
 from linebot.receives import Receive
+from linebot import operations
 
 from coscupbot import api, db, modules, utils
 from coscupbot.model import LanguageCode
@@ -63,8 +64,23 @@ class CoscupBot(object):
             elif isinstance(content, messages.VideoMessage):
                 # handle Video message
                 pass
+            elif isinstance(content, operations.AddedAsFriend):
+                # handle add friend
+                self.task_pool.submit(self.handle_add_friend, r)
             else:
                 logging.error('Not support content %s. %s' % (content, r))
+
+    def handle_add_friend(self, receive):
+        mid = receive['from_mid']
+        self.logger.info('User %s add friend.' % mid)
+        self.init_user_data(mid)
+        lang = self.check_fromuser_language(mid)
+        humour = self.check_fromuser_humour(mid)
+        self.command_message_controllers[lang].send_command_message('/addfriend', humour, receive)
+
+    def init_user_data(self, mid):
+        self.logger.info('Init User data for  %s.' % mid)
+        pass
 
     def try_set_mid(self, receive):
         """
