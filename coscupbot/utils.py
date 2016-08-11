@@ -4,20 +4,62 @@ import iso8601
 import redis
 
 SponsorKeyDic = {
-    "vedkoprjdi": "HopeBay",
-    "dkmjijoji": "Gandi",
-    "dekdfkp3e": "Yahoo",
-    "djnfjdjfie": "QNAP",
-    "vhjnjeda3er": "PUMO",
-    "dfdjfirnjnjh": "Automattic",
-    "dfjnj3ei31": "Appier",
-    "vnjbhkauj": "Top Career",
-    "emijvbnruh": "EITC",
-    "dfjrbenkuh": "KKBOX",
-    "dcfdjhuiyq": "HDE",
-    "dvuhjenqjb": "MySQL",
-    "qasddaojkrf": "LINE",
-    "dfmk1njfu": "COSCUP"
+    "vedkoprjdi": {
+        'name': '和沛移動',
+        'url': 'https://www.hopebaytech.com/'
+    },
+    "dkmjijoji": {
+        'name': 'Gandi',
+        'url': 'https://www.gandi.net/'
+    },
+    "dekdfkp3e": {
+        'name': "Yahoo",
+        'url': 'https://tw.yahoo.com/'
+    },
+    "djnfjdjfie": {
+        'name': "QNAP",
+        'url': 'https://www.qnap.com/zh-tw/'
+    },
+    "vhjnjeda3er": {
+        'name': "捕夢網",
+        'url': "http://www.pumo.com.tw/www/"
+    },
+    "dfdjfirnjnjh": {
+        'name': "Automattic",
+        'url': "https://automattic.com/"
+    },
+    "dfjnj3ei31": {
+        'name': "Appier",
+        'url': "http://www.appier.com/en/index.html"
+    },
+    "vnjbhkauj": {
+        'name': "Top Career",
+        'url': "http://www.topcareer.jp/inter/"
+    },
+    "emijvbnruh": {
+        'name': "EITC",
+        'url': "http://www.eitc.com.tw/"
+    },
+    "dfjrbenkuh": {
+        'name': "KKBOX",
+        'url': "https://www.kkbox.com/about/zh-tw"
+    },
+    "dcfdjhuiyq": {
+        'name': "HDE",
+        'url': "https://www.hde.co.jp/zh-hant/"
+    },
+    "dvuhjenqjb": {
+        'name': "MySQL",
+        'url': "https://www.mysql.com/"
+    },
+    "qasddaojkrf": {
+        'name': "LINE",
+        'url': "http://linecorp.com/zh-hant/"
+    },
+    "dfmk1njfu": {
+        'name': "COSCUP",
+        'url': "https://coscup.org"
+    }
 }
 
 class RedisQueue(object):
