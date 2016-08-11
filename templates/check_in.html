@@ -45,12 +45,12 @@ body {
 {% block body %}
 <div class="demo-card-wide mdl-card mdl-shadow--2dp">
   <div class="mdl-card__title" id="mdl-card__title">
-  	<img src="/sp/img/{{sp_id}}.jpg" width="200px"><br/>
+  	<img src="/sp/img/{{check_in_data['point']}}.jpg" width="200px"><br/>
     <h2 class="mdl-card__title-text">
     </h2>
   </div>
   <div class="mdl-card__supporting-text">
-  {% if check_in_data['first_checl'] %}
+  {% if check_in_data['first_check'] %}
   	已完成{{ check_in_data['point'] }}簽到!
   {% else %}
     您已在{{ check_in_data['point'] }}簽到過了
