@@ -51,13 +51,14 @@ body {
   </div>
   <div class="mdl-card__supporting-text">
   {% if check_in_data['first_check'] %}
-  	已完成{{ check_in_data['point'] }}簽到!
+  	已完成簽到!
   {% else %}
-    您已在{{ check_in_data['point'] }}簽到過了
+    您已在此簽到過了
   {% endif %}
+  <br/>
+  您還有{{left}}個檢查點要收集，加油！
   </div>
 </div>
-<div>{{ check_in_data }}</div>
 {% endblock %}
 </body>
 </html>
