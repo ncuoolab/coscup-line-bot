@@ -146,7 +146,7 @@ class CoscupBot(object):
         mid = receive['from_mid']
         res = self.dao.get_next_command(mid).split(':')
         self.logger.info('Get next command for %s. %s' % (mid, res))
-        lang= res[0]
+        lang = res[0]
         function_name = res[1]
         methodToCall = getattr(self.command_message_controllers[lang], function_name)
         self.dao.del_next_command(mid)
@@ -274,3 +274,9 @@ class CoscupBot(object):
             self.logger.exception(ex)
             return False
         return True
+
+    def ground_game_check_in(self, sp_id, mid):
+        pass
+
+    def get_ground_game_status(self, mid):
+        pass
