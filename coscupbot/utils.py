@@ -3,6 +3,22 @@
 import iso8601
 import redis
 
+SponsorKeyDic = {
+    "vedkoprjdi": "HopeBay",
+    "dkmjijoji": "Gandi",
+    "dekdfkp3e": "Yahoo",
+    "djnfjdjfie": "QNAP",
+    "vhjnjeda3er": "PUMO",
+    "dfdjfirnjnjh": "Automattic",
+    "dfjnj3ei31": "Appier",
+    "vnjbhkauj": "Top Career",
+    "emijvbnruh": "EITC",
+    "dfjrbenkuh": "KKBOX",
+    "dcfdjhuiyq": "HDE",
+    "dvuhjenqjb": "MySQL",
+    "qasddaojkrf": "LINE",
+    "dfmk1njfu": "COSCUP"
+}
 
 class RedisQueue(object):
     def __init__(self, name, namespace='queue', **redis_kwargs):
