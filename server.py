@@ -187,8 +187,7 @@ def sp_with_id(sp_id):
 @app.route('/sp/<sp_id>/<mid>')
 def sp_check_in(sp_id, mid):
     ret = bot.ground_game_check_in(sp_id, mid)
-    return jsonify(ret)
-    # return render_template('check_in.html', check_in_data=ret)
+    return render_template('check_in.html', check_in_data=ret)
 
 if __name__ == '__main__':
     app.run()
