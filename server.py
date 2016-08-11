@@ -175,6 +175,10 @@ def manual_check_in(sp_id, mid):
 @app.route('/sp/')
 def sp_index():
     return jsonify(statue=True, message="Welcome, traveller! >_O")
+    
+@app.route('/sp/img/<path:path>')
+def send_img(path):
+    return send_from_directory('img', path)
 
 @app.route('/sp/<sp_id>')
 def sp_with_id(sp_id):
