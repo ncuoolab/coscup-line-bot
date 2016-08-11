@@ -6,8 +6,8 @@ import os
 from functools import wraps
 
 from flask import Flask, request
-from flask import render_template
 from flask import Response, jsonify
+from flask import render_template, send_from_directory
 
 import coscupbot
 
@@ -175,7 +175,7 @@ def manual_check_in(sp_id, mid):
 @app.route('/sp/')
 def sp_index():
     return jsonify(statue=True, message="Welcome, traveller! >_O")
-    
+
 @app.route('/sp/img/<path:path>')
 def send_img(path):
     return send_from_directory('img', path)
