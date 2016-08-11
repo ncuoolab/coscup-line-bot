@@ -285,6 +285,7 @@ class CoscupBot(object):
             if ground_data[sp_id]:
                 ret['first_check'] = False
             else:
+                self.logger.debug('User %s first check in to %s' % (mid, sp_id))
                 self.dao.checkin_ground(sp_id, mid)
             ret['status'] = self.dao.get_ground_data(mid)
         except Exception as ex:

@@ -126,7 +126,7 @@ def line_call_back():
 @app.route('/edison')
 @requires_auth
 def edison():
-    ret_json ={}
+    ret_json = {}
     ret = bot.get_edison_request()
     if ret:
         ret_json['mid'] = ret
@@ -158,6 +158,18 @@ def sync_backend():
     if bot.sync_backend_data():
         return 'OK'
     return 'FAIL'
+
+
+@app.route('/groundstatus/<mid>')
+@requires_auth
+def get_gorund_status(mid):
+    return jsonify(bot.get_ground_game_status(mid))
+
+
+@app.route('/groundcheckin/<sp_id>/<mid>')
+@requires_auth
+def manual_check_in(sp_id, mid):
+    return jsonify(bot.ground_game_check_in(sp_id, mid))
 
 
 if __name__ == '__main__':
