@@ -22,7 +22,7 @@ def get_dao():
 def gen_test_commands(num, language='zh_TW'):
     commands = []
     for i in range(0, num):
-        response = [model.CommandResponse(['Yooo'],'resp%s-1' % i),model.CommandResponse(['Yooo'], 'resp%s-2' % i)]
+        response = [model.CommandResponse(['Yooo'], 'resp%s-1' % i), model.CommandResponse(['Yooo'], 'resp%s-2' % i)]
         cmd = model.Command(language, 'CMD%s' % i, response)
         commands.append(cmd)
     return commands
@@ -100,3 +100,17 @@ class TestDb:
 
     def test_delete_no_command(self):
         get_dao().clear_all_command()
+
+    def test_init_ground_data(self):
+        get_dao().init_ground_data('test')
+        data = get_dao().get_ground_data('test')
+        for k, v in data.items():
+            assert v == False
+
+    def test_check_in_ground(self):
+        get_dao().init_ground_data('test')
+        get_dao().checkin_ground('vedkoprjdi', 'test')
+        data = get_dao().get_ground_data('test')
+        print(data)
+        assert data['vedkoprjdi'] == True
+        assert data['dkmjijoji'] == False

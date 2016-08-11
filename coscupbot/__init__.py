@@ -80,7 +80,7 @@ class CoscupBot(object):
 
     def init_user_data(self, mid):
         self.logger.info('Init User data for  %s.' % mid)
-        pass
+        self.dao.init_ground_data(mid)
 
     def try_set_mid(self, receive):
         """
@@ -276,7 +276,22 @@ class CoscupBot(object):
         return True
 
     def ground_game_check_in(self, sp_id, mid):
-        pass
+        self.logger.info('User %s check in to %s' % (mid, sp_id))
+        ret = {'mid': mid, 'point': sp_id, 'first_check': True}
+        try:
+            ground_data = self.dao.get_ground_data(mid)
+            if sp_id not in ground_data:
+                return {'error': 'sp_id %s not found' % sp_id}
+            if ground_data[sp_id]:
+                ret['first_check'] = False
+            else:
+                self.dao.checkin_ground(sp_id, mid)
+            ret['status'] = self.dao.get_ground_data(mid)
+        except Exception as ex:
+            return {'error': str(ex)}
+        return ret
 
     def get_ground_game_status(self, mid):
-        pass
+        self.logger.info('Get ground game status for %s' % mid)
+        ret = {'mid': mid, 'status': self.dao.get_ground_data(mid)}
+        return ret

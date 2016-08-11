@@ -20,10 +20,40 @@ class Dao(object):
         self.LANG_PATTERN = 'LANG::%s'
         self.HUMOUR_PATTERN = 'HUMOUR::%s'
         self.NEXT_STEP_PATTERN = 'NEXT::%s'
+        self.GROUND_PATTERN = 'GROUND::%s'
 
     def test_connection(self):
         r = self.__get_conn()
         r.ping()
+
+    def init_ground_data(self, mid):
+        self.del_ground_data(mid)
+        init_data = self.__init_ground_default_data()
+        r = self.__get_conn()
+        r.hmset(self.GROUND_PATTERN % mid, init_data)
+
+    def checkin_ground(self, sp_id, mid):
+        self.__get_conn().hset(self.GROUND_PATTERN % mid, sp_id, True)
+
+    def get_ground_data(self, mid):
+        ret = {}
+        data = self.__get_conn().hgetall(self.GROUND_PATTERN % mid)
+        for k, v in data.items():
+            key = utils.to_utf8_str(k)
+            if v == b'False':
+                ret[key] = False
+            elif v == b'True':
+                ret[key] = True
+            else:
+                raise Exception('Can not convert key value %s  %s' % (k, v))
+        return ret
+
+    def del_ground_data(self, mid):
+        key = self.GROUND_PATTERN % mid
+        try:
+            self.__get_conn().delete(key)
+        except:
+            pass
 
     def set_next_command(self, mid, lang, method_name):
         r = self.__get_conn()
@@ -181,6 +211,12 @@ class Dao(object):
 
     def __get_conn(self):
         return redis.Redis(connection_pool=self.conn_pool)
+
+    def __init_ground_default_data(self):
+        ret = {}
+        for key in utils.SponsorKeyDic:
+            ret[key] = False
+        return ret
 
 
 class CommandError(Exception):
