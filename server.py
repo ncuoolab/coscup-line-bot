@@ -171,6 +171,18 @@ def get_gorund_status(mid):
 def manual_check_in(sp_id, mid):
     return jsonify(bot.ground_game_check_in(sp_id, mid))
 
+@app.route('/sp/')
+def sp_index():
+    return jsonify(statue=True, message="Welcome, traveller! >_O")
+
+@app.route('/sp/<sp_id>')
+def sp_with_id(sp_id):
+    return render_template('index.html', sp_id=sp_id, sp_data=sp_dict[sp_id])
+
+@app.route('/sp/<sp_id>/<mid>')
+def sp_check_in(sp_id, mid):
+    ret = manual_check_in(sp_id, mid)
+    return render_template('check_in.html', ret)
 
 if __name__ == '__main__':
     app.run()
