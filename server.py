@@ -177,7 +177,7 @@ def sp_index():
 
 @app.route('/sp/<sp_id>')
 def sp_with_id(sp_id):
-    return render_template('index.html', sp_id=sp_id, sp_data=sp_dict[sp_id])
+    return render_template('index.html', sp_id=sp_id)
 
 @app.route('/sp/<sp_id>/<mid>')
 def sp_check_in(sp_id, mid):
