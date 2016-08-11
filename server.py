@@ -6,6 +6,7 @@ import os
 from functools import wraps
 
 from flask import Flask, request
+from flask import render_template
 from flask import Response, jsonify
 
 import coscupbot
