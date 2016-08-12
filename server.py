@@ -187,8 +187,11 @@ def sp_with_id(sp_id):
 @app.route('/sp/<sp_id>/<mid>')
 def sp_check_in(sp_id, mid):
     ret = bot.ground_game_check_in(sp_id, mid)
-    left = len(ret['status'])-sum(ret['status'].values())
-    return render_template('check_in.html', check_in_data=ret, left=left)
+    if 'error' in ret:
+        return render_template('check_in_failed.html')
+    else:
+        left = len(ret['status'])-sum(ret['status'].values())
+        return render_template('check_in.html', check_in_data=ret, left=left)
 
 if __name__ == '__main__':
     app.run()
