@@ -67,16 +67,14 @@ img > .checked {
       <tr>
       {% for sp_id in check_in_data['status']) %}
         {% if check_in_data['status'][sp_id] %}
-          <td><img class="checked" src="/sp/img/{{sp_id}}.jpg"/></td>
+          [O]{{sp_id}}, 
         {% else %}
-          <td><img src="/sp/img/{{sp_id}}.jpg"/></td>
+          [X]{{sp_id}}, 
         {% endif %}
         {% if loop.index % 3 == 2 %}
-          </tr><tr>
+          <br/>
         {% endif %}
       {% endfor %}
-      </tr>
-    </table>
   </div>
 </div>
 {% endblock %}
