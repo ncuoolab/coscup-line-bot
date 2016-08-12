@@ -317,7 +317,7 @@ class CoscupInfoHelper(object):
 
     def __find_program_by_room_time(self, room, time):
         for program in self.programs:
-            if program.room == room and program.starttime < time < program.endtime:
+            if program.room == room and program.starttime <= time < program.endtime:
                 return program
         return None
 
