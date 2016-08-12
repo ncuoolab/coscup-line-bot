@@ -71,7 +71,7 @@ img > .checked {
         {% else %}
           <td><img src="/sp/img/{{sp_id}}.jpg" width="60px"></td>
         {% endif %}
-        {% if loop.index % 3 == 2 %}
+        {% if loop.index % 3 == 0 %}
           </tr><tr>
         {% endif %}
       {% endfor %}
