@@ -76,7 +76,7 @@ class CoscupBot(object):
         self.init_user_data(mid)
         lang = self.check_fromuser_language(mid)
         humour = self.check_fromuser_humour(mid)
-        self.command_message_controllers[lang].send_command_message('/addfriend', humour, receive)
+        self.command_message_controllers[lang].boot_action(receive, humour)
 
     def init_user_data(self, mid):
         self.logger.info('Init User data for  %s.' % mid)
