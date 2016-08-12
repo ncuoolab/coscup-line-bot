@@ -39,6 +39,10 @@ body {
 .demo-card-wide > .mdl-card__supporting-text {
 	text-align: center;
 }
+img > .checked {
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+}
 </style>
 </head>
 <body>
@@ -57,6 +61,22 @@ body {
   {% endif %}
   <br/>
   您還有{{left}}個檢查點要收集，加油！
+  </div>
+  <div>
+    <table>
+      <tr>
+      {% for idx, sp_id in enumerate(check_in_data['status']) %}
+        {% if check_in_data['status'][idx] %}
+          <td><img class="checked" src="/sp/img/{{sp_id}}.jpg"/></td>
+        {% else %}
+          <td><img src="/sp/img/{{sp_id}}.jpg"/></td>
+        {% endif %}
+        {% if idx % 3 == 2 %}
+          </tr><tr>
+        {% endif %}
+      {% endfor %}
+      </tr>
+    </table>
   </div>
 </div>
 {% endblock %}
