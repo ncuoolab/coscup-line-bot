@@ -65,13 +65,13 @@ img > .checked {
   <div>
     <table>
       <tr>
-      {% for idx, sp_id in enumerate(check_in_data['status']) %}
-        {% if check_in_data['status'][idx] %}
+      {% for sp_id in check_in_data['status']) %}
+        {% if check_in_data['status'][sp_id] %}
           <td><img class="checked" src="/sp/img/{{sp_id}}.jpg"/></td>
         {% else %}
           <td><img src="/sp/img/{{sp_id}}.jpg"/></td>
         {% endif %}
-        {% if idx % 3 == 2 %}
+        {% if loop.index % 3 == 2 %}
           </tr><tr>
         {% endif %}
       {% endfor %}
