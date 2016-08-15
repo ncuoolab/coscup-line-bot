@@ -26,6 +26,12 @@ class Dao(object):
         r = self.__get_conn()
         r.ping()
 
+    def del_lang_data(self, mid):
+        self.__get_conn().delete(self.LANG_PATTERN % mid)
+
+    def del_humour_data(self, mid):
+        self.__get_conn().delete(self.HUMOUR_PATTERN % mid)
+
     def init_ground_data(self, mid):
         self.del_ground_data(mid)
         init_data = self.__init_ground_default_data()
