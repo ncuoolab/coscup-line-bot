@@ -188,7 +188,7 @@ def sp_with_id(sp_id):
 def sp_check_in(sp_id, mid):
     ret = bot.ground_game_check_in(sp_id, mid)
     if 'error' in ret:
-        return render_template('check_in_failed.html')
+        return render_template('check_in_failed.html', err_msg=ret['error'])
     else:
         left = len(ret['status'])-sum(ret['status'].values())
         return render_template('check_in.html', check_in_data=ret, left=left)
