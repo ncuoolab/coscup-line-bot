@@ -287,7 +287,7 @@ class CoscupBot(object):
             if ground_data[sp_id]:
                 ret['first_check'] = False
             if not self.can_check_in_last(sp_id, ground_data):
-                return {'error': 'You havn’t finished other checkpoints! Come back later.'}
+                return {'error': 'You have not finished other checkpoints! Come back later.'}
             else:
                 self.logger.debug('User %s first check in to %s' % (mid, sp_id))
                 self.dao.checkin_ground(sp_id, mid)
@@ -307,10 +307,10 @@ class CoscupBot(object):
         :param mid:
         :return:
         """
-        if sp_id is not utils.FINAL_SPONSOR:
+        if sp_id != utils.FINAL_SPONSOR:
             return True
 
-        for key, value in ground_data:
+        for key, value in ground_data.items():
             if not value:
                 return False
         return True
