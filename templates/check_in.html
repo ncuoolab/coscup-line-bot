@@ -19,6 +19,33 @@ window.addEventListener("load", function(evt) {
 		});
 	}, false);
 });
+var options = {
+  pageKey: "key1",
+  titleBar: {
+    center: {
+      text: "COSCUP2016",
+      clickable: false
+    },
+    right: {
+      imgId: "btn_default",
+      text: "Close",
+      visible: true,
+      enable: true
+    }
+  }
+};
+LCS.Interface.updateTitleBar(options);
+LCS.Interface.registerTitleBarCallback(function(evt) {
+  switch(evt.target) {
+  case "RBUTTON":
+    window.location = "https://line.me/R/ti/p/%40test_coscup2016";
+    break;
+  case "LBUTTON":
+  case "BACK":
+  case "TITLE":
+    break;
+  }
+});
 </script>
 <style>
 body {
