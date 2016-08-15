@@ -286,6 +286,8 @@ class CoscupBot(object):
                 return {'error': 'sp_id %s not found' % sp_id}
             if ground_data[sp_id]:
                 ret['first_check'] = False
+            if not self.can_check_in_last(sp_id, ground_data):
+                return {'error': 'You havn’t finished other checkpoints! Come back later.'}
             else:
                 self.logger.debug('User %s first check in to %s' % (mid, sp_id))
                 self.dao.checkin_ground(sp_id, mid)
@@ -298,3 +300,17 @@ class CoscupBot(object):
         self.logger.info('Get ground game status for %s' % mid)
         ret = {'mid': mid, 'status': self.dao.get_ground_data(mid)}
         return ret
+
+    def can_check_in_last(self, sp_id, ground_data):
+        """
+        If final stage check in. check all point be done.
+        :param mid:
+        :return:
+        """
+        if sp_id is not utils.FINAL_SPONSOR:
+            return True
+
+        for key, value in ground_data:
+            if not value:
+                return False
+        return True

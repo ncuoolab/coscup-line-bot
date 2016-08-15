@@ -62,6 +62,8 @@ SponsorKeyDic = {
     }
 }
 
+FINAL_SPONSOR = 'dfmk1njfu'
+
 class RedisQueue(object):
     def __init__(self, name, namespace='queue', **redis_kwargs):
         self.__db = redis.Redis(**redis_kwargs)
