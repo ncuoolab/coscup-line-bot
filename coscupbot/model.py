@@ -101,6 +101,7 @@ class NLPActions(object):
     Program_help = 'PROGRAMHELP'
     Program_not_found = 'PROGRAMNOTFUND'
     Program_result = 'PROGRAMRESULT'
+    Program_suggest = 'RPOGRAMSUGGEST'
     Show_transport_types = 'SHOWTRANSPORTTYPES'
     Edison_request = 'EDISONREQUEST'
     Show_sponsors = 'SHOWSPONSORS'

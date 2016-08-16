@@ -64,6 +64,7 @@ SponsorKeyDic = {
 
 FINAL_SPONSOR = 'dfmk1njfu'
 
+
 class RedisQueue(object):
     def __init__(self, name, namespace='queue', **redis_kwargs):
         self.__db = redis.Redis(**redis_kwargs)
@@ -104,6 +105,12 @@ def to_utf8_str(byte):
 def parse_wit_datime(dt):
     value = dt['value']
     return iso8601.parse_date(value)
+
+
+def get_wit_datetime_count(request):
+    ents = request['entities']
+    datetimes = ents['datetime']
+    return len(datetimes)
 
 
 def get_wit_datetimes(request):
