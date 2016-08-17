@@ -41,9 +41,11 @@ class CommandController(object):
             'tw': model.LanguageCode.zh_tw,
             'Chinese': model.LanguageCode.zh_tw,
             'chinese': model.LanguageCode.zh_tw,
+            'CHINESE': model.LanguageCode.zh_tw,
 
             '英文': model.LanguageCode.en_us,
             'English': model.LanguageCode.en_us,
+            'ENGLISH': model.LanguageCode.en_us,
             'english': model.LanguageCode.en_us,
             'en': model.LanguageCode.en_us,
             'en-US': model.LanguageCode.en_us,
