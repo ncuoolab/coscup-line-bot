@@ -1,0 +1,219 @@
+[
+    {
+        "booth": "D1",
+        "name": "和沛移動",
+        "website": "https://www.hopebaytech.com/",
+        "challenge": "vedkoprjdi",
+        "location": "在人文館四樓鑽石區1號攤位",
+        "bonus": "至和沛移動攤位參觀，並花1分鐘填寫問券，就有機會抽中各項大獎。\n翟神獎：HTC Vive，共1名。紀念獎：限量紀念T-Shirt，共20名"
+    },
+    {
+        "booth": "D2",
+        "name": "Gandi",
+        "website": "https://www.gandi.net/",
+        "challenge": "dkmjijoji",
+        "location": "在人文館四樓鑽石區2號攤位",
+        "bonus": "Gandi 的攤位準備了以下的好康：\n1. 免費註冊 .COM.TW  (一年期）優惠代碼\n2.Gandi T-shirts\n3. .Taipei 填充球"
+    },
+    {
+        "booth": "G1",
+        "name": "QNAP",
+        "website": "https://www.qnap.com/zh-tw/",
+        "challenge": "djnfjdjfie",
+        "location": "在人文館三樓黃金區1號攤位",
+        "bonus": "COSCUP 同學Fun一夏！QNAP 好康福利站將正式營運！快來 QNAP 活動攤位填問卷，試手氣！數百個夏日實用好禮等你帶回去！"
+    },
+    {
+        "booth": "G2",
+        "name": "Appier",
+        "website": "http://www.appier.com/en/index.html",
+        "challenge": "dfjnj3ei31",
+        "location": "在人文館三樓黃金區2號攤位",
+        "bonus": "歡迎來APPIER參觀攤位"
+    },
+    {
+        "booth": "G3",
+        "name": "HDE",
+        "website": "https://www.hde.co.jp/zh-hant/",
+        "challenge": "dcfdjhuiyq",
+        "location": "在人文館三樓黃金區3號攤位",
+        "bonus": "歡迎來HDE參觀攤位"
+    },
+    {
+        "booth": "G4",
+        "name": "MySQL",
+        "website": "https://www.mysql.com/",
+        "challenge": "dvuhjenqjb",
+        "location": "在人文館三樓黃金區4號攤位",
+        "bonus": "歡迎來MySQL參觀攤位"
+    },
+    {
+        "booth": "G5",
+        "name": "LINE",
+        "website": "http://linecorp.com/zh-hant/",
+        "challenge": "qasddaojkrf",
+        "location": "在人文館三樓黃金區5號攤位",
+        "bonus": "歡迎來LINE參觀攤位"
+    },
+    {
+        "booth": "G6",
+        "name": "TOP CAREER",
+        "website": "http://www.topcareer.jp/inter/",
+        "challenge": "vnjbhkauj",
+        "location": "在人文館三樓黃金區6號攤位",
+        "bonus": "歡迎來TOP CAREER參觀攤位"
+    },
+    {
+        "booth": "G7",
+        "name": "KKBOX",
+        "website": "https://www.kkbox.com/about/zh-tw",
+        "challenge": "dfjrbenkuh",
+        "location": "在人文館三樓黃金區7號攤位",
+        "bonus": "歡迎來 KKBOX 參觀攤位"
+    },
+    {
+        "booth": "G8",
+        "name": "Automattic",
+        "website": "https://automattic.com/",
+        "challenge": "dfdjfirnjnjh",
+        "location": "在人文館三樓黃金區8號攤位",
+        "bonus": "Automattic初登陸COSCUP，來就送！隨意拿！親朋好友的份別忘記！\n\n- 五彩繽紛的WordPress貼紙，為您的掌上乾坤再添夢幻！\n- 新點子overflow了嗎？輕巧的Jetpack筆記本組，隨取隨寫，溢出的腦汁點滴不漏！\n- 黑、白、透三款WordPress太陽眼鏡，open source也可以時尚有型！\n\n請務必光臨8號攤位，拿好拿滿，讓您開源貢獻滿滿！ "
+    },
+    {
+        "booth": "G9",
+        "name": "TBA",
+        "location": "在人文館四樓黃金區9號攤位",
+        "bonus": "這是空的攤位"
+    },
+    {
+        "booth": "G10",
+        "name": "捕夢網",
+        "website": "http://www.pumo.com.tw/www/",
+        "challenge": "vhjnjeda3er",
+        "location": "在人文館四樓黃金區10號攤位",
+        "bonus": "撲克牌抽牌比輸贏 安排跟SG合照 可獲得精美小禮物，捕夢網在 G10 攤位"
+    },
+    {
+        "booth": "G11",
+        "name": "東森信息",
+        "website": "http://www.eitc.com.tw/",
+        "challenge": "emijvbnruh",
+        "location": "在人文館四樓黃金區11號攤位",
+        "bonus": "來東森信息填問卷 送精美小禮品，我們在 G11"
+    },
+    {
+        "booth": "G12",
+        "name": "TBA",
+        "location": "在人文館四樓黃金區12號攤位",
+        "bonus": "這是空的攤位"
+    },
+    {
+        "booth": "B1",
+        "name": "天瓏書局",
+        "location": "在人文館三樓第一會議廳後面",
+        "bonus": "我們提供中文書到75折，比起以往再便宜2%，\n原文書的部分是到8折，而今年我們新拓展的業務簡體書的部分，則是85折優惠，\n也感謝您提供五張桌子給予我們陳列，\n另外，書籍重點Tittle的部分，主要以下列幾個為主，\nRaspberry Pi、Arduino、機器人、嵌入式系統、物聯網、Javascript、Python機器學習..."
+    },
+    {
+        "booth": "B2",
+        "name": "馥林文化",
+        "location": "在人文館三樓第一會議廳後面",
+        "bonus": "馥林文化帶來科技類雜誌：\n《Make》國際中文版、《ROBOCON》國際中文版、《Circuit Cellar嵌入式科技》國際中文版外\n書籍的類型包含：\n1.Arduino相關\n2.Raspberry Pi相關\n3.電腦及手機程式應用\n4.機器人相關\n5.3D列印及穿戴式科技\n6.maker相關\n75-77折的專屬優惠，希望讓與會夥伴皆能愉快倘佯書海。"
+    },
+    {
+        "booth": "B3",
+        "name": "桑格",
+        "location": "在人文館三樓第一會議廳後面",
+        "bonus": "好的咖啡因讓你寫扣無往不利！\n\n特別五種特選咖啡豆\n製作成兩款冰釀咖啡 共 100 罐 (300cc)\n外面手沖咖啡店原價 NT 240，\n我們特別優惠 NT 60 一瓶，\n整整 25折 的折扣提供給大家。\n\n也將提供五種咖啡豆的掛耳包 200 包 (每種 40 包 <11G裝>)\n咖啡豆 20 包 (每種4包 <半磅裝>)\n到現場販售。快來書商區找桑格"
+    },
+    {
+        "booth": "S1",
+        "name": "TBA",
+        "location": "在人文館四樓北側通道"
+    },
+    {
+        "booth": "S2",
+        "name": "YSITD",
+        "location": "在人文館四樓北側通道",
+        "bonus": "我們是 YSITD"
+    },
+    {
+        "booth": "S3",
+        "name": "MozTW",
+        "location": "在人文館四樓北側通道",
+        "bonus": "我們是 MozTW"
+    },
+    {
+        "booth": "S4",
+        "name": "WoFOSS好自由小組（台灣女子自由軟體工作小組，Women in Free and Open Source Software in Taiwan）",
+        "location": "在人文館四樓北側通道",
+        "bonus": "我們是 WoFOSS"
+    },
+    {
+        "booth": "S5",
+        "name": "Fedora + LibreOffice + l10n-tw 聯合攤位",
+        "location": "在人文館四樓北側通道",
+        "bonus": "我們是 Fedora + LibreOffice + |10n-tw"
+    },
+    {
+        "booth": "S6",
+        "name": "Ubuntu-TW",
+        "location": "在人文館四樓北側通道",
+        "bonus": "我們是 Ubuntu-TW"
+    },
+    {
+        "booth": "S7",
+        "name": "openSUSE Taiwan Community",
+        "location": "在人文館四樓南側通道",
+        "bonus": "我們是 openSUSE Taiwan Community"
+    },
+    {
+        "booth": "S8",
+        "name": "VideoLAN",
+        "location": "在人文館四樓南側通道",
+        "bonus": "我們是 VideoLAN"
+    },
+    {
+        "booth": "S9",
+        "name": "OSM-tw",
+        "location": "在人文館四樓南側通道",
+        "bonus": "我們是 OSM-tw"
+    },
+    {
+        "booth": "S10",
+        "name": "香港開源年會 HKOSCon",
+        "location": "在人文館四樓南側通道",
+        "bonus": "我們是 香港開源年會 HKOSCon"
+    },
+    {
+        "booth": "S11",
+        "name": "MOPCON",
+        "location": "在人文館四樓南側通道",
+        "bonus": "我們是 MOPCON"
+    },
+    {
+        "booth": "S12",
+        "name": "OpenStack Taiwan User Group",
+        "location": "在人文館四樓南側通道",
+        "bonus": "我們是 OpenStack Taiwan User Group"
+    },
+    {
+        "booth": "S13",
+        "name": "ROS.Taipei",
+        "location": "在活動中心二樓第一會議廳入口前",
+        "bonus": "我們是 ROS.Taipei"
+    },
+    {
+        "booth": "T",
+        "name": "琅茶",
+        "location": "在人文館三樓第二會議廳右前方入口外",
+        "bonus": "我們是 琅茶"
+    },
+    {
+        "booth": "O",
+        "name": "COSCUP",
+        "website": "http://coscup.org/",
+        "challenge": "dfmk1njfu",
+        "location": "在人文館三樓第二會議廳後面",
+        "bonus": "我們是 大會行銷攤位，你攤位集點完成了嗎？快來兌換獨家贈品，每日數量有限唷 ~"
+    }
+]

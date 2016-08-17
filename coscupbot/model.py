@@ -79,7 +79,6 @@ class CommandResponse(object):
         return json.dumps(dic)
 
 
-
 class NlpAction(object):
     def __init__(self, language, action_str, responses):
         """
@@ -125,11 +124,40 @@ class CoscupApiType(object):
     level = 'LEVEL'
     transport = 'TRANSPORT'
     staff = 'STAFF'
+    booth = 'BOOTH'
 
 
 class LanguageCode(object):
     zh_tw = 'zh-TW'
     en_us = 'en-US'
+
+
+class Booth(object):
+    @classmethod
+    def de_json_list(cls, json_string):
+        json_obj = check_json(json_string)
+        ret = []
+        for booth in json_obj:
+            ret.append(Booth.de_json(booth))
+        return ret
+
+    @classmethod
+    def de_json(cls, jsonobj):
+        booth = jsonobj.get('booth')
+        name = jsonobj.get('name')
+        website = jsonobj.get('website')
+        challenge = jsonobj.get('challenge')
+        location = jsonobj.get('location')
+        bonus = jsonobj.get('bonus')
+        return Booth(booth, name, website, challenge, location, bonus)
+
+    def __init__(self, booth, name, website, challenge, location, bonus):
+        self.booth = booth
+        self.name = name
+        self.website = website
+        self.challenge = challenge
+        self.location = location
+        self.bonus = bonus
 
 
 class Program(object):

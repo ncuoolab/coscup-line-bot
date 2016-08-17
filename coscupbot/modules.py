@@ -310,6 +310,7 @@ class CoscupInfoHelper(object):
         self.levels = None
         self.transport = None
         self.staffs = None
+        self.booth = None
         self.load_db_to_cache()
 
     def find_program_by_room_time(self, room, time, lang):
@@ -405,6 +406,13 @@ class CoscupInfoHelper(object):
         logging.debug('Get program staff from coscup api. %s', response)
         self.dao.save_coscup_api_data(CoscupApiType.staff, response)
 
+    def get_booth_to_db(self):
+        url = self.backend_url + '/booth.json'
+        logging.info('Start to get booth data from coscup api. %s', url)
+        response = self.__get_url_content(url)
+        logging.debug('Get program booth from coscup api. %s', response)
+        self.dao.save_coscup_api_data(CoscupApiType.booth, response)
+
     def __get_url_content(self, url):
         with urlopen(url) as response:
             ret = response.read()
@@ -419,5 +427,6 @@ class CoscupInfoHelper(object):
             self.levels = model.Level.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.level))
             self.transport = model.Transport.de_json(self.dao.get_coscup_api_data(CoscupApiType.transport))
             self.staffs = model.Staff.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.staff))
+            self.booth = model.Booth.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.booth))
         except Exception as ex:
             logging.exception(ex)
