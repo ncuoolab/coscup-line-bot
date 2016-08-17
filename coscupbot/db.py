@@ -42,7 +42,7 @@ class Dao(object):
         self.__get_conn().delete(self.SESSION_PATTERN % mid)
 
     def get_session(self, mid):
-        result = self.__get_conn().get(self.NEXT_STEP_PATTERN % mid)
+        result = self.__get_conn().get(self.SESSION_PATTERN % mid)
         if result:
             return utils.to_utf8_str(result)
         return None
@@ -55,7 +55,7 @@ class Dao(object):
         r.delete(*keys)
 
     def add_context(self, mid, context):
-        self.__get_conn().set(self.CONTEXT_PATTERN% mid, json.dumps(context))
+        self.__get_conn().set(self.CONTEXT_PATTERN % mid, json.dumps(context))
 
     def del_context(self, mid):
         self.__get_conn().delete(self.CONTEXT_PATTERN % mid)
