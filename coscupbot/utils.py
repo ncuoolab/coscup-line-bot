@@ -12,10 +12,6 @@ SponsorKeyDic = {
         'name': 'Gandi',
         'url': 'https://www.gandi.net/'
     },
-    "dekdfkp3e": {
-        'name': "Yahoo",
-        'url': 'https://tw.yahoo.com/'
-    },
     "djnfjdjfie": {
         'name': "QNAP",
         'url': 'https://www.qnap.com/zh-tw/'
