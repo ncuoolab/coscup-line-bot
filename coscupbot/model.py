@@ -111,7 +111,7 @@ class NLPActions(object):
 
 
 class GoogleSheetName(object):
-    Command = 'COMMAND'
+    Command = 'NEW_COMMAND'
     NLPAction = 'NLP_ACTION'
     Realtime = 'REALTIME'
     Time = 'TIME'

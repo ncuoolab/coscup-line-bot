@@ -68,7 +68,7 @@ class SheetParser(object):
 class CommandSheetParser(SheetParser):
     def __init__(self, spreadsheet):
         super().__init__(spreadsheet)
-        self.sheet_name = 'NEW_COMMAND'
+        self.sheet_name = GoogleSheetName.Command
         self.refresh_time_pos = (1, 10)
         self.command_type = ('standard', 'humour')
 
