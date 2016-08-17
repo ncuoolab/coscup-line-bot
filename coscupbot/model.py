@@ -107,6 +107,8 @@ class NLPActions(object):
     Sponsor_intro = 'SPONSORINTRO'
     Show_langs = 'SHOWCHOICELANG'
     Set_language_response = 'SETLANGRESP'
+    Show_booths = 'SHOWBOOTHS'
+    Booth_Intro = 'SHOWBOOTHINTRO'
 
 
 class GoogleSheetName(object):

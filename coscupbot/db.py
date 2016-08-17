@@ -61,10 +61,10 @@ class Dao(object):
         except:
             pass
 
-    def set_next_command(self, mid, lang, method_name):
+    def set_next_command(self, mid, lang, method_name, class_name):
         r = self.__get_conn()
         key = self.NEXT_STEP_PATTERN % mid
-        value = lang + ":" + method_name
+        value = lang + ":" + method_name+":"+class_name
         r.set(key, value)
 
     def get_next_command(self, mid):
@@ -75,6 +75,13 @@ class Dao(object):
 
     def del_next_command(self, mid):
         self.__get_conn().delete(self.NEXT_STEP_PATTERN % mid)
+
+    def del_all_next_command(self):
+        r = self.__get_conn()
+        keys = r.keys('NEXT::*')
+        if len(keys) == 0:
+            return
+        r.delete(*keys)
 
     def set_mid_lang(self, mid, lang):
         r = self.__get_conn()

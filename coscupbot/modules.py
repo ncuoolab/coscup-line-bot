@@ -153,6 +153,8 @@ class WitMessageController(object):
             'ShowTransport': self.show_transport_result,
             'ShowSponsors': self.show_sponsors,
             'ShowSponsorIntro': self.show_sponsor_intro,
+            'ShowBooths': self.show_booths,
+            'ShowBoothIntro': self.show_booth_intro,
         }
         return Wit(access_token=self.token, actions=actions)
 
@@ -163,11 +165,11 @@ class WitMessageController(object):
             self.logger.info('Wit process new message %s' % message)
             session_id = self.get_session_id(mid)
             result = self.client.run_actions(session_id, message, self.get_session_context(mid, receive),
-                                             action_confidence=0.3)
+                                             action_confidence=0.1)
 
-            if 'stop' in result:
+            # if 'stop' in result:
                 # Action done. Clear cache data.
-                self.clear_session_id(mid)
+                # self.clear_session_id(mid)
 
             if 'processed' not in result:
                 self.logger.warning('Message [%s] not run in action.' % message)
@@ -186,8 +188,13 @@ class WitMessageController(object):
             self.bot_api.reply_text(receive, response)
 
     def clear_session(self, mid):
+        self.logger.info('Clear session for %s' % mid)
         self.clear_session_id(mid)
         self.clear_session_context(mid)
+
+    def clear_session_by_request(self, request):
+        mid = request['context']['from_mid']
+        self.clear_session(mid)
 
     def get_session_id(self, mid):
         if mid in self.mid_action:
@@ -216,16 +223,20 @@ class WitMessageController(object):
         self.bot_api.send_text(to_mid=mid, text=msg)
 
     def send_welcome(self, request):
+        self.clear_session_by_request(request)
         return self.send_nlp_action_message(request, NLPActions.Welcome)
 
     def send_location(self, request):
+        self.clear_session_by_request(request)
         return self.send_nlp_action_message(request, NLPActions.Location)
 
     def send_event_time(self, request):
+        self.clear_session_by_request(request)
         return self.send_nlp_action_message(request, NLPActions.EventTime)
 
     def find_program_with_room(self, request):
         ctx = request['context']
+        self.clear_session_by_request(request)
         try:
             if utils.get_wit_datetime_count(request) != 1:
                 # If time not be only one. can not find program. response suggestioon.
@@ -248,11 +259,13 @@ class WitMessageController(object):
         ctx = request['context']
         transport = utils.get_wit_transport_type(request)
         resp = self.bot.coscup_api_helper.show_transport_result(transport, self.lang)
+        self.clear_session_by_request(request)
         return self.__set_response_message(ctx, resp)
 
     def get_program_help(self, request):
         cxt = request['context']
         response = random_get_result(self.dao.get_nlp_response(NLPActions.Program_help, self.lang))
+        self.clear_session_by_request(request)
         return self.__set_response_message(cxt, response)
 
     def show_sponsors(self, request):
@@ -264,7 +277,21 @@ class WitMessageController(object):
         cxt = request['context']
         sp_name = utils.get_wit_sponsor_name(request)
         response = self.bot.coscup_api_helper.show_sponsor_intro(sp_name, self.lang)
+        self.clear_session_by_request(request)
         return self.__set_response_message(cxt, response)
+
+    def show_booths(self, request):
+        cxt = request['context']
+        response = self.bot.coscup_api_helper.show_booths(self.lang)
+        # self.bot.setup_next_step(cxt['from_mid'], self.lang, self.show_booth_intro)
+        return self.__set_response_message(cxt, response, 'booths_response_msg')
+
+    def show_booth_intro(self, request):
+        cxt = request['context']
+        booth_name = utils.get_wit_booth(request)
+        response = self.bot.coscup_api_helper.show_booth_intro(booth_name, self.lang)
+        self.clear_session_by_request(request)
+        return self.__set_response_message(cxt, response, 'boothintro_response_msg')
 
     def send_nlp_action_message(self, request, action):
         logging.info('Process %s action. %s' % (action, request))
@@ -272,8 +299,8 @@ class WitMessageController(object):
         ctx = request['context']
         return self.__set_response_message(ctx, response)
 
-    def __set_response_message(self, context, message):
-        context['response_msg'] = message
+    def __set_response_message(self, context, message, responsekey='response_msg'):
+        context[responsekey] = message
         context['processed'] = True
         return context
 
@@ -312,7 +339,7 @@ class CoscupInfoHelper(object):
         self.levels = None
         self.transport = None
         self.staffs = None
-        self.booth = None
+        self.booths = None
         self.load_db_to_cache()
 
     def find_program_by_room_time(self, room, time, lang):
@@ -338,11 +365,20 @@ class CoscupInfoHelper(object):
     def show_sponsors(self, lang):
         return self.__gen_template_result(NLPActions.Show_sponsors, lang, sponsors=self.sponsors)
 
+    def show_booths(self, lang):
+        return self.__gen_template_result(NLPActions.Show_booths, lang, booths=self.booths)
+
     def show_sponsor_intro(self, sponsor_name, lang):
         for sp in self.sponsors:
             if sponsor_name == sp.name_en or sponsor_name == sp.name_zh:
                 return self.__gen_template_result(NLPActions.Sponsor_intro, lang, sponsor=sp)
         raise Exception('Search Sponsor error. %s not found.' % sponsor_name)
+
+    def show_booth_intro(self, booth_name, lang):
+        for booth in self.booths:
+            if booth_name.upper() == booth.booth.upper():
+                return self.__gen_template_result(NLPActions.Booth_Intro, lang, booth=booth)
+        raise Exception('Search booth error. %s not found.' % booth_name)
 
     def __gen_template_result(self, nlp_action, lang, **args):
         tem_str = random_get_result(self.dao.get_nlp_response(nlp_action, lang))
@@ -357,6 +393,7 @@ class CoscupInfoHelper(object):
         self.get_level_to_db()
         self.get_transport_to_db()
         self.get_staff_to_db()
+        self.get_booth_to_db()
         self.load_db_to_cache()
 
     def get_program_to_db(self):
@@ -412,7 +449,7 @@ class CoscupInfoHelper(object):
         url = self.backend_url + '/booth.json'
         logging.info('Start to get booth data from coscup api. %s', url)
         response = self.__get_url_content(url)
-        logging.debug('Get program booth from coscup api. %s', response)
+        logging.debug('Get booth from coscup api. %s', response)
         self.dao.save_coscup_api_data(CoscupApiType.booth, response)
 
     def __get_url_content(self, url):
@@ -429,6 +466,6 @@ class CoscupInfoHelper(object):
             self.levels = model.Level.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.level))
             self.transport = model.Transport.de_json(self.dao.get_coscup_api_data(CoscupApiType.transport))
             self.staffs = model.Staff.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.staff))
-            self.booth = model.Booth.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.booth))
+            self.booths = model.Booth.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.booth))
         except Exception as ex:
             logging.exception(ex)

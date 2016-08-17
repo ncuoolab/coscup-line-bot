@@ -21,6 +21,7 @@ class CoscupBot(object):
         self.task_pool = ThreadPoolExecutor(num_thread)
         self.db_url = db_url
         self.dao = db.Dao(db_url)
+        self.dao.del_all_next_command()
         self.nlp_message_controllers = self.gen_nlp_message_controllers(wit_tokens)
         self.command_message_controllers = self.gen_command_message_controllers(
             [LanguageCode.zh_tw, LanguageCode.en_us])
@@ -150,7 +151,12 @@ class CoscupBot(object):
         self.logger.info('Get next command for %s. %s' % (mid, res))
         lang = res[0]
         function_name = res[1]
-        methodToCall = getattr(self.command_message_controllers[lang], function_name)
+        class_name = res[2]
+        methodToCall = None
+        if class_name == 'COMMANS':
+            methodToCall = getattr(self.command_message_controllers[lang], function_name)
+        else:
+            methodToCall = getattr(self.nlp_message_controllers[lang], function_name)
         self.dao.del_next_command(mid)
         methodToCall(receive, humour)
 
