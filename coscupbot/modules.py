@@ -225,13 +225,16 @@ class WitMessageController(object):
     def find_program_with_room(self, request):
         ctx = request['context']
         try:
-            time = utils.get_wit_datetimes(request)
-            room = utils.get_wit_room(request)
-            resp = self.bot.coscup_api_helper.find_program_by_room_time(room, time, self.lang)
-            ctx = self.__set_response_message(ctx, resp)
+            if utils.get_wit_datetime_count(request) != 1:
+                # If time not be only one. can not find program. response suggestioon.
+                return self.send_nlp_action_message(request, NLPActions.Program_suggest)
+            else:
+                time = utils.get_wit_datetimes(request)
+                room = utils.get_wit_room(request)
+                resp = self.bot.coscup_api_helper.find_program_by_room_time(room, time, self.lang)
+                ctx = self.__set_response_message(ctx, resp)
         except Exception as ex:
             logging.exception(ex)
-
         return ctx
 
     def show_transport_types(self, request):
