@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import json
 import logging
 from threading import Lock
 
@@ -21,10 +21,50 @@ class Dao(object):
         self.HUMOUR_PATTERN = 'HUMOUR::%s'
         self.NEXT_STEP_PATTERN = 'NEXT::%s'
         self.GROUND_PATTERN = 'GROUND::%s'
+        self.SESSION_PATTERN = 'SESSION::%s'
+        self.CONTEXT_PATTERN = 'CONTEXT::%s'
 
     def test_connection(self):
         r = self.__get_conn()
         r.ping()
+
+    def del_all_session(self):
+        r = self.__get_conn()
+        keys = r.keys('SESSION::*')
+        if len(keys) == 0:
+            return
+        r.delete(*keys)
+
+    def add_session(self, mid, session):
+        self.__get_conn().set(self.SESSION_PATTERN % mid, session)
+
+    def del_session(self, mid):
+        self.__get_conn().delete(self.SESSION_PATTERN % mid)
+
+    def get_session(self, mid):
+        result = self.__get_conn().get(self.NEXT_STEP_PATTERN % mid)
+        if result:
+            return utils.to_utf8_str(result)
+        return None
+
+    def del_all_context(self):
+        r = self.__get_conn()
+        keys = r.keys('CONTEXT::*')
+        if len(keys) == 0:
+            return
+        r.delete(*keys)
+
+    def add_context(self, mid, context):
+        self.__get_conn().set(self.CONTEXT_PATTERN% mid, json.dumps(context))
+
+    def del_context(self, mid):
+        self.__get_conn().delete(self.CONTEXT_PATTERN % mid)
+
+    def get_context(self, mid):
+        result = self.__get_conn().get(self.CONTEXT_PATTERN % mid)
+        if result:
+            return json.loads(utils.to_utf8_str(result))
+        return None
 
     def del_lang_data(self, mid):
         self.__get_conn().delete(self.LANG_PATTERN % mid)
@@ -64,7 +104,7 @@ class Dao(object):
     def set_next_command(self, mid, lang, method_name, class_name):
         r = self.__get_conn()
         key = self.NEXT_STEP_PATTERN % mid
-        value = lang + ":" + method_name+":"+class_name
+        value = lang + ":" + method_name + ":" + class_name
         r.set(key, value)
 
     def get_next_command(self, mid):

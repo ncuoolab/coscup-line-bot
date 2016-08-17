@@ -136,8 +136,6 @@ class WitMessageController(object):
         self.lang = lang
         self.client = self.init_wit_client()
         self.dao = db.Dao(db_url)
-        self.mid_action = {}
-        self.action_context = {}
         self.bot = bot
         self.logger = logging.getLogger('WitMessageController')
 
@@ -168,8 +166,8 @@ class WitMessageController(object):
                                              action_confidence=0.1)
 
             # if 'stop' in result:
-                # Action done. Clear cache data.
-                # self.clear_session_id(mid)
+            # Action done. Clear cache data.
+            # self.clear_session_id(mid)
 
             if 'processed' not in result:
                 self.logger.warning('Message [%s] not run in action.' % message)
@@ -197,24 +195,28 @@ class WitMessageController(object):
         self.clear_session(mid)
 
     def get_session_id(self, mid):
-        if mid in self.mid_action:
-            return self.mid_action[mid]
+        action = self.dao.get_session(mid)
+        if action:
+            return action
         session_id = 'sesseion-%s-%s' % (mid, datetime.datetime.now().strftime("%Y-%m-%d%H:%M:%S"))
-        self.mid_action[mid] = session_id
+        self.dao.add_session(mid, session_id)
         return session_id
 
     def clear_session_id(self, mid):
-        self.mid_action.pop(mid, None)
+        self.dao.del_session(mid)
 
     def get_session_context(self, mid, receive):
-        if mid in self.action_context:
-            self.action_context[mid].pop('processed', None)
-            return self.action_context[mid]
-        self.action_context[mid] = self.convert_text_receive(receive)
-        return self.action_context[mid]
+        context = self.dao.get_context(mid)
+        if context:
+            context.pop('processed', None)
+            self.dao.add_context(mid, context)
+            return context
+        context = self.convert_text_receive(receive)
+        self.dao.add_context(mid, context)
+        return context
 
     def clear_session_context(self, mid):
-        self.action_context.pop(mid, None)
+        self.dao.del_context(mid)
 
     def send_message(self, request, response):
         mid = request['context']['from_mid']

@@ -22,6 +22,8 @@ class CoscupBot(object):
         self.db_url = db_url
         self.dao = db.Dao(db_url)
         self.dao.del_all_next_command()
+        self.dao.del_all_context()
+        self.dao.del_all_session()
         self.nlp_message_controllers = self.gen_nlp_message_controllers(wit_tokens)
         self.command_message_controllers = self.gen_command_message_controllers(
             [LanguageCode.zh_tw, LanguageCode.en_us])
