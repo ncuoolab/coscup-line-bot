@@ -185,6 +185,10 @@ def sp_index():
 def send_img(path):
     return send_from_directory('img', path)
 
+@app.route('/sp/css/<path:path>')
+def send_img(path):
+    return send_from_directory('css', path)
+
 @app.route('/sp/<sp_id>')
 def sp_with_id(sp_id):
     return render_template('index.html', sp_id=sp_id)
