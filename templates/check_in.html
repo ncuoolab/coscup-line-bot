@@ -58,8 +58,8 @@ LCS.Interface.registerTitleBarCallback(function(evt) {
     <img src="../img/eventTitle-01.png" alt="開源巔峰挑戰賽" class="eventTitle">
 </div>
 <div class="pointChart">
-  {% for sp_id in check_in_data['status'] %}
-  <div class="pointStamp {{check_in_data['booth']}} {%if check_in_data['status'][sp_id]%}pokemonGo{% endif %}"></div>
+  {% for sp_booth in check_in_data['status'] %}
+  <div class="pointStamp {{sp_booth}} {%if check_in_data['status'][sp_booth]%}pokemonGo{% endif %}"></div>
   {% endfor %}
 </div>
 {% endblock %}

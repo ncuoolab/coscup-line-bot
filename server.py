@@ -196,11 +196,14 @@ def sp_with_id(sp_id):
 @app.route('/sp/<sp_id>/<mid>')
 def sp_check_in(sp_id, mid):
     ret = bot.ground_game_check_in(sp_id, mid)
+    for status in ret['status']:
+        ret['status'][utils.SponsorKeyDic[status]] = ret['status'][status]
+        ret['status'].pop(status)
     if 'error' in ret:
         return render_template('check_in_failed.html', err_msg=ret['error'])
     else:
         left = len(ret['status'])-sum(ret['status'].values())
-        return render_template('check_in.html', check_in_data=ret, left=left)
+        return render_template('check_in.html', check_in_data=ret, left=left, sp_key_dict=utils.SponsorKeyDic)
 
 if __name__ == '__main__':
     app.run()
