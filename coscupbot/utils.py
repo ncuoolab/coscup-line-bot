@@ -144,3 +144,8 @@ def get_wit_sponsor_name(request):
     ents = request['entities']
     sp = ents['sponsors'][0]['value']
     return sp
+
+def get_wit_booth(request):
+    ents = request['entities']
+    sp = ents['booths'][0]['value']
+    return sp

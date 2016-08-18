@@ -49,7 +49,22 @@ def test_de_json_transport_zh():
     assert len(trans.get_transport_types('zh-TW')) == 5
     assert '搭乘捷運' in trans.get_transport_types('zh-TW')
 
+
 def test_get_transport_result():
     json_str = open('test_data/transport_test.json', 'r').read()
     trans = model.Transport.de_json(json_str)
     ret = trans.get_transport_result('YouBike', 'zh-TW')
+
+
+def test_de_json_booth():
+    json_str = open('test_data/booth_test.json', 'r').read()
+    booths = model.Booth.de_json_list(json_str)
+    assert len(booths) > 0
+
+
+def test_de_json_booth_data():
+    json_str = open('test_data/booth_test.json', 'r').read()
+    booth = model.Booth.de_json_list(json_str)[0]
+    assert 'D1' == booth.booth
+    assert '和沛移動' == booth.name
+    assert 'vedkoprjdi' == booth.challenge

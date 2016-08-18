@@ -41,9 +41,11 @@ class CommandController(object):
             'tw': model.LanguageCode.zh_tw,
             'Chinese': model.LanguageCode.zh_tw,
             'chinese': model.LanguageCode.zh_tw,
+            'CHINESE': model.LanguageCode.zh_tw,
 
             '英文': model.LanguageCode.en_us,
             'English': model.LanguageCode.en_us,
+            'ENGLISH': model.LanguageCode.en_us,
             'english': model.LanguageCode.en_us,
             'en': model.LanguageCode.en_us,
             'en-US': model.LanguageCode.en_us,
@@ -99,7 +101,7 @@ class CommandController(object):
     def boot_action(self, receive, humour=False):
         mid = receive['from_mid']
         logging.info('Trigger boot action from %s' % mid)
-        self.bot.setup_next_step(mid, self.lang, self.set_language)
+        self.bot.setup_next_step(mid, self.lang, self.set_language, 'COMMAND')
         self.send_command_message('/login', humour, receive)
 
     def set_language(self, receive, humour=False):
@@ -108,10 +110,10 @@ class CommandController(object):
         msg = receive['content']['text']
         if msg not in self.language_pack:
             self.send_command_message('/langerror', humour, receive)
-            self.bot.setup_next_step(mid, self.lang, self.set_language)
+            self.bot.setup_next_step(mid, self.lang, self.set_language, 'COMMAND')
         else:
             self.dao.set_mid_lang(mid, self.language_pack[msg])
-            self.bot.setup_next_step(mid, self.lang, self.set_humour)
+            self.bot.setup_next_step(mid, self.lang, self.set_humour, 'COMMAND')
             self.send_command_message('/sethumour', humour, receive)
 
     def set_humour(self, receive, humour=False):
@@ -120,7 +122,7 @@ class CommandController(object):
         msg = receive['content']['text']
         if msg not in self.bool_pack:
             self.send_command_message('/humourerror', humour, receive)
-            self.bot.setup_next_step(mid, self.lang, self.set_humour)
+            self.bot.setup_next_step(mid, self.lang, self.set_humour, 'COMMAND')
         else:
             self.dao.set_mid_humour(mid, self.bool_pack[msg])
             self.send_command_message('/sethumourdone', humour, receive)
@@ -134,8 +136,6 @@ class WitMessageController(object):
         self.lang = lang
         self.client = self.init_wit_client()
         self.dao = db.Dao(db_url)
-        self.mid_action = {}
-        self.action_context = {}
         self.bot = bot
         self.logger = logging.getLogger('WitMessageController')
 
@@ -151,6 +151,8 @@ class WitMessageController(object):
             'ShowTransport': self.show_transport_result,
             'ShowSponsors': self.show_sponsors,
             'ShowSponsorIntro': self.show_sponsor_intro,
+            'ShowBooths': self.show_booths,
+            'ShowBoothIntro': self.show_booth_intro,
         }
         return Wit(access_token=self.token, actions=actions)
 
@@ -163,9 +165,9 @@ class WitMessageController(object):
             result = self.client.run_actions(session_id, message, self.get_session_context(mid, receive),
                                              action_confidence=0.3)
 
-            if 'stop' in result:
-                # Action done. Clear cache data.
-                self.clear_session_id(mid)
+            # if 'stop' in result:
+            # Action done. Clear cache data.
+            # self.clear_session_id(mid)
 
             if 'processed' not in result:
                 self.logger.warning('Message [%s] not run in action.' % message)
@@ -184,28 +186,37 @@ class WitMessageController(object):
             self.bot_api.reply_text(receive, response)
 
     def clear_session(self, mid):
+        self.logger.info('Clear session for %s' % mid)
         self.clear_session_id(mid)
         self.clear_session_context(mid)
 
+    def clear_session_by_request(self, request):
+        mid = request['context']['from_mid']
+        self.clear_session(mid)
+
     def get_session_id(self, mid):
-        if mid in self.mid_action:
-            return self.mid_action[mid]
+        action = self.dao.get_session(mid)
+        if action:
+            return action
         session_id = 'sesseion-%s-%s' % (mid, datetime.datetime.now().strftime("%Y-%m-%d%H:%M:%S"))
-        self.mid_action[mid] = session_id
+        self.dao.add_session(mid, session_id)
         return session_id
 
     def clear_session_id(self, mid):
-        self.mid_action.pop(mid, None)
+        self.dao.del_session(mid)
 
     def get_session_context(self, mid, receive):
-        if mid in self.action_context:
-            self.action_context[mid].pop('processed', None)
-            return self.action_context[mid]
-        self.action_context[mid] = self.convert_text_receive(receive)
-        return self.action_context[mid]
+        context = self.dao.get_context(mid)
+        if context:
+            context.pop('processed', None)
+            self.dao.add_context(mid, context)
+            return context
+        context = self.convert_text_receive(receive)
+        self.dao.add_context(mid, context)
+        return context
 
     def clear_session_context(self, mid):
-        self.action_context.pop(mid, None)
+        self.dao.del_context(mid)
 
     def send_message(self, request, response):
         mid = request['context']['from_mid']
@@ -214,16 +225,20 @@ class WitMessageController(object):
         self.bot_api.send_text(to_mid=mid, text=msg)
 
     def send_welcome(self, request):
+        self.clear_session_by_request(request)
         return self.send_nlp_action_message(request, NLPActions.Welcome)
 
     def send_location(self, request):
+        self.clear_session_by_request(request)
         return self.send_nlp_action_message(request, NLPActions.Location)
 
     def send_event_time(self, request):
+        self.clear_session_by_request(request)
         return self.send_nlp_action_message(request, NLPActions.EventTime)
 
     def find_program_with_room(self, request):
         ctx = request['context']
+        self.clear_session_by_request(request)
         try:
             if utils.get_wit_datetime_count(request) != 1:
                 # If time not be only one. can not find program. response suggestioon.
@@ -246,11 +261,13 @@ class WitMessageController(object):
         ctx = request['context']
         transport = utils.get_wit_transport_type(request)
         resp = self.bot.coscup_api_helper.show_transport_result(transport, self.lang)
+        self.clear_session_by_request(request)
         return self.__set_response_message(ctx, resp)
 
     def get_program_help(self, request):
         cxt = request['context']
         response = random_get_result(self.dao.get_nlp_response(NLPActions.Program_help, self.lang))
+        self.clear_session_by_request(request)
         return self.__set_response_message(cxt, response)
 
     def show_sponsors(self, request):
@@ -262,7 +279,21 @@ class WitMessageController(object):
         cxt = request['context']
         sp_name = utils.get_wit_sponsor_name(request)
         response = self.bot.coscup_api_helper.show_sponsor_intro(sp_name, self.lang)
+        self.clear_session_by_request(request)
         return self.__set_response_message(cxt, response)
+
+    def show_booths(self, request):
+        cxt = request['context']
+        response = self.bot.coscup_api_helper.show_booths(self.lang)
+        # self.bot.setup_next_step(cxt['from_mid'], self.lang, self.show_booth_intro)
+        return self.__set_response_message(cxt, response, 'booths_response_msg')
+
+    def show_booth_intro(self, request):
+        cxt = request['context']
+        booth_name = utils.get_wit_booth(request)
+        response = self.bot.coscup_api_helper.show_booth_intro(booth_name, self.lang)
+        self.clear_session_by_request(request)
+        return self.__set_response_message(cxt, response, 'boothintro_response_msg')
 
     def send_nlp_action_message(self, request, action):
         logging.info('Process %s action. %s' % (action, request))
@@ -270,8 +301,8 @@ class WitMessageController(object):
         ctx = request['context']
         return self.__set_response_message(ctx, response)
 
-    def __set_response_message(self, context, message):
-        context['response_msg'] = message
+    def __set_response_message(self, context, message, responsekey='response_msg'):
+        context[responsekey] = message
         context['processed'] = True
         return context
 
@@ -310,19 +341,27 @@ class CoscupInfoHelper(object):
         self.levels = None
         self.transport = None
         self.staffs = None
+        self.booths = None
         self.load_db_to_cache()
 
     def find_program_by_room_time(self, room, time, lang):
         program = self.__find_program_by_room_time(room, time)
-        if program is None:
-            return random_get_result(self.dao.get_nlp_response(NLPActions.Program_not_found, lang))
-        return self.__gen_template_result(NLPActions.Program_result, lang, program=program, time=time)
+        if program :
+            return self.__gen_template_result(NLPActions.Program_result, lang, program=program, time=time)
+        program = self.__find_program_by_room_near(room, time)
+        if program:
+            return self.__gen_template_result(NLPActions.Program_near, lang, program=program, time=time)
+        return random_get_result(self.dao.get_nlp_response(NLPActions.Program_not_found, lang))
 
     def __find_program_by_room_time(self, room, time):
         for program in self.programs:
             if program.room == room and program.starttime <= time < program.endtime:
                 return program
         return None
+
+    def __find_program_by_room_near(self, room, time):
+        time = time + datetime.timedelta(minutes=20)
+        return self.__find_program_by_room_time(room, time)
 
     def show_transport_types(self, lang):
         transport_types = self.transport.get_transport_types(lang)
@@ -335,11 +374,20 @@ class CoscupInfoHelper(object):
     def show_sponsors(self, lang):
         return self.__gen_template_result(NLPActions.Show_sponsors, lang, sponsors=self.sponsors)
 
+    def show_booths(self, lang):
+        return self.__gen_template_result(NLPActions.Show_booths, lang, booths=self.booths)
+
     def show_sponsor_intro(self, sponsor_name, lang):
         for sp in self.sponsors:
             if sponsor_name == sp.name_en or sponsor_name == sp.name_zh:
                 return self.__gen_template_result(NLPActions.Sponsor_intro, lang, sponsor=sp)
         raise Exception('Search Sponsor error. %s not found.' % sponsor_name)
+
+    def show_booth_intro(self, booth_name, lang):
+        for booth in self.booths:
+            if booth_name.upper() == booth.booth.upper():
+                return self.__gen_template_result(NLPActions.Booth_Intro, lang, booth=booth)
+        raise Exception('Search booth error. %s not found.' % booth_name)
 
     def __gen_template_result(self, nlp_action, lang, **args):
         tem_str = random_get_result(self.dao.get_nlp_response(nlp_action, lang))
@@ -354,6 +402,7 @@ class CoscupInfoHelper(object):
         self.get_level_to_db()
         self.get_transport_to_db()
         self.get_staff_to_db()
+        self.get_booth_to_db()
         self.load_db_to_cache()
 
     def get_program_to_db(self):
@@ -405,6 +454,13 @@ class CoscupInfoHelper(object):
         logging.debug('Get program staff from coscup api. %s', response)
         self.dao.save_coscup_api_data(CoscupApiType.staff, response)
 
+    def get_booth_to_db(self):
+        url = self.backend_url + '/booth.json'
+        logging.info('Start to get booth data from coscup api. %s', url)
+        response = self.__get_url_content(url)
+        logging.debug('Get booth from coscup api. %s', response)
+        self.dao.save_coscup_api_data(CoscupApiType.booth, response)
+
     def __get_url_content(self, url):
         with urlopen(url) as response:
             ret = response.read()
@@ -419,5 +475,6 @@ class CoscupInfoHelper(object):
             self.levels = model.Level.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.level))
             self.transport = model.Transport.de_json(self.dao.get_coscup_api_data(CoscupApiType.transport))
             self.staffs = model.Staff.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.staff))
+            self.booths = model.Booth.de_json_list(self.dao.get_coscup_api_data(CoscupApiType.booth))
         except Exception as ex:
             logging.exception(ex)

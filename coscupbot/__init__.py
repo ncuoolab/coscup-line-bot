@@ -4,6 +4,7 @@ import logging
 from concurrent.futures import ThreadPoolExecutor
 
 import redis
+import time
 from apscheduler.schedulers.background import BackgroundScheduler
 from linebot.client import *
 from linebot.receives import Receive
@@ -21,6 +22,9 @@ class CoscupBot(object):
         self.task_pool = ThreadPoolExecutor(num_thread)
         self.db_url = db_url
         self.dao = db.Dao(db_url)
+        self.dao.del_all_next_command()
+        self.dao.del_all_context()
+        self.dao.del_all_session()
         self.nlp_message_controllers = self.gen_nlp_message_controllers(wit_tokens)
         self.command_message_controllers = self.gen_command_message_controllers(
             [LanguageCode.zh_tw, LanguageCode.en_us])
@@ -33,6 +37,7 @@ class CoscupBot(object):
         self.coscup_api_helper = modules.CoscupInfoHelper(db_url)
         self.start_scheduler()
         self.next_step_dic = {}
+        self.take_photo_sec = 6
 
     def process_new_event(self, data):
         """
@@ -42,6 +47,7 @@ class CoscupBot(object):
         :return:
         """
         self.logger.info('Process new receives. %s', data)
+        self.dao.add_message_record(data)
         receive = Receive(data)
         for r in receive:
             content = r['content']
@@ -127,9 +133,14 @@ class CoscupBot(object):
         """
         mid = receive['from_mid']
         self.logger.info('New sticker message.[From] %s' % mid)
-        self.edison_queue.put(mid)
+        content = receive['content']
         lang = self.check_fromuser_language(mid)
-        result = modules.random_get_result(self.dao.get_nlp_response(model.NLPActions.Edison_request, lang))
+        stkgid = content.attrs['stkpkgid']
+        if stkgid != '2':
+            result = modules.random_get_result(self.dao.get_nlp_response(model.NLPActions.Edison_not_match, lang))
+        else:
+            self.edison_queue.put(mid)
+            result = modules.random_get_result(self.dao.get_nlp_response(model.NLPActions.Edison_request, lang))
         self.bot_api.reply_text(receive, result)
 
     def check_fromuser_language(self, mid):
@@ -150,12 +161,17 @@ class CoscupBot(object):
         self.logger.info('Get next command for %s. %s' % (mid, res))
         lang = res[0]
         function_name = res[1]
-        methodToCall = getattr(self.command_message_controllers[lang], function_name)
+        class_name = res[2]
+        methodToCall = None
+        if class_name == 'COMMAND':
+            methodToCall = getattr(self.command_message_controllers[lang], function_name)
+        else:
+            methodToCall = getattr(self.nlp_message_controllers[lang], function_name)
         self.dao.del_next_command(mid)
         methodToCall(receive, humour)
 
-    def setup_next_step(self, mid, lang, func):
-        self.dao.set_next_command(mid, lang, func.__name__)
+    def setup_next_step(self, mid, lang, func, class_name):
+        self.dao.set_next_command(mid, lang, func.__name__, class_name)
 
     def check_fromuser_humour(self, mid):
         hu = self.dao.get_mid_humour(mid)
@@ -187,8 +203,19 @@ class CoscupBot(object):
         if result:
             mid = result.decode('utf-8')
             self.logger.info('Edison get mid %s .' % mid)
+            self.task_pool.submit(self.send_take_photo_count, mid)
             return mid
         return None
+
+    def send_take_photo_count(self, mid):
+        for i in range(0, self.take_photo_sec):
+            self.bot_api.send_text(to_mid=mid, text=str(self.take_photo_sec - i))
+            time.sleep(1)
+        resp = modules.random_get_result(
+            self.dao.get_command_responses('/edisontakephoto', self.check_fromuser_language(mid),
+                                           self.check_fromuser_humour(mid)))
+        command_resp = model.CommandResponse.de_json(resp)
+        self.bot_api.send_text(to_mid=mid, text=command_resp.response_msg)
 
     def take_photo_done(self, data):
         """
@@ -198,6 +225,7 @@ class CoscupBot(object):
         :return:
         """
         self.logger.info('Edison take photo done.[Data] %s' % data)
+        self.dao.add_photo_record(data)
         json_obj = json.loads(data)
         mid = json_obj['mid']
         o_url = json_obj['originalUrl']
@@ -314,3 +342,10 @@ class CoscupBot(object):
             if not value:
                 return False
         return True
+
+    def get_status(self):
+        ret = {"message_processed": self.dao.get_message_record_count(),
+               'waiting_edison_take_photo': self.edison_queue.qsize(),
+               'num_of_friends': self.dao.get_friend_count(),
+               'num_photos_edison_take': self.dao.get_photo_record_count()}
+        return ret
