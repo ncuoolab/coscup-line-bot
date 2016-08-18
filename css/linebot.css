@@ -45,55 +45,53 @@ box-shadow: 1px 1px 5px 1px rgba(132,156,127,1);
 }
 
 .D1{
-    background-image: url(./img/logo/D1.png);
-    
+    background-image: url(../img/logo/D1.png) no-repeat center;
 }
 
 .D2{
-    background-image: url(../img/logo/D2.png);
+    background-image: url(../img/logo/D2.png) no-repeat center;
 }
 
 .G1{
-    background-image: url(../img/logo/G1.png);
+    background-image: url(../img/logo/G1.png) no-repeat center;
 }
 
 .G2{
-    background-image: url(../img/logo/G2.png);
+    background-image: url(../img/logo/G2.png) no-repeat center;
 }
 
 .G3{
-    background-image: url(../img/logo/G3.png);
+    background-image: url(../img/logo/G3.png) no-repeat center;
 }
 
 .G4{
-    background-image: url(../img/logo/G4.png);
+    background-image: url("../img/logo/G4.png") no-repeat center;
 }
 
-
 .G5{
-    background-image: url(../../img/logo/G5.png);
+    background-image: url(../img/logo/G5.png) no-repeat center;
 }
 
 .G6{
-    background-image: url(../img/logo/G6.png);
+    background-image: url(../img/logo/G6.png) no-repeat center;
 }
 
 .G7{
-    background-image: url(../img/logo/G7.png);
+    background-image: url(../img/logo/G7.png) no-repeat center;
 }
 
 .G8{
-    background-image: url(../img/logo/G8.png);
+    background-image: url(../img/logo/G8.png) no-repeat center;
 }
 
-
 .G10{
-    background-image: url(../img/logo/G10.png);
+    background-image: url(../img/logo/G10.png) no-repeat center;
 }
 
 .G11{
-    background-image: url(../img/logo/G11.png);
+    background-image: url(../img/logo/G11.png) no-repeat center;
 }
+
 .pokemonGO{
     background:rgba(255,255,255,0.8) url(../img/done-01.png) no-repeat center;
 }
