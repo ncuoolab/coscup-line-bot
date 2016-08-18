@@ -346,15 +346,22 @@ class CoscupInfoHelper(object):
 
     def find_program_by_room_time(self, room, time, lang):
         program = self.__find_program_by_room_time(room, time)
-        if program is None:
-            return random_get_result(self.dao.get_nlp_response(NLPActions.Program_not_found, lang))
-        return self.__gen_template_result(NLPActions.Program_result, lang, program=program, time=time)
+        if program :
+            return self.__gen_template_result(NLPActions.Program_result, lang, program=program, time=time)
+        program = self.__find_program_by_room_near(room, time)
+        if program:
+            return self.__gen_template_result(NLPActions.Program_near, lang, program=program, time=time)
+        return random_get_result(self.dao.get_nlp_response(NLPActions.Program_not_found, lang))
 
     def __find_program_by_room_time(self, room, time):
         for program in self.programs:
             if program.room == room and program.starttime <= time < program.endtime:
                 return program
         return None
+
+    def __find_program_by_room_near(self, room, time):
+        time = time + datetime.timedelta(minutes=20)
+        return self.__find_program_by_room_time(room, time)
 
     def show_transport_types(self, lang):
         transport_types = self.transport.get_transport_types(lang)
