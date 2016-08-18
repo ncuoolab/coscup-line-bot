@@ -163,7 +163,7 @@ class CoscupBot(object):
         function_name = res[1]
         class_name = res[2]
         methodToCall = None
-        if class_name == 'COMMANS':
+        if class_name == 'COMMAND':
             methodToCall = getattr(self.command_message_controllers[lang], function_name)
         else:
             methodToCall = getattr(self.nlp_message_controllers[lang], function_name)
