@@ -37,6 +37,7 @@ class CoscupBot(object):
         self.coscup_api_helper = modules.CoscupInfoHelper(db_url)
         self.start_scheduler()
         self.next_step_dic = {}
+        self.take_photo_sec = 6
 
     def process_new_event(self, data):
         """
@@ -207,8 +208,8 @@ class CoscupBot(object):
         return None
 
     def send_take_photo_count(self, mid):
-        for i in range(0, 5):
-            self.bot_api.send_text(to_mid=mid, text=str(5 - i))
+        for i in range(0, self.take_photo_sec):
+            self.bot_api.send_text(to_mid=mid, text=str(self.take_photo_sec - i))
             time.sleep(1)
         resp = modules.random_get_result(
             self.dao.get_command_responses('/edisontakephoto', self.check_fromuser_language(mid),
