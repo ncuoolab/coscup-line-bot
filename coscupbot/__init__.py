@@ -170,8 +170,8 @@ class CoscupBot(object):
         self.dao.del_next_command(mid)
         methodToCall(receive, humour)
 
-    def setup_next_step(self, mid, lang, func):
-        self.dao.set_next_command(mid, lang, func.__name__)
+    def setup_next_step(self, mid, lang, func, class_name):
+        self.dao.set_next_command(mid, lang, func.__name__, class_name)
 
     def check_fromuser_humour(self, mid):
         hu = self.dao.get_mid_humour(mid)
