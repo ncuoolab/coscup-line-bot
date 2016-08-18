@@ -4,6 +4,7 @@ import logging
 from concurrent.futures import ThreadPoolExecutor
 
 import redis
+import time
 from apscheduler.schedulers.background import BackgroundScheduler
 from linebot.client import *
 from linebot.receives import Receive
@@ -201,8 +202,19 @@ class CoscupBot(object):
         if result:
             mid = result.decode('utf-8')
             self.logger.info('Edison get mid %s .' % mid)
+            self.task_pool.submit(self.send_take_photo_count, mid)
             return mid
         return None
+
+    def send_take_photo_count(self, mid):
+        for i in range(0, 5):
+            self.bot_api.send_text(to_mid=mid, text=str(5 - i))
+            time.sleep(1)
+        resp = modules.random_get_result(
+            self.dao.get_command_responses('/edisontakephoto', self.check_fromuser_language(mid),
+                                           self.check_fromuser_humour(mid)))
+        command_resp = model.CommandResponse.de_json(resp)
+        self.bot_api.send_text(to_mid=mid, text=command_resp.response_msg)
 
     def take_photo_done(self, data):
         """
