@@ -197,8 +197,8 @@ def sp_with_id(sp_id):
 def sp_check_in(sp_id, mid):
     ret = bot.ground_game_check_in(sp_id, mid)
     for status in ret['status']:
-        ret['status'][utils.SponsorKeyDic[status]['booth']] = ret['status'][status]
-    for sp_key in utils.SponsorKeyDic:
+        ret['status'][coscupbot.utils.SponsorKeyDic[status]['booth']] = ret['status'][status]
+    for sp_key in coscupbot.utils.SponsorKeyDic:
         ret['status'].pop(sp_key)
     if 'error' in ret:
         return render_template('check_in_failed.html', err_msg=ret['error'])
