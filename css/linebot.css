@@ -1,0 +1,89 @@
+html{
+    background: top center #fffce8 url(../img/bkg3.png) no-repeat;
+    background-size: cover;
+    
+}
+
+
+.banner{
+    width: 100%;
+    text-align: center;
+}
+
+.logo{
+  width:40%;
+    
+}
+
+.eventTitle{
+  width:50%;
+}
+
+
+.pointChart{
+    padding-bottom: 50%;
+    margin-top: 5%;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pointStamp{
+    background-color: #DDD;
+    width: 23%;
+    padding-bottom: 12%;
+    margin: 1%;
+    float: left;
+    background-size: cover;
+}
+
+.D1{
+    background-image: url(../img/logo/D1.png);
+    
+}
+
+.D2{
+    background-image: url(../img/logo/D2.png);
+}
+
+.G1{
+    background-image: url(../img/logo/G1.png);
+}
+
+.G2{
+    background-image: url(../img/logo/G2.png);
+}
+
+.G3{
+    background-image: url(../img/logo/G3.png);
+}
+
+.G4{
+    background-image: url(../img/logo/G4.png);
+}
+
+
+.G5{
+    background-image: url(../img/logo/G5.png);
+}
+
+.G6{
+    background-image: url(../img/logo/G6.png);
+}
+
+.G7{
+    background-image: url(../img/logo/G7.png);
+}
+
+.G8{
+    background-image: url(../img/logo/G8.png);
+}
+
+
+.G10{
+    background-image: url(../img/logo/G10.png);
+}
+
+.G11{
+    background-image: url(../img/logo/G11.png);
+}

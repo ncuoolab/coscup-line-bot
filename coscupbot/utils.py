@@ -5,54 +5,67 @@ import redis
 
 SponsorKeyDic = {
     "vedkoprjdi": {
+        'booth': 'D1',
         'name': '和沛移動',
-        'url': 'https://www.hopebaytech.com/'
+        'url': 'https://www.hopebaytech.com/',
     },
     "dkmjijoji": {
+        'booth': 'D2',
         'name': 'Gandi',
         'url': 'https://www.gandi.net/'
     },
     "djnfjdjfie": {
+        'booth': 'G1',
         'name': "QNAP",
         'url': 'https://www.qnap.com/zh-tw/'
     },
     "vhjnjeda3er": {
+        'booth': 'G10',
         'name': "捕夢網",
         'url': "http://www.pumo.com.tw/www/"
     },
     "dfdjfirnjnjh": {
+        'booth': 'G8',
         'name': "Automattic",
         'url': "https://automattic.com/"
     },
     "dfjnj3ei31": {
+        'booth': 'G2',
         'name': "Appier",
         'url': "http://www.appier.com/en/index.html"
     },
     "vnjbhkauj": {
+        'booth': 'G6',
         'name': "Top Career",
         'url': "http://www.topcareer.jp/inter/"
     },
     "emijvbnruh": {
+        'booth': 'G11',
         'name': "EITC",
         'url': "http://www.eitc.com.tw/"
     },
     "dfjrbenkuh": {
+        'booth': 'G7',
         'name': "KKBOX",
         'url': "https://www.kkbox.com/about/zh-tw"
     },
     "dcfdjhuiyq": {
+        'booth': 'G3',
         'name': "HDE",
         'url': "https://www.hde.co.jp/zh-hant/"
     },
     "dvuhjenqjb": {
+        'booth': 'G4',
         'name': "MySQL",
         'url': "https://www.mysql.com/"
     },
     "qasddaojkrf": {
+        'booth': 'G5',
         'name': "LINE",
         'url': "http://linecorp.com/zh-hant/"
     },
     "dfmk1njfu": {
+        'booth': 'O',
         'name': "COSCUP",
         'url': "https://coscup.org"
     }
