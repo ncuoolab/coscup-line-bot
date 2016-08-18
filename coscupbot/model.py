@@ -103,6 +103,7 @@ class NLPActions(object):
     Program_suggest = 'RPOGRAMSUGGEST'
     Show_transport_types = 'SHOWTRANSPORTTYPES'
     Edison_request = 'EDISONREQUEST'
+    Edison_not_match = 'EDISONNOTMATCH'
     Show_sponsors = 'SHOWSPONSORS'
     Sponsor_intro = 'SPONSORINTRO'
     Show_langs = 'SHOWCHOICELANG'

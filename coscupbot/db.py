@@ -23,6 +23,23 @@ class Dao(object):
         self.GROUND_PATTERN = 'GROUND::%s'
         self.SESSION_PATTERN = 'SESSION::%s'
         self.CONTEXT_PATTERN = 'CONTEXT::%s'
+        self.MESSAGE_RECORD = 'MSGRECORD'
+        self.PHOTO_RECORD = 'PHOTOTACKED'
+
+    def add_photo_record(self, record):
+        self.__get_conn().lpush(self.PHOTO_RECORD, record)
+
+    def get_photo_record_count(self):
+        self.__get_conn().llen(self.PHOTO_RECORD)
+
+    def add_message_record(self, message):
+        self.__get_conn().lpush(self.MESSAGE_RECORD, message)
+
+    def get_message_record_count(self):
+        return self.__get_conn().llen(self.MESSAGE_RECORD)
+
+    def get_friend_count(self):
+        return len(self.__get_conn().keys('GROUND*'))
 
     def test_connection(self):
         r = self.__get_conn()

@@ -163,7 +163,7 @@ class WitMessageController(object):
             self.logger.info('Wit process new message %s' % message)
             session_id = self.get_session_id(mid)
             result = self.client.run_actions(session_id, message, self.get_session_context(mid, receive),
-                                             action_confidence=0.1)
+                                             action_confidence=0.3)
 
             # if 'stop' in result:
             # Action done. Clear cache data.

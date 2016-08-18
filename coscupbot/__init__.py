@@ -45,6 +45,7 @@ class CoscupBot(object):
         :return:
         """
         self.logger.info('Process new receives. %s', data)
+        self.dao.add_message_record(data)
         receive = Receive(data)
         for r in receive:
             content = r['content']
@@ -130,9 +131,14 @@ class CoscupBot(object):
         """
         mid = receive['from_mid']
         self.logger.info('New sticker message.[From] %s' % mid)
-        self.edison_queue.put(mid)
+        content = receive['content']
         lang = self.check_fromuser_language(mid)
-        result = modules.random_get_result(self.dao.get_nlp_response(model.NLPActions.Edison_request, lang))
+        stkgid = content.attrs['stkpkgid']
+        if stkgid != '2':
+            result = modules.random_get_result(self.dao.get_nlp_response(model.NLPActions.Edison_not_match, lang))
+        else:
+            self.edison_queue.put(mid)
+            result = modules.random_get_result(self.dao.get_nlp_response(model.NLPActions.Edison_request, lang))
         self.bot_api.reply_text(receive, result)
 
     def check_fromuser_language(self, mid):
@@ -206,6 +212,7 @@ class CoscupBot(object):
         :return:
         """
         self.logger.info('Edison take photo done.[Data] %s' % data)
+        self.dao.add_photo_record(data)
         json_obj = json.loads(data)
         mid = json_obj['mid']
         o_url = json_obj['originalUrl']
@@ -322,3 +329,10 @@ class CoscupBot(object):
             if not value:
                 return False
         return True
+
+    def get_status(self):
+        ret = {"message_processed": self.dao.get_message_record_count(),
+               'waiting_edison_take_photo': self.edison_queue.qsize(),
+               'num_of_friends': self.dao.get_friend_count(),
+               'num_photos_edison_take': self.dao.get_photo_record_count()}
+        return ret
