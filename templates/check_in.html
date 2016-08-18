@@ -6,8 +6,8 @@
 <title>COSCUP 開源挑戰賽</title>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="./css/reset.css" rel="stylesheet">
-<link href="./css/linebot.css" rel="stylesheet">
+<link href="../css/reset.css" rel="stylesheet">
+<link href="../css/linebot.css" rel="stylesheet">
 <script src="https://scdn.line-apps.com/channel/sdk/js/loader_20150909.js"></script>
 <script type="text/javascript">
 window.addEventListener("load", function(evt) {
@@ -54,8 +54,8 @@ LCS.Interface.registerTitleBarCallback(function(evt) {
 <body>
 {% block body %}
 <div class= "banner">    
-   <img src="./img/main_withslogan.svg" alt="COSCUPlogo2016" class="logo"><br>
-    <img src="./img/eventTitle-01.png" alt="開源巔峰挑戰賽" class="eventTitle">
+   <img src="../img/main_withslogan.svg" alt="COSCUPlogo2016" class="logo"><br>
+    <img src="../img/eventTitle-01.png" alt="開源巔峰挑戰賽" class="eventTitle">
 </div>
 <div class="pointChart">
   {% for sp_id in check_in_data['status'] %}
