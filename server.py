@@ -196,9 +196,8 @@ def sp_with_id(sp_id):
 @app.route('/sp/<sp_id>/<mid>')
 def sp_check_in(sp_id, mid):
     ret = bot.ground_game_check_in(sp_id, mid)
-    for status in ret['status']:
-        ret['status'][coscupbot.utils.SponsorKeyDic[status]['booth']] = ret['status'][status]
     for sp_key in coscupbot.utils.SponsorKeyDic:
+        ret['status'][coscupbot.utils.SponsorKeyDic[sp_key]['booth']] = ret['status'][sp_key]
         ret['status'].pop(sp_key)
     if 'error' in ret:
         return render_template('check_in_failed.html', err_msg=ret['error'])
