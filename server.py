@@ -10,6 +10,7 @@ from flask import Response, jsonify
 from flask import render_template, send_from_directory
 
 import coscupbot
+from coscupbot import utils
 
 app = Flask(__name__)
 
