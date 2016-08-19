@@ -189,6 +189,19 @@ def manual_check_in(sp_id, mid):
 def get_bot_status():
     return jsonify(bot.get_status())
 
+@app.route('/disableedison')
+@requires_auth
+def disable_edison():
+    bot.disable_take_photo()
+    return "OK"
+
+
+@app.route('/enableedison')
+@requires_auth
+def enable_edison():
+    bot.enable_take_photo()
+    return "OK"
+
 @app.route('/sp/')
 def sp_index():
     return jsonify(statue=True, message="Welcome, traveller! >_O")

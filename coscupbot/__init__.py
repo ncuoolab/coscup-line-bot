@@ -136,6 +136,9 @@ class CoscupBot(object):
         content = receive['content']
         lang = self.check_fromuser_language(mid)
         stkgid = content.attrs['stkpkgid']
+        if not self.dao.is_edison_enable():
+            self.send_take_photo_disable(mid)
+            return
         if stkgid != '2':
             result = modules.random_get_result(self.dao.get_nlp_response(model.NLPActions.Edison_not_match, lang))
         else:
@@ -151,6 +154,14 @@ class CoscupBot(object):
             self.edison_queue.put(mid)
             result = modules.random_get_result(self.dao.get_nlp_response(model.NLPActions.Edison_request, lang))
         self.bot_api.reply_text(receive, result)
+
+    def send_take_photo_disable(self, mid):
+        resp = modules.random_get_result(
+               self.dao.get_command_responses('/edisondisable', self.check_fromuser_language(mid),
+                                                   self.check_fromuser_humour(mid)))
+        command_resp = model.CommandResponse.de_json(resp)
+        self.bot_api.send_text(to_mid=mid, text=command_resp.response_msg)
+
 
     def check_fromuser_language(self, mid):
         """
@@ -256,6 +267,14 @@ class CoscupBot(object):
     def clear_take_photo_count(self, mid):
         self.logger.info('Clear number of photos for user %s.' % mid)
         self.dao.del_num_of_photo(mid)
+
+    def enable_take_photo(self):
+        self.logger.info('Enable Edison')
+        self.dao.enable_edison()
+
+    def disable_take_photo(self):
+        self.logger.info('Disable Edison')
+        self.dao.disable_edison()
 
     def broadcast_realtime_message(self):
         """

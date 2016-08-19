@@ -26,6 +26,18 @@ class Dao(object):
         self.MESSAGE_RECORD = 'MSGRECORD'
         self.PHOTO_RECORD = 'PHOTOTACKED'
         self.NUMPHOTO_PATTERN = 'NUMPHOTO::%s'
+        self.EDISON_ENABLE = 'EDISONENABLE'
+
+    def is_edison_enable(self):
+        self.__get_conn().setnx(self.EDISON_ENABLE, 1)
+        result = int(self.__get_conn().get(self.EDISON_ENABLE))
+        return result == 1
+
+    def disable_edison(self):
+        self.__get_conn().set(self.EDISON_ENABLE, 0)
+
+    def enable_edison(self):
+        self.__get_conn().set(self.EDISON_ENABLE, 1)
 
     def get_num_of_photo(self, mid):
         self.__get_conn().setnx(self.NUMPHOTO_PATTERN % mid, 0)
