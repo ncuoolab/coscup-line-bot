@@ -204,7 +204,7 @@ class CoscupBot(object):
         ret = {}
         for key, value in wittokens.items():
             ret[key] = modules.WitMessageController(self, wittokens[key], self.db_url,
-                                                    key)
+                                                    model.LanguageCode.zh_tw)
         return ret
 
     def gen_command_message_controllers(self, langs):
