@@ -157,6 +157,9 @@ class WitMessageController(object):
             'ShowSponsorIntro': self.show_sponsor_intro,
             'ShowBooths': self.show_booths,
             'ShowBoothIntro': self.show_booth_intro,
+            'ShowDirty' : self.send_dirty,
+            'ShowPokemon':self.send_pokemon,
+            'ShowNothankyou':self.send_no_thankyou,
         }
         return Wit(access_token=self.token, actions=actions)
 
@@ -227,6 +230,18 @@ class WitMessageController(object):
         msg = utils.to_utf8_str(response['text'])
         logging.info('Wit send message [%s] to [%s]', mid, msg)
         self.bot_api.send_text(to_mid=mid, text=msg)
+
+    def send_pokemon(self, request):
+        self.clear_session_by_request(request)
+        return self.send_nlp_action_message(request, NLPActions.Pokemon)
+
+    def send_no_thankyou(self, request):
+        self.clear_session_by_request(request)
+        return self.send_nlp_action_message(request, NLPActions.No_thankyou)
+
+    def send_dirty(self, request):
+        self.clear_session_by_request(request)
+        return self.send_nlp_action_message(request, NLPActions.Dirty)
 
     def send_welcome(self, request):
         self.clear_session_by_request(request)
@@ -350,7 +365,7 @@ class CoscupInfoHelper(object):
 
     def find_program_by_room_time(self, room, time, lang):
         program = self.__find_program_by_room_time(room, time)
-        if program :
+        if program:
             return self.__gen_template_result(NLPActions.Program_result, lang, program=program, time=time)
         program = self.__find_program_by_room_near(room, time)
         if program:

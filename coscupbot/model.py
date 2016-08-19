@@ -111,6 +111,9 @@ class NLPActions(object):
     Set_language_response = 'SETLANGRESP'
     Show_booths = 'SHOWBOOTHS'
     Booth_Intro = 'SHOWBOOTHINTRO'
+    Pokemon = 'POKEMON'
+    No_thankyou = 'NOTAHNKYOU'
+    Dirty = 'DIRTYWORD'
 
 
 class GoogleSheetName(object):
