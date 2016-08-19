@@ -139,6 +139,15 @@ class CoscupBot(object):
         if stkgid != '2':
             result = modules.random_get_result(self.dao.get_nlp_response(model.NLPActions.Edison_not_match, lang))
         else:
+            photo_count = self.dao.get_num_of_photo(mid)
+            if photo_count >= utils.PHOTO_LIMIT:
+                # over limit
+                resp = modules.random_get_result(
+                    self.dao.get_command_responses('/edisonoverlimit', self.check_fromuser_language(mid),
+                                                   self.check_fromuser_humour(mid)))
+                command_resp = model.CommandResponse.de_json(resp)
+                self.bot_api.send_text(to_mid=mid, text=command_resp.response_msg)
+                return
             self.edison_queue.put(mid)
             result = modules.random_get_result(self.dao.get_nlp_response(model.NLPActions.Edison_request, lang))
         self.bot_api.reply_text(receive, result)
@@ -203,8 +212,18 @@ class CoscupBot(object):
         if result:
             mid = result.decode('utf-8')
             self.logger.info('Edison get mid %s .' % mid)
+            photo_count = self.dao.get_num_of_photo(mid)
+            self.logger.info('User %s already take %d photo.' % (mid, photo_count))
+            if photo_count >= utils.PHOTO_LIMIT:
+                # over limit
+                resp = modules.random_get_result(
+                    self.dao.get_command_responses('/edisonoverlimit', self.check_fromuser_language(mid),
+                                                   self.check_fromuser_humour(mid)))
+                command_resp = model.CommandResponse.de_json(resp)
+                self.bot_api.send_text(to_mid=mid, text=command_resp.response_msg)
+                return None
             self.task_pool.submit(self.send_take_photo_count, mid)
-            return mid
+            return {'mid': mid, 'count': photo_count + 1}
         return None
 
     def send_take_photo_count(self, mid):
@@ -231,7 +250,12 @@ class CoscupBot(object):
         o_url = json_obj['originalUrl']
         p_url = json_obj['previewUrl']
         self.bot_api.send_image(mid, o_url, p_url)
+        self.dao.increase_num_of_photo(mid)
         self.logger.info('Send image to user %s done' % mid)
+
+    def clear_take_photo_count(self, mid):
+        self.logger.info('Clear number of photos for user %s.' % mid)
+        self.dao.del_num_of_photo(mid)
 
     def broadcast_realtime_message(self):
         """

@@ -131,7 +131,7 @@ def edison():
     ret_json = {}
     ret = bot.get_edison_request()
     if ret:
-        ret_json['mid'] = ret
+        ret_json = ret
     return jsonify(ret_json)
 
 
@@ -161,6 +161,11 @@ def sync_backend():
         return 'OK'
     return 'FAIL'
 
+@app.route('/clearnumtakephoto/<mid>')
+@requires_auth
+def clear_num_of_photo(mid):
+    bot.clear_take_photo_count(mid)
+    return 'OK'
 
 @app.route('/groundstatus/<mid>')
 @requires_auth

@@ -73,6 +73,8 @@ SponsorKeyDic = {
 
 FINAL_SPONSOR = 'dfmk1njfu'
 
+PHOTO_LIMIT = 10
+
 
 class RedisQueue(object):
     def __init__(self, name, namespace='queue', **redis_kwargs):

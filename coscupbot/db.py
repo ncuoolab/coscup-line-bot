@@ -25,6 +25,17 @@ class Dao(object):
         self.CONTEXT_PATTERN = 'CONTEXT::%s'
         self.MESSAGE_RECORD = 'MSGRECORD'
         self.PHOTO_RECORD = 'PHOTOTACKED'
+        self.NUMPHOTO_PATTERN = 'NUMPHOTO::%s'
+
+    def get_num_of_photo(self, mid):
+        self.__get_conn().setnx(self.NUMPHOTO_PATTERN % mid, 0)
+        return int(self.__get_conn().get(self.NUMPHOTO_PATTERN % mid))
+
+    def increase_num_of_photo(self, mid):
+        self.__get_conn().incr(self.NUMPHOTO_PATTERN % mid, 1)
+
+    def del_num_of_photo(self, mid):
+        self.__get_conn().delete(self.NUMPHOTO_PATTERN % mid)
 
     def add_photo_record(self, record):
         self.__get_conn().lpush(self.PHOTO_RECORD, record)

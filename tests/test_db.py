@@ -114,3 +114,19 @@ class TestDb:
         print(data)
         assert data['vedkoprjdi'] == True
         assert data['dkmjijoji'] == False
+
+    def test_num_of_photo(self):
+        mid = '1123'
+        result = get_dao().get_num_of_photo(mid)
+        assert result == 0
+
+    def test_num_of_photo_inc(self):
+        mid = '1123'
+        get_dao().increase_num_of_photo(mid)
+        result = get_dao().get_num_of_photo(mid)
+        assert result == 1
+        get_dao().increase_num_of_photo(mid)
+        get_dao().increase_num_of_photo(mid)
+        get_dao().increase_num_of_photo(mid)
+        result = get_dao().get_num_of_photo(mid)
+        assert result == 4
