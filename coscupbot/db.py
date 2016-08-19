@@ -101,6 +101,9 @@ class Dao(object):
         self.__get_conn().delete(self.HUMOUR_PATTERN % mid)
 
     def init_ground_data(self, mid):
+        if self.__get_conn().exists(self.GROUND_PATTERN % mid):
+            # avoid readd friend.
+            return
         self.del_ground_data(mid)
         init_data = self.__init_ground_default_data()
         r = self.__get_conn()

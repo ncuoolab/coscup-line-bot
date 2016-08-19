@@ -367,6 +367,10 @@ class CoscupBot(object):
                 return False
         return True
 
+    def clear_ground_data(self, mid):
+        self.dao.del_ground_data(mid)
+        self.dao.init_ground_data(mid)
+
     def get_status(self):
         ret = {"message_processed": self.dao.get_message_record_count(),
                'waiting_edison_take_photo': self.edison_queue.qsize(),

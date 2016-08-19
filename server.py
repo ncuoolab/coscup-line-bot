@@ -167,6 +167,12 @@ def clear_num_of_photo(mid):
     bot.clear_take_photo_count(mid)
     return 'OK'
 
+@app.route('/cleargrounddata/<mid>')
+@requires_auth
+def clear_ground_data(mid):
+    bot.clear_ground_data(mid)
+    return 'OK'
+
 @app.route('/groundstatus/<mid>')
 @requires_auth
 def get_gorund_status(mid):
