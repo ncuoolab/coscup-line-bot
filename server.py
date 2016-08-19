@@ -61,6 +61,8 @@ def get_wit_tokens():
     ret = {}
     if 'WIT_ZHTW_TOKEN' in os.environ:
         ret['zh-TW'] = os.environ['WIT_ZHTW_TOKEN']
+    if 'WIT_ENUS_TOKEN' in os.environ:
+        ret['en-US'] = os.environ['WIT_ENUS_TOKEN']
     return ret
 
 
