@@ -62,12 +62,14 @@ class CommandController(object):
             'YES': True,
             'yes': True,
             'Y': True,
+            'y': True,
             '不': False,
             '不用': False,
             'No': False,
             'NO': False,
             'no': False,
             'N': False,
+            'n': False,
         }
 
     def process_receive(self, receive, humour=False):
