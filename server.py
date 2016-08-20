@@ -234,10 +234,11 @@ def sp_check_in(sp_id, mid):
     if 'error' in ret:
         return render_template('check_in_failed.html', err_msg=ret['error'])
     else:
+        left = len(ret['status'])-sum(ret['status'].values())
+        ret['status'].pop(coscupbot.utils.FINAL_SPONSOR)
         for sp_key in coscupbot.utils.SponsorKeyDic:
             ret['status'][coscupbot.utils.SponsorKeyDic[sp_key]['booth']] = ret['status'][sp_key]
             ret['status'].pop(sp_key)
-        left = len(ret['status'])-sum(ret['status'].values())
         if left is not 0:
             if sp_id is coscupbot.utils.FINAL_SPONSOR:
                 return render_template('finished.html', check_in_data=ret)
@@ -245,6 +246,10 @@ def sp_check_in(sp_id, mid):
                 return render_template('check_in.html', check_in_data=ret, left=left, sp_key_dict=utils.SponsorKeyDic)
         else:
             return render_template('finished.html', check_in_data=ret)
+
+@app.route('/sp/test')
+def css_test():
+    return render_template('test.html')
 
 if __name__ == '__main__':
     app.run()

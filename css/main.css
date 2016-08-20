@@ -31,6 +31,7 @@ html{
 
 .pointStamp{
     background-color: rgba(230,230,220,0.5);
+    height: 0px;
     width: 23%;
     padding-bottom: 12%;
     margin: 1%;
@@ -42,6 +43,17 @@ html{
     -webkit-box-shadow: 1px 1px 5px 1px rgba(132,156,127,1);
 -moz-box-shadow: 1px 1px 5px 1px rgba(132,156,127,1);
 box-shadow: 1px 1px 5px 1px rgba(132,156,127,1);
+}
+
+.cover_mask{
+    position: relative;
+    top: 50%;
+    left: 50%;
+    max-width: 30%;
+    padding-bottom: -65%;
+    opacity: 0.9;
+    filter: alpha(opacity=90);
+    background: rgba(255, 255, 255, 0.9);
 }
 
 .D1{
@@ -93,7 +105,7 @@ box-shadow: 1px 1px 5px 1px rgba(132,156,127,1);
 }
 
 .pokemonGO{
-    background:rgba(255,255,255,0.8) url(../img/done-01.png) no-repeat center;
+    background:rgba(255,255,255,0.5) url(../img/done-01.png) no-repeat center;
 }
 
 
