@@ -382,6 +382,8 @@ class CoscupBot(object):
             return True
 
         for key, value in ground_data.items():
+            if key == utils.FINAL_SPONSOR:
+                continue
             if not value:
                 return False
         return True
