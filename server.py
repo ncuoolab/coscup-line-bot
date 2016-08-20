@@ -234,7 +234,7 @@ def sp_check_in(sp_id, mid):
         if left is not 0:
             if sp_id is coscupbot.utils.FINAL_SPONSOR:
                 return render_template('finished.html', check_in_data=ret)
-            else
+            else:
                 return render_template('check_in.html', check_in_data=ret, left=left, sp_key_dict=utils.SponsorKeyDic)
         else
             return render_template('finished.html', check_in_data=ret)
