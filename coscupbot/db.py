@@ -53,7 +53,7 @@ class Dao(object):
         self.__get_conn().lpush(self.PHOTO_RECORD, record)
 
     def get_photo_record_count(self):
-        self.__get_conn().llen(self.PHOTO_RECORD)
+        return int(self.__get_conn().llen(self.PHOTO_RECORD))
 
     def add_message_record(self, message):
         self.__get_conn().lpush(self.MESSAGE_RECORD, message)
