@@ -58,7 +58,7 @@ LCS.Interface.registerTitleBarCallback(function(evt) {
     <img src="../img/eventTitle-01.png" alt="開源巔峰挑戰賽" class="eventTitle">
 </div>
 <div class="pointChart">
-  {%if check_in_data['first_check'][sp_booth]%}
+  {% if check_in_data['first_check'] %}
   	<h2>恭喜你完成COSCUP2016 開源挑戰賽!</h2>請將此頁面展示給COSCUP攤位上的工作人員看，以換取精美贈品!
   {% else %}
     <h2>你已經換過贈品了喔!</h2>
