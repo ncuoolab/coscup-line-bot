@@ -229,8 +229,15 @@ def sp_check_in(sp_id, mid):
     if 'error' in ret:
         return render_template('check_in_failed.html', err_msg=ret['error'])
     else:
+        
         left = len(ret['status'])-sum(ret['status'].values())
-        return render_template('check_in.html', check_in_data=ret, left=left, sp_key_dict=utils.SponsorKeyDic)
+        if left is not 0:
+            if sp_id is coscupbot.utils.FINAL_SPONSOR:
+                return render_template('finished.html', check_in_data=ret)
+            else
+                return render_template('check_in.html', check_in_data=ret, left=left, sp_key_dict=utils.SponsorKeyDic)
+        else
+            return render_template('finished.html', check_in_data=ret)
 
 if __name__ == '__main__':
     app.run()
