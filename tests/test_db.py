@@ -115,6 +115,17 @@ class TestDb:
         assert data['vedkoprjdi'] == True
         assert data['dkmjijoji'] == False
 
+    def test_check_in_not_friedn(self):
+        get_dao().checkin_ground('vedkoprjdi', 'test')
+        data = get_dao().get_ground_data('test')
+        print(data)
+        assert data['vedkoprjdi'] == True
+        assert data['dkmjijoji'] == False
+        get_dao().checkin_ground('dkmjijoji', 'test')
+        data = get_dao().get_ground_data('test')
+        assert data['vedkoprjdi'] == True
+        assert data['dkmjijoji'] == True
+
     def test_num_of_photo(self):
         mid = '1123'
         result = get_dao().get_num_of_photo(mid)

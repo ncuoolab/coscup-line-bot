@@ -125,6 +125,7 @@ class Dao(object):
         r.hmset(self.GROUND_PATTERN % mid, init_data)
 
     def checkin_ground(self, sp_id, mid):
+        self.init_ground_data(mid)
         self.__get_conn().hset(self.GROUND_PATTERN % mid, sp_id, True)
 
     def get_ground_data(self, mid):
