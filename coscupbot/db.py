@@ -64,8 +64,11 @@ class Dao(object):
     def get_message_record_count(self):
         return self.__get_conn().llen(self.MESSAGE_RECORD)
 
-    def get_friend_count(self):
+    def get_ground_player_count(self):
         return len(self.__get_conn().keys('GROUND*'))
+
+    def get_num_of_friend(self):
+        return len(self.__get_conn().keys('LANG*'))
 
     def test_connection(self):
         r = self.__get_conn()

@@ -398,6 +398,7 @@ class CoscupBot(object):
     def get_status(self):
         ret = {"message_processed": self.dao.get_message_record_count(),
                'waiting_edison_take_photo': self.edison_queue.qsize(),
-               'num_of_friends': self.dao.get_friend_count(),
+               'num_of_ground_player': self.dao.get_ground_player_count(),
+               'num_of_friend': self.dao.get_num_of_friend(),
                'num_photos_edison_take': self.dao.get_photo_record_count()}
         return ret
