@@ -236,7 +236,7 @@ def sp_check_in(sp_id, mid):
                 return render_template('finished.html', check_in_data=ret)
             else:
                 return render_template('check_in.html', check_in_data=ret, left=left, sp_key_dict=utils.SponsorKeyDic)
-        else
+        else:
             return render_template('finished.html', check_in_data=ret)
 
 if __name__ == '__main__':
