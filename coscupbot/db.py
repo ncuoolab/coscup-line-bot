@@ -130,6 +130,7 @@ class Dao(object):
 
     def get_ground_data(self, mid):
         ret = {}
+        self.init_ground_data(mid)
         data = self.__get_conn().hgetall(self.GROUND_PATTERN % mid)
         for k, v in data.items():
             key = utils.to_utf8_str(k)
