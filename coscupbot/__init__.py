@@ -157,11 +157,10 @@ class CoscupBot(object):
 
     def send_take_photo_disable(self, mid):
         resp = modules.random_get_result(
-               self.dao.get_command_responses('/edisondisable', self.check_fromuser_language(mid),
-                                                   self.check_fromuser_humour(mid)))
+            self.dao.get_command_responses('/edisondisable', self.check_fromuser_language(mid),
+                                           self.check_fromuser_humour(mid)))
         command_resp = model.CommandResponse.de_json(resp)
         self.bot_api.send_text(to_mid=mid, text=command_resp.response_msg)
-
 
     def check_fromuser_language(self, mid):
         """
@@ -354,6 +353,7 @@ class CoscupBot(object):
         try:
             ground_data = self.dao.get_ground_data(mid)
             if sp_id not in ground_data:
+                self.logger.error('User %s sp_id %s not found.' % (mid, sp_id))
                 return {'error': 'sp_id %s not found' % sp_id}
             if ground_data[sp_id]:
                 ret['first_check'] = False
