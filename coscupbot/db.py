@@ -39,6 +39,9 @@ class Dao(object):
     def enable_edison(self):
         self.__get_conn().set(self.EDISON_ENABLE, 1)
 
+    def is_friend(self, mid):
+        return self.__get_conn().exists(self.GROUND_PATTERN % mid)
+
     def get_num_of_photo(self, mid):
         self.__get_conn().setnx(self.NUMPHOTO_PATTERN % mid, 0)
         return int(self.__get_conn().get(self.NUMPHOTO_PATTERN % mid))

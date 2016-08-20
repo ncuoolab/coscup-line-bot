@@ -388,6 +388,9 @@ class CoscupBot(object):
                 return False
         return True
 
+    def is_bot_friend(self, mid):
+        return self.dao.is_friend(mid)
+
     def clear_ground_data(self, mid):
         self.dao.del_ground_data(mid)
         self.dao.init_ground_data(mid)

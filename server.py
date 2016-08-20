@@ -191,6 +191,11 @@ def manual_check_in(sp_id, mid):
 def get_bot_status():
     return jsonify(bot.get_status())
 
+@app.route('/isfriend/<mid>')
+@requires_auth
+def is_friend(mid):
+    return jsonify(bot.is_bot_friend(mid))
+
 @app.route('/disableedison')
 @requires_auth
 def disable_edison():
