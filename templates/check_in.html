@@ -59,7 +59,11 @@ LCS.Interface.registerTitleBarCallback(function(evt) {
 </div>
 <div class="pointChart">
   {% for sp_booth in check_in_data['status'] %}
-  <div class="pointStamp {{sp_booth}} {%if check_in_data['status'][sp_booth]%}pokemonGO{% endif %}"></div>
+  <div class="pointStamp {{sp_booth}}">
+  {% if check_in_data['status'][sp_booth] %}
+  <img class="cover_mask" src="../img/done-01.png" />
+  {% endif %}
+  </div>
   {% endfor %}
 </div>
 {% endblock %}
