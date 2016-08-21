@@ -163,3 +163,10 @@ box-shadow: 1px 1px 5px 1px rgba(132,156,127,1);
     .banner{width: 30%;}
     
 }
+
+footer{
+
+    width: 100%;
+    clear: both;
+    float: left;
+}
