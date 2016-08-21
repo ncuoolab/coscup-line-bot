@@ -235,9 +235,9 @@ def sp_check_in(sp_id, mid):
         return render_template('check_in_failed.html', err_msg=ret['error'])
     else:
         left = len(ret['status'])-sum(ret['status'].values())
-        ret['status'].pop(coscupbot.utils.FINAL_SPONSOR)
         for sp_key in coscupbot.utils.SponsorKeyDic:
-            ret['status'][coscupbot.utils.SponsorKeyDic[sp_key]['booth']] = ret['status'][sp_key]
+            if sp_key is not coscupbot.utils.FINAL_SPONSOR:
+                ret['status'][coscupbot.utils.SponsorKeyDic[sp_key]['booth']] = ret['status'][sp_key]
             ret['status'].pop(sp_key)
         if left is not 0:
             if sp_id is coscupbot.utils.FINAL_SPONSOR:
