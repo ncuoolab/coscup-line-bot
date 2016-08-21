@@ -152,6 +152,7 @@ class CoscupBot(object):
                 self.bot_api.send_text(to_mid=mid, text=command_resp.response_msg)
                 return
             self.edison_queue.put(mid)
+            self.dao.increase_num_of_photo(mid)
             result = modules.random_get_result(self.dao.get_nlp_response(model.NLPActions.Edison_request, lang))
         self.bot_api.reply_text(receive, result)
 
@@ -260,7 +261,6 @@ class CoscupBot(object):
         o_url = json_obj['originalUrl']
         p_url = json_obj['previewUrl']
         self.bot_api.send_image(mid, o_url, p_url)
-        self.dao.increase_num_of_photo(mid)
         self.logger.info('Send image to user %s done' % mid)
 
     def clear_take_photo_count(self, mid):
