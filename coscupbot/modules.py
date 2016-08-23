@@ -168,6 +168,7 @@ class WitMessageController(object):
                 for ac in new_actions:
                     if ac == '':
                         continue
+                    self.logger.info('Add dyn action %s' % ac)
                     actions[ac] = self.send_simple_response
         except Exception as ex:
             self.logger.exception(ex)
