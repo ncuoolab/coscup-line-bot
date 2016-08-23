@@ -138,10 +138,10 @@ class WitMessageController(object):
         self.bot_api = bot.bot_api
         self.db_url = db_url
         self.lang = lang
-        self.client = self.init_wit_client()
         self.dao = db.Dao(db_url)
         self.bot = bot
         self.logger = logging.getLogger('WitMessageController')
+        self.client = self.init_wit_client()
 
     def init_wit_client(self):
         actions = {
@@ -157,10 +157,20 @@ class WitMessageController(object):
             'ShowSponsorIntro': self.show_sponsor_intro,
             'ShowBooths': self.show_booths,
             'ShowBoothIntro': self.show_booth_intro,
-            'ShowDirty' : self.send_dirty,
-            'ShowPokemon':self.send_pokemon,
-            'ShowNothankyou':self.send_no_thankyou,
+            'ShowDirty': self.send_dirty,
+            'ShowPokemon': self.send_pokemon,
+            'ShowNothankyou': self.send_no_thankyou,
         }
+        try:
+            new_action = self.dao.get_nlp_response('ACTIONMAP', self.lang)
+            if len(new_action) > 0:
+                new_actions = new_action[0].decode("utf-8").split(";")
+                for ac in new_actions:
+                    if ac == '':
+                        continue
+                    actions[ac] = self.send_simple_response
+        except Exception as ex:
+            self.logger.exception(ex)
         return Wit(access_token=self.token, actions=actions)
 
     def process_receive(self, receive):
@@ -254,6 +264,12 @@ class WitMessageController(object):
     def send_event_time(self, request):
         self.clear_session_by_request(request)
         return self.send_nlp_action_message(request, NLPActions.EventTime)
+
+    def send_simple_response(self, request):
+        self.logger.info('Get dynmaic simple response %s' % request)
+        action = request['action']
+        self.clear_session_by_request(request)
+        return self.send_nlp_action_message(request, action)
 
     def find_program_with_room(self, request):
         ctx = request['context']

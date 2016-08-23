@@ -340,12 +340,15 @@ class CoscupBot(object):
             self.reset_scheduler()
             self.coscup_api_helper.sync_backend()
             self.sheet_message_controller.parse_data_from_google_sheet()
+            for key, value in self.nlp_message_controllers.items():
+                value.init_wit_client()
             self.broadcast_realtime_message()
         except Exception as ex:
             self.logger.error('Sync backend data Failed.')
             self.logger.exception(ex)
             return False
         return True
+
 
     def ground_game_check_in(self, sp_id, mid):
         self.logger.info('User %s check in to %s' % (mid, sp_id))
